@@ -3,6 +3,7 @@
 # The second key is the BIDS acquisition name.
 # The value is a DICOM series description or a list of DICOM series descriptions
 # for that BIDS data type and acquisition.
+
 bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
     'anat': {
         # FLAIR
@@ -89,6 +90,13 @@ bids_dicom_ignores: list[str] = [
     'AAHead_Scout_32ch-head-coil_MPR_tra',
     'AAHead_Scout_32ch-head-coil_MPR_cor',
     'PhoenixZIPReport',
+    # Paris non-diagnostic files
+    'anat-mtw_acq-MTON_07mm_ND',
+    'anat-mtw_acq-MTOFF_07mm_ND',
+    'anat-mtw_acq-T1w_07mm_ND',
+    'anat-nm_acq-MTboost_sag_0.55mm_ND',
+    # TODO: How to map this one ?
+    'fmap-b1_tra_p2_B1',
 ]
 
 # The order in which the BIDS labels should appear in a BIDS acquisition name.
