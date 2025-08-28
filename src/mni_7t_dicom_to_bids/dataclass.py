@@ -206,7 +206,7 @@ class BidsName:
 
     def get(self, label: str) -> str | None:
         """
-        Get the value associated with a lavel in the BIDS name.
+        Get the value associated with a label in the BIDS name.
         """
 
         return self.entries[label]
