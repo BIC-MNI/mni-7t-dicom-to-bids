@@ -37,3 +37,10 @@ preview = true
 [tool.ruff.lint]
 ignore = ["E203", "E221", "E241", "E251"]
 select = ["E", "F", "I", "N", "RUF", "UP", "W"]
+
+[tool.codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = '.git*'
+check-hidden = true
+# ignore-regex = ''
+ignore-words-list = 'datas'
