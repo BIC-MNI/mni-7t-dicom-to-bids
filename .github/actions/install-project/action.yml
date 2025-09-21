@@ -1,0 +1,20 @@
+name: Install MNI 7T BIDS converter
+description: Install the MNI 7T BIDS converter and all its dependencies.
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+        cache: pip
+
+    - name: Install BIC-util
+      shell: bash
+      run: pip install git+https://github.com/BIC-MNI/BIC_MRI_pipeline_util
+
+    - name: Install MNI 7T BIDS converter
+      shell: bash
+      run: pip install .[dev]
