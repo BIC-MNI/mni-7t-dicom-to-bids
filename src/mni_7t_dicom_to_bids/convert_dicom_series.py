@@ -63,6 +63,7 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
                 bids_data_type_path,
                 counter,
                 lambda tmp_dicom_dir_path, tmp_output_path: convert_bids_dicom_series(
+                    dicom_series,
                     bids_session,
                     bids_acquisition,
                     bids_data_type_path,
@@ -114,6 +115,7 @@ def get_conversions_counter(dicom_bids_mapping: DicomBidsMapping, args: Args) ->
 
 
 def convert_bids_dicom_series(
+    dicom_series: DicomSeriesInfo,
     bids_session: BidsSessionInfo,
     bids_acquisition: BidsAcquisitionInfo,
     bids_data_type_path: str,
@@ -130,7 +132,7 @@ def convert_bids_dicom_series(
 
     run_dicom_to_niix(tmp_dicom_dir_path, tmp_output_dir_path, file_name, args)
 
-    patch_files(Path(tmp_output_dir_path))
+    patch_files(Path(tmp_output_dir_path), dicom_series)
 
     # Check if the files already exist in the target directory.
 
