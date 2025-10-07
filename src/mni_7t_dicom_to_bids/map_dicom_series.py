@@ -1,7 +1,7 @@
 import fnmatch
 
 from mni_7t_dicom_to_bids.dataclass import BidsAcquisitionInfo, DicomBidsMapping, DicomSeriesInfo
-from mni_7t_dicom_to_bids.variables import bids_dicom_ignores, bids_dicom_mappings
+from mni_7t_dicom_to_bids.dictionary import bids_dicom_ignores, bids_dicom_mappings
 
 
 def map_bids_dicom_series(dicom_series_list: list[DicomSeriesInfo]) -> DicomBidsMapping:

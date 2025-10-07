@@ -3,7 +3,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from re import Match, Pattern
 
-from mni_7t_dicom_to_bids.variables import bids_label_order
+from mni_7t_dicom_to_bids.dictionary import bids_label_order
 
 
 @dataclass(frozen=True, order=True)
