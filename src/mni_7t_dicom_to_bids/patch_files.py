@@ -144,7 +144,7 @@ def get_mt_flip_angle(dicom_series: DicomSeriesInfo) -> float | None:
         return
 
     # Get the MT flip angle attribute from the Siemens CSA header.
-    mt_flip_angle_match = re.search(r'sWipMemBlock\.adFree\[2\]\\t = \\t(.+)\\n', str(csa_header.value))
+    mt_flip_angle_match = re.search(r'sWipMemBlock\.adFree\[2\]\\t = \\t(.+?)\\n', str(csa_header.value))
     if mt_flip_angle_match is None:
         return
 
