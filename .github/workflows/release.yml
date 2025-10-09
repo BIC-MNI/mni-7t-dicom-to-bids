@@ -1,0 +1,51 @@
+name: Build and release
+
+on:
+  push:
+    branches:
+    - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and release
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the MNI 7T DICOM to BIDS converter repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build the compilation Docker image
+      run: |
+        docker build -t compile_mni_7t_dicom_to_bids -f compile.Dockerfile .
+
+    - name: Build executable
+      run: |
+        mkdir -p /dist
+        docker run --mount type=bind,src=/dist,dst=/mni_7t_dicom_to_bids/dist compile_mni_7t_dicom_to_bids
+
+    - name: Delete old latest release
+      run: |
+        gh release delete latest --yes || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create latest release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: latest
+        name: "Latest Development Build"
+        body: |
+          **Automated development build**
+
+          - **Commit:** ${{ github.sha }}
+          - **Date:** ${{ github.event.head_commit.timestamp }}
+        draft: false
+        prerelease: true
+        generate_release_notes: false
+        files: /dist/mni7t_dcm2bids
