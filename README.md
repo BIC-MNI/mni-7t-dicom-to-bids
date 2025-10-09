@@ -2,6 +2,10 @@
 
 This project is the MNI 7T DICOM to BIDS converter, which is used at the Montreal Neurological Institute-Hospital to convert 7 Tesla DICOM scans to BIDS.
 
+## Contributing
+
+If you want to contribute to the MNI 7T DICOM to BIDS converter, read the contribution guide [here](./CONTRIBUTING.md).
+
 ## Installation
 
 ### PIP
