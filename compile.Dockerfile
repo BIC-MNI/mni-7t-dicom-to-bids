@@ -1,12 +1,12 @@
 # Use an old Debian system to compile the converter with an old glibc version and ensure
 # compatibility with many users.
-FROM debian:10
+FROM debian:11
 
 RUN apt-get update
 
 # Install Python 3.11
 
-# Python 3.11 is not available by default on Debian 10. As such, we compile it from source instead.
+# Python 3.11 is not available by default on Debian 11. As such, we compile it from source instead.
 
 # Install the Python build dependencies.
 # Copied from https://github.com/python/cpython/blob/3.11/.github/workflows/posix-deps-apt.sh

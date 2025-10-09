@@ -36,7 +36,7 @@ This will create a `dist/mni7t_dcm2bids` executable for the MNI 7T DICOM to BIDS
 
 ## Compilation (maximum compatibility)
 
-The executable of a project compiled with PyInstaller may be depend on the `glibc` version of the system on which it was compiled. As such, the MNI 7T DICOM to BIDS includes a `compile.Dockerfile` file designed to build the project using an old `glibc` version such that the executable created is compatible with Debian 10 or more recent Debian-based systems.
+The executable of a project compiled with PyInstaller may be depend on the `glibc` version of the system on which it was compiled. As such, the MNI 7T DICOM to BIDS includes a `compile.Dockerfile` file designed to build the project using an old `glibc` version such that the executable created is compatible with Debian 11 or more recent Debian-based systems.
 
 To build the Docker image for the compiler, use the following command in the project root directory:
 
