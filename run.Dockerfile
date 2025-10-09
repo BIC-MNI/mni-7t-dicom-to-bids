@@ -12,7 +12,7 @@ COPY . /mni_7t_dicom_to_bids
 WORKDIR /mni_7t_dicom_to_bids
 
 # Install the package and its other dependencies.
-RUN pip install --no-cache-dir git+https://github.com/BIC-MNI/BIC_MRI_pipeline_util.git
+RUN pip install --no-cache-dir git+https://github.com/BIC-MNI/bic-mri-pipeline-util.git
 RUN pip install --no-cache-dir .
 
 CMD ["mni_7t_dicom_to_bids"]

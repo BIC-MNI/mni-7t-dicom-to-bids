@@ -13,7 +13,7 @@ runs:
 
     - name: Install BIC-util
       shell: bash
-      run: pip install git+https://github.com/BIC-MNI/BIC_MRI_pipeline_util
+      run: pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
 
     - name: Install MNI 7T BIDS converter
       shell: bash

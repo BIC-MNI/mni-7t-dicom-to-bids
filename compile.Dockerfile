@@ -55,7 +55,7 @@ COPY . /mni_7t_dicom_to_bids
 WORKDIR /mni_7t_dicom_to_bids
 
 # Install the package and its other dependencies.
-RUN pip3.11 install --no-cache-dir git+https://github.com/BIC-MNI/BIC_MRI_pipeline_util.git
+RUN pip3.11 install --no-cache-dir git+https://github.com/BIC-MNI/bic-mri-pipeline-util.git
 RUN pip3.11 install --no-cache-dir .[dev]
 
 # Run PyInstaller, the executable will be created as `/mni_7t_dicom_to_bids/dist/mni7t_dcm2bids`.

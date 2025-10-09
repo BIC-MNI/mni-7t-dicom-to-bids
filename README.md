@@ -9,8 +9,8 @@ This project is the MNI 7T DICOM to BIDS converter, which is used at the Montrea
 To install the converter with PIP, install the following packages in the relevant Python environment:
 
 ```sh
-pip install git+https://github.com/BIC-MNI/BIC_MRI_pipeline_util
-pip install git+https://github.com/BIC-MNI/MNI_7T_DICOM_to_BIDS
+pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
+pip install git+https://github.com/BIC-MNI/mni-7t-dicom-to-bids
 ```
 
 You must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably a more recent version) installed on your machine.
@@ -20,7 +20,7 @@ You must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably
 To install the converter with Docker, clone the GitHub repository and build the project using the `run.Dockerfile` file:
 
 ```sh
-git clone https://github.com/BIC-MNI/MNI_7T_DICOM_to_BIDS mni_7t_dicom_to_bids
+git clone https://github.com/BIC-MNI/mni-7t-dicom-to-bids mni_7t_dicom_to_bids
 docker build -t mni_7t_dicom_to_bids -f mni_7t_dicom_to_bids/run.Dockerfile mni_7t_dicom_to_bids
 ```
 
