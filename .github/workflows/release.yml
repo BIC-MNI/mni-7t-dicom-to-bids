@@ -26,8 +26,8 @@ jobs:
 
     - name: Build executable
       run: |
-        mkdir -p /dist
-        docker run --mount type=bind,src=/dist,dst=/mni_7t_dicom_to_bids/dist compile_mni_7t_dicom_to_bids
+        mkdir dist
+        docker run --mount type=bind,src=$(pwd)/dist,dst=/mni_7t_dicom_to_bids/dist compile_mni_7t_dicom_to_bids
 
     - name: Delete old latest release
       run: |
@@ -48,4 +48,4 @@ jobs:
         draft: false
         prerelease: true
         generate_release_notes: false
-        files: /dist/mni7t_dcm2bids
+        files: dist/mni7t_dcm2bids
