@@ -39,7 +39,7 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         tag_name: latest
-        name: "Latest Development Build"
+        name: "Latest development build"
         body: |
           **Automated development build**
 
