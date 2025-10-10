@@ -6,6 +6,8 @@ build-backend = "hatchling.build"
 name = "mni_7t_dicom_to_bids"
 version = "0.0.0"
 readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">= 3.11"
 dependencies = [
     "bic_util",
