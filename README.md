@@ -21,11 +21,11 @@ You must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably
 
 ### Docker
 
-To install the converter with Docker, clone the GitHub repository and build the project using the `run.Dockerfile` file:
+To install the converter with Docker, clone the GitHub repository and build the project image:
 
 ```sh
 git clone https://github.com/BIC-MNI/mni-7t-dicom-to-bids mni_7t_dicom_to_bids
-docker build -t mni_7t_dicom_to_bids -f mni_7t_dicom_to_bids/run.Dockerfile mni_7t_dicom_to_bids
+docker build . -t mni_7t_dicom_to_bids mni_7t_dicom_to_bids
 ```
 
 ## Execution

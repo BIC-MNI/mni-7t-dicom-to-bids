@@ -11,8 +11,8 @@ RUN unzip dcm2niix_lnx.zip -d /usr/bin
 COPY . /mni_7t_dicom_to_bids
 WORKDIR /mni_7t_dicom_to_bids
 
-# Install the package and its other dependencies.
+# Install the package and its dependencies.
 RUN pip install --no-cache-dir git+https://github.com/BIC-MNI/bic-mri-pipeline-util.git
 RUN pip install --no-cache-dir .
 
-CMD ["mni_7t_dicom_to_bids"]
+CMD ["mni7t_dcm2bids"]
