@@ -6,37 +6,50 @@ This project is the MNI 7T DICOM to BIDS converter, which is used at the Montrea
 
 If you want to contribute to the MNI 7T DICOM to BIDS converter, read the contribution guide [here](./CONTRIBUTING.md).
 
-## Installation
+## Usage
 
-### PIP
+### Executable
 
-To install the converter with PIP, install the following packages in the relevant Python environment:
+You can download the latest version of the converter as an executable [here](https://github.com/BIC-MNI/mni-7t-dicom-to-bids/releases/tag/latest). This executable should work on all Debian-based machines (including Ubuntu) from Debian 11 or newer.
+
+To run the executable, use the following command:
+
+```sh
+mni7t_dcm2bids <dicom_study_path> <bids_dataset_path> --subject <subject_label> --session <session_label>
+```
+
+The input DICOM directory must contain the DICOM files of a single session. The output BIDS directory can either be an empty directory (which can be created by the script) or be an existing BIDS directory (in which case the converted session is added to the existing BIDS).
+
+### Docker
+
+You can run the latest version of the converter as a Docker image using the following command:
+
+```sh
+docker run ghcr.io/bic-mni/mni-7t-dicom-to-bids <dicom_study_path> <bids_dataset_path> --subject <subject_label> --session <session_label>
+```
+
+You can find more information about the converter Docker image [here](https://github.com/BIC-MNI/mni-7t-dicom-to-bids/pkgs/container/mni-7t-dicom-to-bids). You might need to add bind mounts (`--mount` option) to link the input and output directories of the converter to the host.
+
+### Apptainer
+
+You can also use the aforementioned Docker image of the converter with Apptainer using the following command:
+
+```sh
+apptainer run docker://ghcr.io/bic-mni/mni-7t-dicom-to-bids <dicom_study_path> <bids_dataset_path> --subject <subject_label> --session <session_label>
+```
+
+Similarly, you might need to use bind paths (`--bind` option) to link the input and output directories of the converter to the host.
+
+### Python
+
+Finally, you can also install the converter as a Python package. To do so, run the following commands in the relevant Python environment:
 
 ```sh
 pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
 pip install git+https://github.com/BIC-MNI/mni-7t-dicom-to-bids
 ```
 
-You must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably a more recent version) installed on your machine.
-
-### Docker
-
-To install the converter with Docker, clone the GitHub repository and build the project image:
-
-```sh
-git clone https://github.com/BIC-MNI/mni-7t-dicom-to-bids mni_7t_dicom_to_bids
-docker build . -t mni_7t_dicom_to_bids mni_7t_dicom_to_bids
-```
-
-## Execution
-
-You can run the MNI 7T DICOM to BIDS converter using the following command:
-
-```sh
-mni7t_dcm2bids <dicom_study_path> <bids_dataset_path> --subject <subject_label> --session <session_label>
-```
-
-The input DICOM directory must contain the DICOMs of a single session. The output BIDS directory can either be an empty directory (which can be created by the script) or be an existing BIDS directory (in which case the converted session is added to the existing BIDS).
+Note that you must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably a more recent version) installed on your machine.
 
 ## BIDS naming dictionary
 

@@ -6,9 +6,9 @@ This document explains how to modify and contribute to the MNI 7T DICOM to BIDS 
 
 The GitHub repository of the project can be found at https://github.com/BIC-MNI/mni-7t-dicom-to-bids, if you want to contribute, do not hesitate to fill an issue or open a a pull request.
 
-## Installation
+## Python installation
 
-As with the a normal installation, start by installing the BIC utilities Python package.
+To install the converter as an editable Python package, start by installing the BIC utilities Python package.
 
 ```sh
 pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
@@ -30,6 +30,14 @@ In this command:
 - `mni-7t-dicom-to-bids` is the path of the repository you just cloned (if you moved into the project directory, then that path would be `.`).
 - `-e` (or `--editable` in its long form) keeps the package modifiable instead of simply copying the current code.
 - `[dev]` also installs the development tools.
+
+## Docker build
+
+To build the Docker image of the converter locally, use the following command in the project root directory:
+
+```sh
+docker build -t mni-7t-dicom-to-bids .
+```
 
 ## Development tools
 
