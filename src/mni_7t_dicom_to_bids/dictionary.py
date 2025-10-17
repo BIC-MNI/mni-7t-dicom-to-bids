@@ -168,13 +168,20 @@ bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
 }
 
 # List of DICOM series descriptions that are ignored in the BIDS conversion.
-bids_dicom_ignores: list[str] = [
+ignored_dicom_series: list[str] = [
     'AAHead_Scout_32ch-head-coil',
     'AAHead_Scout_32ch-head-coil_MPR_sag',
     'AAHead_Scout_32ch-head-coil_MPR_tra',
     'AAHead_Scout_32ch-head-coil_MPR_cor',
     'ADD_RUN1-4',
     'PhoenixZIPReport',
+]
+
+# List of DICOM series description suffixes that are ignored while matching DICOM series to BIDS
+# acquisitions.
+ignored_dicom_series_suffixes: list[str] = [
+    '_Pha',
+    '_Motion',
 ]
 
 # The order in which the BIDS entities should appear in a BIDS file name.
