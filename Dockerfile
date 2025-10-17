@@ -15,4 +15,5 @@ WORKDIR /mni_7t_dicom_to_bids
 RUN pip install --no-cache-dir git+https://github.com/BIC-MNI/bic-mri-pipeline-util.git
 RUN pip install --no-cache-dir .
 
-CMD ["mni7t_dcm2bids"]
+# Define the converter as the entrypoint.
+ENTRYPOINT ["mni7t_dcm2bids"]
