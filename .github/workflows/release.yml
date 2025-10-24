@@ -4,14 +4,65 @@ on:
   push:
     branches:
     - main
+    - 'release-*'
 
 permissions:
   contents: write
   packages: write
 
 jobs:
+  check-version:
+    name: Detect version
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.detect.outputs.name }}
+      description: ${{ steps.detect.outputs.description }}
+      prerelease: ${{ steps.detect.outputs.prerelease }}
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v4
+    - name: Detect version and release type
+      id: detect
+      run: |
+        if [[ "${{ github.ref }}" == refs/heads/main ]]; then
+          NAME="latest"
+          DESCRIPTION="Latest development build"
+          PRERELEASE="true"
+        elif [[ "${{ github.ref }}" =~ refs/heads/release-.* ]]; then
+          VERSION="${GITHUB_REF#refs/heads/release-}"
+
+          # Extract package version from the pyproject file.
+          PYPROJECT_VERSION=$(grep -E '^version = ' pyproject.toml | cut -d '"' -f 2)
+
+          # Check that a version has been found.
+          if [[ -z "$PYPROJECT_VERSION" ]]; then
+            echo "Error: No package version found in pyproject.toml"
+            exit 1
+          fi
+
+          # Compare branch and package versions.
+          if [[ "$VERSION" != "$PYPROJECT_VERSION" ]]; then
+            echo "Error: Version mismatch"
+            echo "Branch version: $VERSION"
+            echo "Package version: $PYPROJECT_VERSION"
+            exit 1
+          fi
+
+          NAME="$VERSION"
+          DESCRIPTION="Release $VERSION"
+          PRERELEASE="false"
+        else
+          echo "Error: Unsupported branch"
+          exit 1
+        fi
+
+        echo "name=$NAME" >> $GITHUB_OUTPUT
+        echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
+        echo "prerelease=$PRERELEASE" >> $GITHUB_OUTPUT
+
   release-executable:
     name: Release executable
+    needs: check-version
     runs-on: ubuntu-latest
 
     steps:
@@ -30,29 +81,32 @@ jobs:
         mkdir dist
         docker run --mount type=bind,src=$(pwd)/dist,dst=/mni_7t_dicom_to_bids/dist compile_mni_7t_dicom_to_bids
 
-    - name: Delete old latest release
+    - name: Delete existing release
       run: |
-        gh release delete latest --yes || true
+        gh release delete "${{ needs.check-version.outputs.name }}" --yes || true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Create latest release
+    - name: Create release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: latest
-        name: "Latest development build"
+        tag_name: ${{ needs.check-version.outputs.name }}
+        name: "${{ needs.check-version.outputs.description }}"
         body: |
-          **Automated development build**
+          **${{ needs.check-version.outputs.description }}**
 
+          - **Version:** ${{ needs.check-version.outputs.name }}
           - **Commit:** ${{ github.sha }}
           - **Date:** ${{ github.event.head_commit.timestamp }}
+          - **Branch:** ${{ github.ref_name }}
         draft: false
-        prerelease: true
+        prerelease: ${{ needs.check-version.outputs.prerelease }}
         generate_release_notes: false
         files: dist/mni7t_dcm2bids
 
   release-image:
     name: Release image
+    needs: check-version
     runs-on: ubuntu-latest
 
     steps:
@@ -66,7 +120,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Inventory Image
+      - name: Build and push Docker image
         run: |
-          docker build . --tag ghcr.io/bic-mni/mni-7t-dicom-to-bids:latest
-          docker push ghcr.io/bic-mni/mni-7t-dicom-to-bids:latest
+          docker build . --tag ghcr.io/bic-mni/mni-7t-dicom-to-bids:${{ needs.check-version.outputs.name }}
+          docker push ghcr.io/bic-mni/mni-7t-dicom-to-bids:${{ needs.check-version.outputs.name }}

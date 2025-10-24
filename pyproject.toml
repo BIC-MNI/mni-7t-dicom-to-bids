@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mni_7t_dicom_to_bids"
-version = "0.0.0"
+version = "0.1.0"
 readme = "README.md"
 license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]

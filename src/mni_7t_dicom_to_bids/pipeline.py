@@ -9,10 +9,13 @@ from mni_7t_dicom_to_bids.print import (
     print_found_ignored_dicom_series,
     print_found_mapped_bids_acquisitions,
     print_found_unknown_dicom_series,
+    print_version,
 )
 
 
 def mni_7t_dicom_to_bids(args: Args):
+    print_version()
+
     check_dicom_to_niix()
 
     dicom_series_list = group_dicom_series(args.dicom_study_path)

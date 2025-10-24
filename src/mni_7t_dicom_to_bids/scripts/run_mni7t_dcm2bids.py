@@ -6,16 +6,21 @@ from bic_util.fs import require_empty_directory, require_output_directory, requi
 
 from mni_7t_dicom_to_bids.args import ConvertUnknownsArg, process_args
 from mni_7t_dicom_to_bids.pipeline import mni_7t_dicom_to_bids
+from mni_7t_dicom_to_bids.print import get_version
 
 
 def main():
-
-    # Parse CLI arguments
+    # Parse CLI arguments.
 
     parser = argparse.ArgumentParser(
         prog='mni7t_dcm2bids',
         description="Convert a DICOM study to BIDS using the MNI 7T conversion configuration.",
     )
+
+    parser.add_argument('--version',
+        action='version',
+        version=get_version(),
+        help="Print the MNI 7T DICOM to BIDS converter version number and exit.")
 
     parser.add_argument('dicom_study_path',
         help="Path of the input DICOM study directory.")
@@ -53,7 +58,7 @@ def main():
         action='store_true',
         help="Overwrite files in the BIDS dataset if they already exist.")
 
-    # Process CLI arguments
+    # Process CLI arguments.
 
     args = process_args(parser.parse_args())
 

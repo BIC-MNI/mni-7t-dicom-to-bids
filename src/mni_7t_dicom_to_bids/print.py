@@ -1,10 +1,27 @@
 import os
+from importlib.metadata import version
 from shlex import quote
 
 from bic_util.print import print_error_exit, print_warning
 
 from mni_7t_dicom_to_bids.args import AbortUnknownsArg, ConvertUnknownsArg, SkipUnknownsArg, UnknownsArg
 from mni_7t_dicom_to_bids.dataclass import DicomBidsMapping, DicomSeriesInfo
+
+
+def get_version() -> str:
+    """
+    Get the version of the current MNI 7T DICOM to BIDS package.
+    """
+
+    return version('mni_7t_dicom_to_bids')
+
+
+def print_version():
+    """
+    Print the version of the current MNI 7T DICOM to BIDS package.
+    """
+
+    print(f"Running the MNI 7T DICOM to BIDS converter version {get_version()}.")
 
 
 def print_found_dicom_series(dicom_series_list: list[DicomSeriesInfo]):
