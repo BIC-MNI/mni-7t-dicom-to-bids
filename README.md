@@ -10,7 +10,7 @@ If you want to contribute to the MNI 7T DICOM to BIDS converter, read the contri
 
 ### Executable
 
-You can download the latest version of the converter as an executable [here](https://github.com/BIC-MNI/mni-7t-dicom-to-bids/releases/tag/latest). This executable should work on all Debian-based machines (including Ubuntu) from Debian 11 or newer.
+You can download the latest version of the converter as an executable [here](https://github.com/bic-mni/mni-7t-dicom-to-bids/releases/tag/latest). This executable should work on all Debian-based machines (including Ubuntu) from Debian 11 or newer.
 
 To run the executable, use the following command:
 
@@ -28,7 +28,7 @@ You can run the latest version of the converter as a Docker image using the foll
 docker run ghcr.io/bic-mni/mni-7t-dicom-to-bids <dicom_study_path> <bids_dataset_path> --subject <subject_label> --session <session_label>
 ```
 
-You can find more information about the converter Docker image [here](https://github.com/BIC-MNI/mni-7t-dicom-to-bids/pkgs/container/mni-7t-dicom-to-bids). You might need to add bind mounts (`--mount` option) to link the input and output directories of the converter to the host.
+You can find more information about the converter Docker image [here](https://github.com/bic-mni/mni-7t-dicom-to-bids/pkgs/container/mni-7t-dicom-to-bids). You might need to add bind mounts (`--mount` option) to link the input and output directories of the converter to the host.
 
 ### Apptainer
 
@@ -45,8 +45,8 @@ Similarly, you might need to use bind paths (`--bind` option) to link the input 
 Finally, you can also install the converter as a Python package. To do so, run the following commands in the relevant Python environment:
 
 ```sh
-pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
-pip install git+https://github.com/BIC-MNI/mni-7t-dicom-to-bids
+pip install git+https://github.com/bic-mni/bic-mri-pipeline-util
+pip install git+https://github.com/bic-mni/mni-7t-dicom-to-bids
 ```
 
 Note that you must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably a more recent version) installed on your machine.
