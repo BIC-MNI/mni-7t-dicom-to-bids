@@ -42,10 +42,9 @@ Similarly, you might need to use bind paths (`--bind` option) to link the input 
 
 ### Python
 
-Finally, you can also install the converter as a Python package. To do so, run the following commands in the relevant Python environment:
+Finally, you can also install the converter as a Python package. To do so, run the following command in the relevant Python environment:
 
 ```sh
-pip install git+https://github.com/bic-mni/bic-mri-pipeline-util
 pip install git+https://github.com/bic-mni/mni-7t-dicom-to-bids
 ```
 
