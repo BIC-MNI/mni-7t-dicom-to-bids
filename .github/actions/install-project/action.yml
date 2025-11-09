@@ -11,10 +11,6 @@ runs:
         python-version: 3.11
         cache: pip
 
-    - name: Install BIC-util
-      shell: bash
-      run: pip install git+https://github.com/BIC-MNI/bic-mri-pipeline-util
-
     - name: Install MNI 7T BIDS converter
       shell: bash
       run: pip install .[dev]

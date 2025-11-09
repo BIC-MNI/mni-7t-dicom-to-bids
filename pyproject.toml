@@ -10,7 +10,7 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 requires-python = ">= 3.11"
 dependencies = [
-    "bic_util",
+    "bic_util @ git+https://github.com/bic-mni/bic-mri-pipeline-util@release-0.1.0",
     "pydicom",
 ]
 
@@ -26,6 +26,9 @@ mni7t_dcm2bids = "mni_7t_dicom_to_bids.scripts.run_mni7t_dcm2bids:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mni_7t_dicom_to_bids"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.pyright]
 include = ["src"]

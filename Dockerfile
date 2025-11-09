@@ -12,7 +12,6 @@ COPY . /mni_7t_dicom_to_bids
 WORKDIR /mni_7t_dicom_to_bids
 
 # Install the package and its dependencies.
-RUN pip install --no-cache-dir git+https://github.com/BIC-MNI/bic-mri-pipeline-util.git
 RUN pip install --no-cache-dir .
 
 # Define the converter as the entrypoint.
