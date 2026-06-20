@@ -85,8 +85,8 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
                 unknown_dicom_series,
                 args.unknowns.dir_path,
                 counter,
-                lambda tmp_dicom_dir_path, tmp_ouput_dir_path: convert_unknown_dicom_series(
-                    unknown_dicom_series, tmp_dicom_dir_path, tmp_ouput_dir_path, args
+                lambda tmp_dicom_dir_path, tmp_output_dir_path: convert_unknown_dicom_series(
+                    unknown_dicom_series, tmp_dicom_dir_path, tmp_output_dir_path, args
                 ),
             )
 
