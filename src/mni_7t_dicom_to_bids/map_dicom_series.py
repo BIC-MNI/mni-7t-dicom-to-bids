@@ -66,17 +66,17 @@ def get_bids_acquisition_info(dicom_series: DicomSeriesInfo) -> BidsAcquisitionI
     return None
 
 
-def trim_series_description_suffix(series_descripton: str) -> str:
+def trim_series_description_suffix(series_description: str) -> str:
     """
     Trim a DICOM series description by removing an ignored suffix if any is found. The trimming is
     only applied once.
     """
 
     for ignored_suffix in ignored_dicom_series_suffixes:
-        if series_descripton.endswith(ignored_suffix):
-            return series_descripton.removesuffix(ignored_suffix)
+        if series_description.endswith(ignored_suffix):
+            return series_description.removesuffix(ignored_suffix)
 
-    return series_descripton
+    return series_description
 
 
 def sort_dicom_bids_mapping(dicom_bids_mapping: DicomBidsMapping):

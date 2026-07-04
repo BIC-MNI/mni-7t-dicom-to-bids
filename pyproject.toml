@@ -19,6 +19,7 @@ dev = [
     "pyinstaller",
     "pyright",
     "ruff",
+    "typos",
 ]
 
 [project.scripts]
@@ -42,3 +43,15 @@ preview = true
 [tool.ruff.lint]
 ignore = ["E203", "E221", "E241", "E251"]
 select = ["E", "F", "I", "N", "RUF", "UP", "W"]
+
+[tool.typos.files]
+# Ignore data dictionary.
+extend-exclude = [
+    "src/mni_7t_dicom_to_bids/dictionary.py",
+]
+
+[tool.typos.default]
+locale = "en-us"
+
+[tool.typos.default.extend-words]
+datas = "datas"  # PyInstaller attribute

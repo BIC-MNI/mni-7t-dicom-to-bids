@@ -38,7 +38,7 @@ def main():
 
     parser.add_argument('--skip-unknowns',
         action='store_true',
-        help="Skip unrecognized DICOM series if there are some. Cannot be used with --convert-unkowns.")
+        help="Skip unrecognized DICOM series if there are some. Cannot be used with --convert-unknowns.")
 
     parser.add_argument('--convert-unknowns',
         help=(
