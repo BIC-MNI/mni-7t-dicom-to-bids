@@ -5,13 +5,14 @@ import shutil
 from datetime import datetime
 from importlib.abc import Traversable
 from importlib.resources import as_file, files
+from pathlib import Path
 
 from bic_util.print import print_error_exit, print_warning
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 
 
-def add_dataset_files(bids_dataset_path: str, bids_session: BidsSessionInfo, dicom_study_path: str, overwrite: bool):
+def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, dicom_study_path: Path, overwrite: bool):
     """
     Add the auxiliary dataset files to the output BIDS directory.
     """
@@ -27,7 +28,7 @@ def add_dataset_files(bids_dataset_path: str, bids_session: BidsSessionInfo, dic
     add_sessions_tsv_file(bids_dataset_path, bids_session)
 
 
-def add_static_dataset_files(bids_dir_path: str, overwrite: bool):
+def add_static_dataset_files(bids_dir_path: Path, overwrite: bool):
     """
     Copy the static dataset files into the BIDS directory. The files are copied only if they do not
     exist in the BIDS directory, or if they exist and are changed but can be overwritten. Exit the
@@ -37,9 +38,9 @@ def add_static_dataset_files(bids_dir_path: str, overwrite: bool):
     # Copy the static dataset files.
     for file_name in ['.bidsignore', 'participants.json']:
         with as_file(_resolve_asset_file_path(file_name)) as new_file_path:
-            old_file_path = os.path.join(bids_dir_path, file_name)
+            old_file_path = bids_dir_path / file_name
 
-            if not os.path.exists(old_file_path):
+            if not old_file_path.exists():
                 print(f"File '{file_name}' does not exist in the BIDS directory. Creating...")
             else:
                 if filecmp.cmp(old_file_path, new_file_path, shallow=False):
@@ -59,17 +60,21 @@ def add_static_dataset_files(bids_dir_path: str, overwrite: bool):
             shutil.copyfile(new_file_path, old_file_path)
 
 
-def add_participants_7t_to_bids_json_file(bids_dataset_path: str, bids_session: BidsSessionInfo, dicom_study_path: str):
+def add_participants_7t_to_bids_json_file(
+    bids_dataset_path: Path,
+    bids_session: BidsSessionInfo,
+    dicom_study_path: Path,
+):
     """
     Create or update the `participants_7t_to_bids.tsv` file.
     """
 
-    file_path = os.path.join(bids_dataset_path, 'participants_7t_to_bids.tsv')
-    if os.path.exists(file_path):
+    file_path = bids_dataset_path / 'participants_7t_to_bids.tsv'
+    if file_path.exists():
         print("File 'participants_7t_to_bids.tsv' already exists.")
     else:
         print("Creating file 'participants_7t_to_bids.tsv'...")
-        with open(file_path, 'w') as file:
+        with file_path.open('w') as file:
             file.write("sub\tses\tdate\tN.anat\tN.dwi\tN.func\tN.fmap\tdicoms\tuser\n")
 
     anat_count = _count_nifti_files(bids_dataset_path, bids_session, 'anat')
@@ -79,53 +84,53 @@ def add_participants_7t_to_bids_json_file(bids_dataset_path: str, bids_session: 
 
     print("Appending session to file 'participants_7t_to_bids.tsv'...")
 
-    time = os.path.getmtime(bids_dataset_path)
+    time = bids_dataset_path.stat().st_mtime
     date_string = datetime.fromtimestamp(time).strftime('%Y-%m-%d')
 
-    with open(file_path, 'a') as file:
+    with file_path.open('a') as file:
         file.write(
             f"{bids_session.subject}\t{bids_session.session}\t{date_string}\t"
             f"{anat_count}\t{dwi_count}\t{func_count}\t{fmap_count}\t{dicom_study_path}\t{getpass.getuser()}\n"
         )
 
 
-def add_participants_tsv_file(bids_dataset_path: str, bids_session: BidsSessionInfo):
+def add_participants_tsv_file(bids_dataset_path: Path, bids_session: BidsSessionInfo):
     """
     Create or update the `participants.tsv` BIDS file.
     """
 
-    file_path = os.path.join(bids_dataset_path, 'participants.tsv')
-    if os.path.exists(file_path):
+    file_path = bids_dataset_path / 'participants.tsv'
+    if file_path.exists():
         print("File 'participants.tsv' already exists.")
     else:
         print("Creating file 'participants.tsv'...")
-        with open(file_path, 'w') as file:
+        with file_path.open('w') as file:
             file.write("participant_id\tsite\n")
 
     print("Appending session to file 'participants.tsv'...")
 
-    with open(file_path, 'a') as file:
+    with file_path.open('a') as file:
         file.write(f"sub-{bids_session.subject}\tMontreal_SiemmensTerra7T\n")
 
 
-def add_sessions_tsv_file(bids_dataset_path: str, bids_session: BidsSessionInfo):
+def add_sessions_tsv_file(bids_dataset_path: Path, bids_session: BidsSessionInfo):
     """
     Create or update the `sub-XXX_sessions.tsv` BIDS file.
     """
 
     file_name = f'sub-{bids_session.subject}_sessions.tsv'
-    file_path = os.path.join(bids_dataset_path, f'sub-{bids_session.subject}', file_name)
+    file_path = bids_dataset_path / f'sub-{bids_session.subject}' / file_name
 
-    if os.path.exists(file_path):
+    if file_path.exists():
         print(f"File '{file_name}' already exists.")
     else:
         print(f"Creating file '{file_name}'...")
-        with open(file_path, 'w') as file:
+        with file_path.open('w') as file:
             file.write('session_id\n')
 
     print(f"Appending session to file '{file_name}'...")
 
-    with open(file_path, 'a') as file:
+    with file_path.open('a') as file:
         file.write(f'ses-{bids_session.session}\n')
 
 
@@ -134,23 +139,23 @@ def _resolve_asset_file_path(file_name: str) -> Traversable:
     Resolve a package static asset file path.
     """
 
-    rel_file_path = os.path.join('assets', file_name)
+    rel_file_path = Path('assets') / file_name
     return files('mni_7t_dicom_to_bids').joinpath(rel_file_path)
 
 
-def _count_nifti_files(bids_dataset_path: str, bids_session: BidsSessionInfo, scan_type_name: str) -> int:
+def _count_nifti_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, scan_type_name: str) -> int:
     """
     Count the NIfTI files in a directory.
     """
 
-    bids_scan_type_path = os.path.join(
-        bids_dataset_path,
-        f'sub-{bids_session.subject}',
-        f'ses-{bids_session.session}',
-        scan_type_name,
+    bids_scan_type_path = (
+        bids_dataset_path
+        / f'sub-{bids_session.subject}'
+        / f'ses-{bids_session.session}'
+        / scan_type_name
     )
 
-    if not os.path.exists(bids_scan_type_path):
+    if not bids_scan_type_path.exists():
         return 0
 
     count = 0

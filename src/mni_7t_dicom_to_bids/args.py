@@ -1,6 +1,6 @@
-import os
 from argparse import Namespace
 from dataclasses import dataclass
+from pathlib import Path
 
 from bic_util.print import print_error_exit
 
@@ -17,7 +17,7 @@ class SkipUnknownsArg:
 
 @dataclass
 class ConvertUnknownsArg:
-    dir_path: str
+    dir_path: Path
 
 
 UnknownsArg = AbortUnknownsArg | SkipUnknownsArg | ConvertUnknownsArg
@@ -38,8 +38,8 @@ ErrorsArg = SkipErrorsArg | IncludeErrorsArg
 
 @dataclass
 class Args:
-    dicom_study_path: str
-    bids_dataset_path: str
+    dicom_study_path: Path
+    bids_dataset_path: Path
     subject: str
     session: str
     unknowns: UnknownsArg
@@ -70,8 +70,8 @@ def process_args(args: Namespace) -> Args:
         errors_arg = SkipErrorsArg()
 
     return Args(
-        dicom_study_path  = os.path.normpath(args.dicom_study_path),
-        bids_dataset_path = os.path.normpath(args.bids_dataset_path),
+        dicom_study_path  = args.dicom_study_path.resolve(),
+        bids_dataset_path = args.bids_dataset_path.resolve(),
         subject           = args.subject,
         session           = args.session,
         unknowns          = unknowns_arg,

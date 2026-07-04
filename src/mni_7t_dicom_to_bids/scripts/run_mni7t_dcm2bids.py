@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+from pathlib import Path
 
 from bic_util.fs import require_empty_directory, require_output_directory, require_readable_directory
 
@@ -23,9 +24,11 @@ def main():
         help="Print the MNI 7T DICOM to BIDS converter version number and exit.")
 
     parser.add_argument('dicom_study_path',
+        type=Path,
         help="Path of the input DICOM study directory.")
 
     parser.add_argument('bids_dataset_path',
+        type=Path,
         help="Path of the output BIDS dataset directory.")
 
     parser.add_argument('--subject',
@@ -41,6 +44,7 @@ def main():
         help="Skip unrecognized DICOM series if there are some. Cannot be used with --convert-unknowns.")
 
     parser.add_argument('--convert-unknowns',
+        type=Path,
         help=(
             "Convert unrecognized DICOM series to this directory path if there are some. Cannot be used with"
             " --skip-unknowns."

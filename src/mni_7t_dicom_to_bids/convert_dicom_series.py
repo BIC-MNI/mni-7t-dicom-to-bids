@@ -118,11 +118,11 @@ def convert_bids_dicom_series(
     dicom_series: DicomSeriesInfo,
     bids_session: BidsSessionInfo,
     bids_acquisition: BidsAcquisitionInfo,
-    bids_data_type_path: str,
+    bids_data_type_path: Path,
     run_number: int | None,
     args: Args,
-    tmp_dicom_dir_path: str,
-    tmp_output_dir_path: str,
+    tmp_dicom_dir_path: Path,
+    tmp_output_dir_path: Path,
 ):
     """
     Convert an unknown DICOM series to NIfTI.
@@ -141,20 +141,20 @@ def convert_bids_dicom_series(
     print_existing_bids_files(existing_file_paths, bids_data_type_path, args.overwrite)
 
     for existing_file_path in existing_file_paths:
-        os.remove(existing_file_path)
+        existing_file_path.unlink()
 
 
-def get_existing_bids_file_paths(tmp_output_dir_path: str, bids_data_type_path: str) -> list[str]:
+def get_existing_bids_file_paths(tmp_output_dir_path: Path, bids_data_type_path: Path) -> list[Path]:
     """
     Get the paths of the files from a completedDICOM series conversion that already exist in the
     BIDS dataset.
     """
 
-    existing_file_paths: list[str] = []
+    existing_file_paths: list[Path] = []
 
     for file in os.scandir(tmp_output_dir_path):
-        output_file_path = os.path.join(bids_data_type_path, file.name)
-        if os.path.exists(output_file_path):
+        output_file_path = bids_data_type_path / file.name
+        if output_file_path.exists():
             existing_file_paths.append(output_file_path)
 
     return existing_file_paths
@@ -162,8 +162,8 @@ def get_existing_bids_file_paths(tmp_output_dir_path: str, bids_data_type_path: 
 
 def convert_unknown_dicom_series(
     unknown_dicom_series: DicomSeriesInfo,
-    tmp_dicom_dir_path: str,
-    tmp_output_dir_path: str,
+    tmp_dicom_dir_path: Path,
+    tmp_output_dir_path: Path,
     args: Args,
 ):
     """
@@ -184,9 +184,9 @@ def convert_unknown_dicom_series(
 
 def run_conversion_function(
     dicom_series: DicomSeriesInfo,
-    output_dir_path: str,
+    output_dir_path: Path,
     counter: DicomSeriesConversionsCounter,
-    convert: Callable[[str, str], None],
+    convert: Callable[[Path, Path], None],
 ):
     """
     Run the DICOM to NIfTI conversion function with temporary input and output directories, handle
@@ -200,7 +200,7 @@ def run_conversion_function(
                 shutil.copy(dicom_file_path, tmp_dicom_dir_path)
 
             with tempfile.TemporaryDirectory() as tmp_output_dir_path:
-                convert(tmp_dicom_dir_path, tmp_output_dir_path)
+                convert(Path(tmp_dicom_dir_path), Path(tmp_output_dir_path))
 
                 # Move the output files to their final directory.
                 for file in os.scandir(tmp_output_dir_path):
@@ -212,7 +212,7 @@ def run_conversion_function(
         counter.errors += 1
 
 
-def run_dicom_to_niix(dicom_dir_path: str, output_dir_path: str, file_name: str, args: Args):
+def run_dicom_to_niix(dicom_dir_path: Path, output_dir_path: Path, file_name: str, args: Args):
     """
     Run `dcm2niix` on a DICOM series run the post-processings on the result.
     """
@@ -220,9 +220,9 @@ def run_dicom_to_niix(dicom_dir_path: str, output_dir_path: str, file_name: str,
     command = [
         'dcm2niix',
         '-z', 'y', '-b', 'y',
-        '-o', output_dir_path,
+        '-o', str(output_dir_path),
         '-f', file_name,
-        dicom_dir_path,
+        str(dicom_dir_path),
     ]
 
     print(f"Running dcm2niix with command: '{' '.join(command)}'.")
@@ -249,23 +249,23 @@ def run_dicom_to_niix(dicom_dir_path: str, output_dir_path: str, file_name: str,
 
 
 def get_bids_data_type_dir_path(
-    bids_dataset_path: str,
+    bids_dataset_path: Path,
     bids_session: BidsSessionInfo,
     bids_acquisition: BidsAcquisitionInfo,
-) -> str:
+) -> Path:
     """
     Get the path of a BIDS data type directory, and create this directory if it does not already
     exist.
     """
 
-    bids_data_type_path = os.path.join(
-        bids_dataset_path,
-        f'sub-{bids_session.subject}',
-        f'ses-{bids_session.session}',
-        bids_acquisition.scan_type
+    bids_data_type_path = (
+        bids_dataset_path
+        / f'sub-{bids_session.subject}'
+        / f'ses-{bids_session.session}'
+        / bids_acquisition.scan_type
     )
 
-    os.makedirs(bids_data_type_path, exist_ok=True)
+    bids_data_type_path.mkdir(exist_ok=True)
     return bids_data_type_path
 
 
