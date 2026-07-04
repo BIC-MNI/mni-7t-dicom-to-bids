@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
+from pathlib import Path
 from re import Match, Pattern
 
 from mni_7t_dicom_to_bids.dictionary import bids_label_order
@@ -22,7 +23,7 @@ class DicomSeriesInfo:
     The DICOM series number.
     """
 
-    file_paths: list[str] = field(compare=False)
+    file_paths: list[Path] = field(compare=False)
     """
     The paths of the DICOM files of the series.
     """

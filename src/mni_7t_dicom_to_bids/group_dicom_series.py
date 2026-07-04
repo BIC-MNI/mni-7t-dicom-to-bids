@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pydicom
 from bic_util.fs import count_all_dir_files, iter_all_dir_files
@@ -9,7 +9,7 @@ from pydicom.errors import InvalidDicomError
 from mni_7t_dicom_to_bids.dataclass import DicomSeriesInfo
 
 
-def group_dicom_series(dicom_dir_path: str) -> list[DicomSeriesInfo]:
+def group_dicom_series(dicom_dir_path: Path) -> list[DicomSeriesInfo]:
     """
     Read a DICOM directory and group all the DICOM files according to their series description and
     series number.
@@ -26,7 +26,7 @@ def group_dicom_series(dicom_dir_path: str) -> list[DicomSeriesInfo]:
     for dicom_file_rel_path in iter_all_dir_files(dicom_dir_path):
         next(progress)
 
-        dicom_file_path = os.path.join(dicom_dir_path, dicom_file_rel_path)
+        dicom_file_path = dicom_dir_path / dicom_file_rel_path
 
         try:
             dicom = pydicom.dcmread(dicom_file_path)  # type: ignore

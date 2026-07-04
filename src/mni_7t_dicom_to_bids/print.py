@@ -1,5 +1,6 @@
 import os
 from importlib.metadata import version
+from pathlib import Path
 from shlex import quote
 
 from bic_util.print import print_error_exit, print_warning
@@ -113,7 +114,7 @@ def print_found_unknown_dicom_series(dicom_bids_mapping: DicomBidsMapping, unkno
             )
 
 
-def print_existing_bids_files(existing_file_paths: list[str], bids_data_type_path: str, overwrite: bool):
+def print_existing_bids_files(existing_file_paths: list[Path], bids_data_type_path: Path, overwrite: bool):
     """
     Print the paths of existing BIDS files to the user if there are some, either directly if these
     files will be overwritten, or by throwing an exception with the appropriate message if this is
