@@ -265,7 +265,7 @@ def get_bids_data_type_dir_path(
         / bids_acquisition.scan_type
     )
 
-    bids_data_type_path.mkdir(exist_ok=True)
+    bids_data_type_path.mkdir(parents=True, exist_ok=True)
     return bids_data_type_path
 
 
