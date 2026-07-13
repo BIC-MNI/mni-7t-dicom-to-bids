@@ -10,7 +10,7 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 requires-python = ">= 3.11"
 dependencies = [
-    "bic_util @ git+https://github.com/bic-mni/bic-mri-pipeline-util@release-0.1.0",
+    "bic_util @ git+https://github.com/bic-mni/bic-mri-pipeline-util",
     "pydicom",
 ]
 
