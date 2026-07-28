@@ -23,8 +23,6 @@ def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, di
 
     add_participants_7t_to_bids_json_file(bids_dataset_path, bids_session, dicom_study_path)
 
-    add_participants_tsv_file(bids_dataset_path, bids_session)
-
     add_sessions_tsv_file(bids_dataset_path, bids_session)
 
 
@@ -92,25 +90,6 @@ def add_participants_7t_to_bids_json_file(
             f"{bids_session.subject}\t{bids_session.session}\t{date_string}\t"
             f"{anat_count}\t{dwi_count}\t{func_count}\t{fmap_count}\t{dicom_study_path}\t{getpass.getuser()}\n"
         )
-
-
-def add_participants_tsv_file(bids_dataset_path: Path, bids_session: BidsSessionInfo):
-    """
-    Create or update the `participants.tsv` BIDS file.
-    """
-
-    file_path = bids_dataset_path / 'participants.tsv'
-    if file_path.exists():
-        print("File 'participants.tsv' already exists.")
-    else:
-        print("Creating file 'participants.tsv'...")
-        with file_path.open('w') as file:
-            file.write("participant_id\tsite\n")
-
-    print("Appending session to file 'participants.tsv'...")
-
-    with file_path.open('a') as file:
-        file.write(f"sub-{bids_session.subject}\tMontreal_SiemmensTerra7T\n")
 
 
 def add_sessions_tsv_file(bids_dataset_path: Path, bids_session: BidsSessionInfo):
