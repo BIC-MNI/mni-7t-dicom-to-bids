@@ -16,11 +16,11 @@ bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
         ],
 
         # UNIT1
-        'UNIT1'               : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images',
+        'acq-07mm_UNIT1'      : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images',
         'desc-denoised_UNIT1' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN',
 
         # T1
-        'T1map' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images',
+        'acq-07mm_T1map' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images',
         'T1w'   : [
             'anat-T1w_acq_mprage_0*8mm_CSptx',
             'anat-T1w_acq_mprage_0*8mm_CSx_ND',
@@ -30,22 +30,22 @@ bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
         # T2
         'acq-SWI_T2starw'                      : '*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
         'acq-romeo_T2starw'                    : '*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-romeo_desc-mask_T2starw'          : '*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-romeo_desc-unwrapped_T2starw'     : '*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-romeo_rec-mask_T2starw'           : '*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-romeo_rec-unwrapped_T2starw'      : '*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
         'acq-aspire_T2starw': [
             'Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
             'Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
             '*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
         ],
-        'acq-aspire_desc-echoCombined_T2starw' : '*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-aspire_desc-echoCombinedSensitivityCorrected_T2starw':
+        'acq-aspire_rec-echoCombined_T2starw'  : '*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw':
             '*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
         'T2map': '*T2Star_Images',
         'acq-me_T2starw': '*anat-T2star_acq-me_gre_07mm*',
 
         # 0.7mm MP2RAGE
-        'inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1',
-        'inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2',
+        'acq-07mm_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1',
+        'acq-07mm_inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2',
 
         # 0.5mm MP2RAGE
         'acq-05mm_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_05mm_UP*_INV1*',
