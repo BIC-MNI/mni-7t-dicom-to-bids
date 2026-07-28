@@ -48,7 +48,21 @@ Finally, you can also install the converter as a Python package. To do so, run t
 pip install git+https://github.com/bic-mni/mni-7t-dicom-to-bids
 ```
 
-Note that you must also have [dcm2niix](https://github.com/rordenlab/dcm2niix) (preferably a more recent version) installed on your machine.
+This command also installs the recommended version of [dcm2niix](https://github.com/rordenlab/dcm2niix).
+
+To also the recommended version of the BIDS validator, use the `validator` extra:
+
+```sh
+pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mni-7t-dicom-to-bids"
+```
+
+## Target software version
+
+| **Software**       | **Version**     |
+|--------------------|-----------------|
+| BIDS Specification | `v1.11.1`       |
+| BIDS Validator     | `v2.4.1`        |
+| dcm2niix           | `v1.0.20260416` |
 
 ## BIDS naming dictionary
 

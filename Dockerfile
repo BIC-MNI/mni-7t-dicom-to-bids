@@ -1,11 +1,7 @@
 FROM python:3.11-slim
 
 # Install the installation dependencies.
-RUN apt-get update && apt-get install -y curl git unzip
-
-# Install the latest version of `dcm2niix`.
-RUN curl -fLO https://github.com/rordenlab/dcm2niix/releases/latest/download/dcm2niix_lnx.zip
-RUN unzip dcm2niix_lnx.zip -d /usr/bin
+RUN apt-get update && apt-get install -y git
 
 # Copy the project directory.
 COPY . /mni_7t_dicom_to_bids
