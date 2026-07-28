@@ -4,6 +4,7 @@ from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
 from mni_7t_dicom_to_bids.map_dicom_series import map_bids_dicom_series
+from mni_7t_dicom_to_bids.metadata.dataset_description import patch_dataset_description
 from mni_7t_dicom_to_bids.print import (
     print_found_dicom_series,
     print_found_ignored_dicom_series,
@@ -39,3 +40,5 @@ def mni_7t_dicom_to_bids(args: Args):
 
     if args.dataset_files:
         add_dataset_files(args.bids_dataset_path, bids_session, args.dicom_study_path, args.overwrite)
+
+    patch_dataset_description(args.bids_dataset_path)
