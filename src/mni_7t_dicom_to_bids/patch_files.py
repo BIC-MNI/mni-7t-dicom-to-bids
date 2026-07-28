@@ -1,13 +1,10 @@
 import math
-import re
 from pathlib import Path
 
-import pydicom
 from bic_util.fs import rename_file
-from bic_util.json import update_json
-from bic_util.print import print_warning
 
 from mni_7t_dicom_to_bids.dataclass import BidsName, DicomSeriesInfo
+from mni_7t_dicom_to_bids.metadata.sidecar import patch_sidecar_metadata
 
 
 def patch_files(acquisition_dir_path: Path, dicom_series: DicomSeriesInfo):
@@ -21,7 +18,7 @@ def patch_files(acquisition_dir_path: Path, dicom_series: DicomSeriesInfo):
     for file_path in acquisition_dir_path.iterdir():
         patch_file_path(file_path)
 
-    patch_json(acquisition_dir_path, dicom_series)
+    patch_sidecar_metadata(acquisition_dir_path, dicom_series)
 
 
 def patch_file_path(file_path: Path):
@@ -96,61 +93,3 @@ def patch_file_path(file_path: Path):
     if new_file_name != file_path.name:
         print(f"Renaming '{file_path.name}' to '{new_file_name}'.")
         rename_file(file_path, new_file_name)
-
-
-def patch_json(acquisition_path: Path, dicom_series: DicomSeriesInfo):
-    """
-    Patch the generated BIDS JSON sidercar files with additional information.
-    """
-
-    # Add 'Units' to 'part-phase' scans.
-    for json_path in acquisition_path.rglob('*part-phase*.json'):
-        update_json(json_path, {
-            'Units': 'rad',
-        })
-
-    # Add 'MTState' to 'mt-off' scans.
-    for json_path in acquisition_path.rglob('*mt-off*.json'):
-        update_json(json_path, {
-            'MTState': False
-        })
-
-    # Add 'MTState' to 'mt-on' scans.
-    for json_path in acquisition_path.rglob('*mt-on*.json'):
-        update_json(json_path, {
-            'MTState': True,
-        })
-
-    # Add 'MTFlipAngle' to the neuromelanin scans.
-    for json_path in acquisition_path.rglob('*neuromelaninMTw*.json'):
-        mt_flip_angle = get_mt_flip_angle(dicom_series)
-        if mt_flip_angle is not None:
-            update_json(json_path, {
-                'MTFlipAngle': mt_flip_angle,
-            })
-
-
-def get_mt_flip_angle(dicom_series: DicomSeriesInfo) -> float | None:
-    """
-    Get the MT flip angle from a DICOM file of the series if it is present.
-    """
-
-    # Read a DICOM file from the DICOM series.
-    dicom = pydicom.dcmread(dicom_series.file_paths[0])  # type: ignore
-
-    # Get the Siemens CSA header of the DICOM file.
-    csa_header = dicom.get((0x0029, 0x1020))
-    if csa_header is None:  # type: ignore
-        return
-
-    # Get the MT flip angle attribute from the Siemens CSA header.
-    mt_flip_angle_match = re.search(r'sWipMemBlock\.adFree\[2\]\\t = \\t(.+?)\\n', str(csa_header.value))
-    if mt_flip_angle_match is None:
-        return
-
-    # Convert the MT flip angle from a string to a number.
-    try:
-        return float(mt_flip_angle_match[1])
-    except ValueError:
-        print_warning(f"Expected numeric MT flip angle but found value '{mt_flip_angle_match[1]}'.")
-        return
