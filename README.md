@@ -83,7 +83,8 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 |   11  |  anat-flair_acq-0p7iso_UPAdia                      | FLAIR                                 | anat          |
 
 ### Anatomical: MEGRE
-
+| **N** | **7T Terra Siemens acquisition**    | **BIDS**                  | **Directory** |
+|:-----:|:-----------------------------------:|:-------------------------:|:-------------:|
 |  12   |  CLEAR-SWI_anat-T2star_acq-me_gre_0\*7iso_ASPIRE    | acq-megre07_rec-CLEARSWI_T2starw                      | anat          |
 |  13   |  Aspire_M_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-megre07_rec-ASPIRE_echo-[1:5]_part-mag_MEGRE      | anat          |
 |  14   |  Aspire_P_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-megre07_rec-ASPIRE_echo-[1:5]_part-phase_MEGRE    | anat          |
@@ -96,7 +97,8 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 
 
 ### Anatomical: Magnetic Transfer weighted, Neuromelanin and time of flight
-
+| **N** | **7T Terra Siemens acquisition**    | **BIDS**                  | **Directory** |
+|:-----:|:-----------------------------------:|:-------------------------:|:-------------:|
 |  21   |  anat-mtw_acq-MTON_07mm                            | acq-mtw_mt-on_MTR                   | anat          |
 |  22   |  anat-mtw_acq-MTOFF_07mm                           | acq-mtw_mt-off_MTR                  | anat          |
 |  23   |  anat-mtw_acq-T1w_07mm                             | acq-mtw_T1w                         | anat          |
