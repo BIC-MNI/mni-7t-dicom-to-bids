@@ -5,65 +5,75 @@
 # The value is a DICOM series description or a list of DICOM series descriptions
 # for that BIDS data type and acquisition.
 # Current series: MPN, MICA-lab, JBL.
+# last update: August 5 2026 by RRC.
 
+# Reordered list based on the acquisition
+# Suffixed based on the BIDS specification v1.11.1 schema files:
+# https://github.com/bids-standard/bids-specification/blob/master/src/schema/objects/suffixes.yaml
 bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
     'anat': {
-        # FLAIR
+        # FLAIR 0.7mm isometric
         'FLAIR': [
             'anat-flair_acq-0*7iso_UPAdia',
             'anat-flair_acq-0*7mm_UPAdia',
             'anat-flair_acq-0*7iso_dev3_5SD_UP',
         ],
 
-        # UNIT1
-        'acq-07mm_UNIT1'      : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images',
-        'desc-denoised_UNIT1' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN',
-
-        # T1
-        'acq-07mm_T1map' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images',
-        'T1w'   : [
+        # T1w/MPRAGE - DEFAULT MPN acquisition. 0.8mm isometric
+        'acq-mprage08CS_T1w'   : [
             'anat-T1w_acq_mprage_0*8mm_CSptx',
             'anat-T1w_acq_mprage_0*8mm_CSx_ND',
-            '*anat-T1w_acq-mprage_0*7mm_UP',
         ],
-
-        # T2
-        'acq-SWI_T2starw'                      : '*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-romeo_T2starw'                    : '*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-romeo_rec-mask_T2starw'           : '*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-romeo_rec-unwrapped_T2starw'      : '*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-aspire_T2starw': [
-            'Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-            'Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-            '*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        ],
-        'acq-aspire_rec-echoCombined_T2starw'  : '*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw':
-            '*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
-        'T2map': '*T2Star_Images',
-        'acq-me_T2starw': '*anat-T2star_acq-me_gre_07mm*',
+        
+        # T1w/MPRAGE - other 0.7mm isometric
+        'acq-mprage07UP_T1w'   : '*anat-T1w_acq-mprage_0*7mm_UP',
 
         # 0.7mm MP2RAGE
-        'acq-07mm_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1',
-        'acq-07mm_inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2',
+        'acq-mp2rage07CSptx_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1',
+        'acq-mp2rage07CSptx_inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2',
+        'acq-mp2rage07CSptx_T1map' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images',
+        'acq-mp2rage07CSptx_UNIT1'               : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images',
+        'acq-mp2rage07CSptx_rec-denoised_UNIT1' : '*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN',
 
         # 0.5mm MP2RAGE
-        'acq-05mm_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_05mm_UP*_INV1*',
-        'acq-05mm_inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_05mm_UP*_INV2*',
-        'acq-05mm_T1map': '*anat-T1w_acq-mp2rage_05mm_UP*_T1_Images*',
-        'acq-05mm_UNIT1': '*anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images*',
+        'acq-mp2rage05UP_inv-1_MP2RAGE': '*anat-T1w_acq-mp2rage_05mm_UP*_INV1*',
+        'acq-mp2rage05UP_inv-2_MP2RAGE': '*anat-T1w_acq-mp2rage_05mm_UP*_INV2*',
+        'acq-mp2rage05UP_T1map': '*anat-T1w_acq-mp2rage_05mm_UP*_T1_Images*',
+        'acq-mp2rage05UP_UNIT1': '*anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images*',
 
         # High-resolution MP2RAGE - CSTFL - Compressed sensing turboflash
         'acq-cstfl_inv-1_MP2RAGE': '*cstfl-mp2rage-05mm_INV1',
         'acq-cstfl_inv-2_MP2RAGE': '*cstfl-mp2rage-05mm_INV2',
         'acq-cstfl_T1map': '*cstfl-mp2rage-05mm_T1_Images',
         'acq-cstfl_UNIT1': '*cstfl-mp2rage-05mm_UNI_Images',
-        'acq-cstflDenoised_UNIT1': '*cstfl-mp2rage-05mm_UNI-DEN',
+        'acq-cstfl_rec-denoised_UNIT1': '*cstfl-mp2rage-05mm_UNI-DEN',
 
-        # MTW
+        # T2starw: ASPIRE/ROMEO Multi echo gradient recalled echo (MEGRE) | MPN DEFAULT acquisition
+        # ASPIRE: Adaptive Combined Phase Imaging
+        # ROMEO: (reconstruction) Rapid Open-source MRI Phase Estimation and Optimization
+        'acq-megre07_rec-CLEARSWI_T2starw'          : '*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-megre07_rec-ASPIRE_MEGRE': [
+            'Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+            'Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        ],
+        'acq-megre07_rec-ASPIRE_T2starw': '*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-megre07_rec-ASPIRE_desc-EchoCombined_T2starw' : '*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-megre07_rec-ASPIRE_desc-EchoCombinedSensCorr_T2starw':
+            '*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'T2map': '*T2Star_Images',
+        'acq-megre07_rec-ROMEO_T2starw'         : '*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-megre07_rec-ROMEO_desc-mask_T2starw'          : '*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+        'acq-megre07_rec-ROMEO_desc-unwrapped_T2starw'     : '*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE',
+
+        # T2starw: MEGRE multi echo gradient recalled echo | previous acquisition
+        'acq-me_T2starw': '*anat-T2star_acq-me_gre_07mm*',
+
+        # MTW |  MPN DEFAULT acquisition
         'acq-mtw_T1w'        : '*anat-mtw_acq-T1w_07mm',
         'acq-mtw_mt-on_MTR'  : '*anat-mtw_acq-MTON_07mm',
         'acq-mtw_mt-off_MTR' : '*anat-mtw_acq-MTOFF_07mm',
+
+        # T1w from the previous MTR acquisition
         'acq-MTR_T1w': '*_T1W',
 
         # NEUROMELANIN
@@ -71,12 +81,11 @@ bids_dicom_mappings: dict[str, dict[str, list[str] | str]] = {
             'anat-nm_acq-MTboost_sag_0.55mm',
             'CR_tfl_MTboost_sag7deg_0.55mm',
         ],
-
         # ANGIO
-        'angio'         : '*anat-angio_acq-tof_03mm_inplane',
-        'acq-cor_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_COR',
-        'acq-sag_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_SAG',
-        'acq-tra_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_TRA',
+        'acq-tof03_angio'         : '*anat-angio_acq-tof_03mm_inplane',
+        'acq-tof03_rec-cor_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_COR',
+        'acq-tof03_rec-sag_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_SAG',
+        'acq-tof03_rec-tra_angio' : '*anat-angio_acq-tof_03mm_inplane_MIP_TRA',
     },
     'dwi': {
         # B0
@@ -185,21 +194,43 @@ ignored_dicom_series_suffixes: list[str] = [
 ]
 
 # The order in which the BIDS entities should appear in a BIDS file name.
-# This order is taken from the BIDS specification entity table:
-# https://bids-specification.readthedocs.io/en/stable/appendices/entity-table.html
+# This order is taken from the BIDS specifications v1.11.1 Feb 19, 2026 schema files:
+#   Entities order: https://github.com/bids-standard/bids-specification/blob/master/src/schema/rules/entities.yaml
+#   Entities definition: https://github.com/bids-standard/bids-specification/blob/master/src/schema/objects/entities.yaml
 bids_label_order = [
-    'sub',
-    'ses',
-    'task',
-    'acq',
-    'ce',
-    'rec',
-    'inv',
-    'mt',
-    'dir',
-    'run',
-    'echo',
-    'part',
-    'chunk',
-    'desc',  # Note that 'desc' is not in the entity table.
+    'sub', 
+    'tpl', 
+    'ses', 
+    'cohort', 
+    'sample', 
+    'task', 
+    'tracksys', 
+    'acq', 
+    'nuc', 
+    'voi', 
+    'ce', 
+    'trc', 
+    'stain', 
+    'rec', 
+    'dir', 
+    'run', 
+    'mod', 
+    'echo', 
+    'flip', 
+    'inv', 
+    'mt', 
+    'part', 
+    'proc', 
+    'hemi', 
+    'space', 
+    'split', 
+    'recording', 
+    'chunk', 
+    'atlas', 
+    'seg', 
+    'scale', 
+    'res', 
+    'den', 
+    'label', 
+    'desc' # There is a current convention to keep description to be the last entity.
 ]

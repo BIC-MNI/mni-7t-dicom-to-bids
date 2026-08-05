@@ -66,36 +66,47 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 
 ## BIDS naming dictionary
 
-### Anatomical
+### Anatomical: MPRAGE, MP2RAGE and FLAIR
 
-| **N** | **7T Terra Siemens acquisition**                   | **BIDS**                            | **Directory** |
-|:-----:|:--------------------------------------------------:|:-----------------------------------:|:-------------:|
-|   1   |  anat-T1w_acq_mprage_0.8mm_CSptx                   | T1w                                 | anat          |
-|   2   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_INV1             | acq-07mm_inv-1_MP2RAGE              | anat          |
-|   3   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_INV2             | acq-07mm_inv-2_MP2RAGE              | anat          |
-|   4   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_T1_Images        | acq-07mm_T1map                      | anat          |
-|   5   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_UNI_Images       | acq-07mm_UNIT1                      | anat          |
-|   6   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_UNI-DEN          | desc-denoised_UNIT1                 | anat          |
-|   7   |  anat-flair_acq-0p7iso_UPAdia                      | FLAIR                               | anat          |
-|   8   |  CLEAR-SWI_anat-T2star_acq-me_gre_0\*7iso_ASPIRE   | acq-SWI_T2starw                     | anat          |
-|   9   |  Romeo_P_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-romeo_T2starw                   | anat          |
-|  10   |  Romeo_Mask_anat-T2star_acq-me_gre_0\*7iso_ASPIRE  | acq-romeo_rec-mask_T2starw          | anat          |
-|  11   |  Romeo_B0_anat-T2star_acq-me_gre_0\*7iso_ASPIRE    | acq-romeo_rec-unwrapped_T2starw     | anat          |
-|  12   |  Aspire_M_anat-T2star_acq-me_gre_0\*7iso_ASPIRE    | acq-aspire_part-mag_T2starw         | anat          |
-|  13   |  Aspire_P_anat-T2star_acq-me_gre_0\*7iso_ASPIRE    | acq-aspire_part-phase_T2starw       | anat          |
-|  14   |  EchoCombined_anat-T2star_acq-me_gre_0\*7iso_ASPIRE | acq-aspire_rec-echoCombined_T2starw | anat          |
-|  15   |  sensitivity_corrected_mag_anat-T2star_acq-me_gre_0\*7iso_ASPIRE | acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw | anat |
-|  16   |  T2star_anat-T2star_acq-me_gre_0\*7iso_ASPIRE      | acq-aspire_[T2starw,T2starmap]      | anat          |
-|  17   |  anat-mtw_acq-MTON_07mm                            | acq-mtw_mt-on_MTR                   | anat          |
-|  18   |  anat-mtw_acq-MTOFF_07mm                           | acq-mtw_mt-off_MTR                  | anat          |
-|  19   |  anat-mtw_acq-T1w_07mm                             | acq-mtw_T1w                         | anat          |
-|  20   |  anat-nm_acq-MTboost_sag_0.55mm                    | acq-neuromelaninMTw_T1w             | anat          |
-|  21   |  anat-angio_acq-tof_03mm_inplane                   | angio                               | anat          |
-|  22   |  anat-angio_acq-tof_03mm_inplane_MIP_SAG           | acq-sag_angio                       | anat          |
-|  23   |  anat-angio_acq-tof_03mm_inplane_MIP_COR           | acq-cor_angio                       | anat          |
-|  24   |  anat-angio_acq-tof_03mm_inplane_MIP_TRA           | acq-tra_angio                       | anat          |
+| **N** | **7T Terra Siemens acquisition**                   | **BIDS**                              | **Directory** |
+|:-----:|:--------------------------------------------------:|:-------------------------------------:|:-------------:|
+|   1   |  anat-T1w_acq_mprage_0.8mm_CSptx                   | acq-mprage08CS_T1w                    | anat          |
+|   2   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_INV1             | acq-mp2rage07CSptx_inv-1_MP2RAGE      | anat          |
+|   3   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_INV2             | acq-mp2rage07CSptx_inv-2_MP2RAGE      | anat          |
+|   4   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_T1_Images        | acq-mp2rage07CSptx_T1map              | anat          |
+|   5   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_UNI_Images       | acq-mp2rage07CSptx_UNIT1              | anat          |
+|   6   |  anat-T1w_acq-mp2rage_0.7mm_CSptx_UNI-DEN          | acq-mp2rage07CSptx_rec-denoised_UNIT1 | anat          |
+|   7   |  anat-T1w_acq-mp2rage_05mm_UP*_INV1	             | acq-mp2rage05UP_inv-1_MP2RAGE         | anat          |
+|   8   |  anat-T1w_acq-mp2rage_05mm_UP*_INV2	             | acq-mp2rage05UP_inv-2_MP2RAGE         | anat          |
+|   9   |  anat-T1w_acq-mp2rage_05mm_UP*_T1_Images	         | acq-mp2rage05UP_T1map                 | anat          |
+|   10  |  anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images	         | acq-mp2rage05UP_UNIT1                 | anat          |
+|   11  |  anat-flair_acq-0p7iso_UPAdia                      | FLAIR                                 | anat          |
 
-> The acquisitions `acq-romeo_part-phase_T2starw`, `acq-aspire_part-mag_T2starw`, and `acq-aspire_part-phase_T2starw` each have five echoes. The final string will include the identifier `echo-` followed by the echo number. For example: `acq-aspire_echo-1_part-mag_T2starw`.
+### Anatomical: MEGRE
+| **N** | **7T Terra Siemens acquisition**    | **BIDS**                  | **Directory** |
+|:-----:|:-----------------------------------:|:-------------------------:|:-------------:|
+|  12   |  CLEAR-SWI_anat-T2star_acq-me_gre_0\*7iso_ASPIRE    | acq-megre07_rec-CLEARSWI_T2starw                      | anat          |
+|  13   |  Aspire_M_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-megre07_rec-ASPIRE_echo-[1:5]_part-mag_MEGRE      | anat          |
+|  14   |  Aspire_P_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-megre07_rec-ASPIRE_echo-[1:5]_part-phase_MEGRE    | anat          |
+|  15   |  EchoCombined_anat-T2star_acq-me_gre_0\*7iso_ASPIRE | acq-megre07_rec-ASPIRE_desc-EchoCombined_T2starw      | anat          |
+|  16   |  sensitivity_corrected_mag_anat-T2star_acq-me_gre_0\*7iso_ASPIRE | acq-megre07_rec-ASPIRE_desc-EchoCombinedSensCorr_T2starw | anat |
+|  17   |  T2star_anat-T2star_acq-me_gre_0\*7iso_ASPIRE       | acq-megre07_rec-ASPIRE_[T2starw,T2starmap]                            | anat |
+|  18   |  Romeo_P_anat-T2star_acq-me_gre_0\*7iso_ASPIRE      | acq-megre07_rec-ROMEO_echo-[1:5]_T2starw              | anat          |
+|  19   |  Romeo_B0_anat-T2star_acq-me_gre_0\*7iso_ASPIRE     | acq-megre07_rec-ROMEO_desc-unwrapped_T2starw          | anat          |
+|  20   |  Romeo_Mask_anat-T2star_acq-me_gre_0\*7iso_ASPIRE   | acq-megre07_rec-ROMEO_desc-mask_T2starw               | anat          |
+
+
+### Anatomical: Magnetic Transfer weighted, Neuromelanin and time of flight
+| **N** | **7T Terra Siemens acquisition**    | **BIDS**                  | **Directory** |
+|:-----:|:-----------------------------------:|:-------------------------:|:-------------:|
+|  21   |  anat-mtw_acq-MTON_07mm                            | acq-mtw_mt-on_MTR                   | anat          |
+|  22   |  anat-mtw_acq-MTOFF_07mm                           | acq-mtw_mt-off_MTR                  | anat          |
+|  23   |  anat-mtw_acq-T1w_07mm                             | acq-mtw_T1w                         | anat          |
+|  24   |  anat-nm_acq-MTboost_sag_0.55mm                    | acq-neuromelaninMTw_T1w             | anat          |
+|  25   |  anat-angio_acq-tof_03mm_inplane                   | acq-tof_angio                       | anat          |
+|  26   |  anat-angio_acq-tof_03mm_inplane_MIP_SAG           | acq-tof_rec-mipsag_angio            | anat          |
+|  27   |  anat-angio_acq-tof_03mm_inplane_MIP_COR           | acq-tof_rec-mipcor_angio            | anat          |
+|  28   |  anat-angio_acq-tof_03mm_inplane_MIP_TRA           | acq-tof_rec-miptra_angio            | anat          |
 
 ### Field maps
 
@@ -135,13 +146,21 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 |------------------|---------------------------------------------------------------|
 | **AP**           | Anterio-Posterior                                             |
 | **PA**           | Postero-anterior                                              |
-| **mtw**          | Magnetic transfer weighted                                    |
+| **CS**           | Compressed SENSE                                              |
+| **ptx**          | Parallel transmission                                         |
+| **UP**           | Universal Pulse                                               |
+| **megre**        | Multi-Echo Gradient Echo.                                     |
+| **mip**          | Maximum intensity projection                                  |
+| **cor**          | Coronal                                                       |
+| **sag**          | Sagittal                                                      |
+| **tra**          | Transverse (Axial)                                            |
+| **mtw**          | Magnetization Transfer Weighted                               |
 | **sfmap**        | Scaled flip angle map                                         |
-| **tof**          | Time of flight                                                |
-| **multib**       | Multi shell N directions                                      |
+| **tof**          | Time-of-flight                                                |
+| **multib**       | Multi shell DWI                                               |
 | **semphon**      | Semantic-phonetic                                             |
-| **romeo**        | Rapid opensource minimum spanning tree algorithm              |
-| **aspire**       | Combination of multi-channel phase data from multi-echo acquisitions |
+| **ASPIRE**       | Combination of multi-channel phase data from multi-echo acquisitions |
+| **ROMEO**        | Rapid opensource minimum spanning tree algorithm              |
 
 ### References
 
