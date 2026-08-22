@@ -6,6 +6,7 @@ from pathlib import Path
 import pydicom
 from bic_util.json import update_json
 from bic_util.print import print_warning
+from bic_util.util import filter_dict_key
 
 from mni_7t_dicom_to_bids.dataclass import BidsName, DicomSeriesInfo
 
@@ -135,7 +136,7 @@ def get_mp2rage_metadata(json_path: Path, dicom_series: DicomSeriesInfo) -> dict
     elif slices_per_slab is not None:
         print_warning(f"Cannot populate NumberShots in '{json_path.name}': PartialFourier is missing.")
 
-    return {key: value for key, value in metadata.items() if key not in sidecar}
+    return filter_dict_key(metadata, lambda key: key not in sidecar)
 
 
 def get_mp2rage_repetition_time_excitation(sidecar: dict[str, object]) -> float | None:
