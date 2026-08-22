@@ -72,7 +72,8 @@
     {
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_T2starw"
+      "filename": "acq-romeo_T2starw",
+      "merge-images": true
     },
     {
       "series": ".*Romeo_Mask_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
@@ -87,12 +88,14 @@
     {
       "series": "Aspire_M_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_T2starw"
+      "filename": "acq-aspire_T2starw",
+      "merge-images": true
     },
     {
       "series": "Aspire_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_T2starw"
+      "filename": "acq-aspire_T2starw",
+      "merge-images": true
     },
     {
       "series": ".*T2star_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",

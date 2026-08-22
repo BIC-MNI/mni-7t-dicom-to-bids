@@ -84,6 +84,7 @@ A dictionary is a JSON or JSON5 file that has the following structure:
       "series": "anat-T1w_acq-mprage_.*",
       "datatype": "anat",
       "filename": "T1w",
+      "merge-images": true,
     },
   ],
 }
@@ -95,6 +96,7 @@ Details:
 - Trimmed suffixes are literal strings removed from the series description before matching.
 - The mapping order is significant, the first matching entry whose series description pattern matches is used.
 - The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
+- The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
 
 ## BIDS naming dictionary
 

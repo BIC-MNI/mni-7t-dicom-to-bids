@@ -1,33 +1,56 @@
-from mni_7t_dicom_to_bids.dataclass import BidsAcquisitionInfo, DicomBidsMapping, DicomSeriesInfo
-from mni_7t_dicom_to_bids.dictionary import DicomDictionary
+from collections import defaultdict
+
+from mni_7t_dicom_to_bids.dataclass import (
+    BidsAcquisitionInfo,
+    ConversionPlan,
+    DicomSeriesInfo,
+    PlannedAcquisition,
+    PlannedDicomSeries,
+)
+from mni_7t_dicom_to_bids.dictionary import DicomDictionary, SeriesMapping
 
 
-def map_bids_dicom_series(
+def create_conversion_plan(
     dicom_series_list: list[DicomSeriesInfo],
     dictionary: DicomDictionary,
-) -> DicomBidsMapping:
+) -> ConversionPlan:
     """
     Map the DICOM series of a DICOM study to BIDS acquisition mappings and unknown DICOM series
     according to the MNI 7T DICOM to BIDS converter configuration.
     """
 
-    dicom_bids_mapping = DicomBidsMapping()
+    acquisition_series: dict[BidsAcquisitionInfo, list[PlannedDicomSeries]] = defaultdict(list)
+    ignored_series: list[DicomSeriesInfo] = []
+    unknown_series: list[DicomSeriesInfo] = []
 
     for dicom_series in dicom_series_list:
         if ignore_dicom_series(dicom_series, dictionary):
-            dicom_bids_mapping.ignored_dicom_series_list.append(dicom_series)
+            ignored_series.append(dicom_series)
             continue
 
-        bids_acquisition = get_bids_acquisition_info(dicom_series, dictionary)
-        if bids_acquisition is not None:
-            dicom_bids_mapping.bids_dicom_series_dict[bids_acquisition].append(dicom_series)
+        series_mapping = get_series_mapping(dicom_series, dictionary)
+        if series_mapping is not None:
+            bids_acquisition = BidsAcquisitionInfo(
+                scan_type = series_mapping.datatype,
+                file_name = series_mapping.filename,
+            )
+
+            acquisition_series[bids_acquisition].append(
+                PlannedDicomSeries(source=dicom_series, merge_images=series_mapping.merge_images)
+            )
+
             continue
 
-        dicom_bids_mapping.unknown_dicom_series_list.append(dicom_series)
+        unknown_series.append(dicom_series)
 
-    sort_dicom_bids_mapping(dicom_bids_mapping)
-
-    return dicom_bids_mapping
+    return ConversionPlan(
+        acquisitions=[
+            PlannedAcquisition(bids=bids_acquisition, series=acquisition_series[bids_acquisition])
+            for bids_acquisition in sorted(acquisition_series)
+        ],
+        ignored_series=sorted(ignored_series),
+        unknown_series=sorted(unknown_series),
+    )
 
 
 def ignore_dicom_series(dicom_series: DicomSeriesInfo, dictionary: DicomDictionary) -> bool:
@@ -42,24 +65,18 @@ def ignore_dicom_series(dicom_series: DicomSeriesInfo, dictionary: DicomDictiona
     return False
 
 
-def get_bids_acquisition_info(
+def get_series_mapping(
     dicom_series: DicomSeriesInfo,
     dictionary: DicomDictionary,
-) -> BidsAcquisitionInfo | None:
-    """
-    Return the BIDS parameters of a DICOM series as per the MNI 7T DICOM to BIDS converter
-    conversion parameters.
-    """
+) -> SeriesMapping | None:
+    """Return the dictionary mapping matching a DICOM series, if one exists."""
 
     # Remove the ignored suffix from the DICOM series description if there is any.
     trimmed_series_description = trim_series_description_suffix(dicom_series.description, dictionary)
 
     for mapping in dictionary.mappings:
         if mapping.series_regex.fullmatch(trimmed_series_description) is not None:
-            return BidsAcquisitionInfo(
-                scan_type = mapping.datatype,
-                file_name = mapping.filename,
-            )
+            return mapping
 
     return None
 
@@ -75,18 +92,3 @@ def trim_series_description_suffix(series_description: str, dictionary: DicomDic
             return series_description.removesuffix(ignored_suffix)
 
     return series_description
-
-
-def sort_dicom_bids_mapping(dicom_bids_mapping: DicomBidsMapping):
-    """
-    Sort the DICOM series mappings gotten from the DICOM a study.
-    """
-
-    dicom_bids_mapping.bids_dicom_series_dict = {
-        bids_acquisition: dicom_bids_mapping.bids_dicom_series_dict[bids_acquisition]
-        for bids_acquisition
-        in sorted(dicom_bids_mapping.bids_dicom_series_dict)
-    }
-
-    dicom_bids_mapping.ignored_dicom_series_list.sort()
-    dicom_bids_mapping.unknown_dicom_series_list.sort()

@@ -6,7 +6,7 @@ from shlex import quote
 from bic_util.print import print_error_exit, print_warning
 
 from mni_7t_dicom_to_bids.args import AbortUnknownsArg, ConvertUnknownsArg, SkipUnknownsArg, UnknownsArg
-from mni_7t_dicom_to_bids.dataclass import DicomBidsMapping, DicomSeriesInfo
+from mni_7t_dicom_to_bids.dataclass import ConversionPlan, DicomSeriesInfo
 
 
 def get_version() -> str:
@@ -40,27 +40,27 @@ def print_found_dicom_series(dicom_series_list: list[DicomSeriesInfo]):
         )
 
 
-def print_found_mapped_bids_acquisitions(dicom_bids_mapping: DicomBidsMapping):
+def print_found_mapped_bids_acquisitions(conversion_plan: ConversionPlan):
     """
     Print the BIDS acquisition mappings found in the DICOM study to the user.
     """
 
-    print(f"Found {len(dicom_bids_mapping.bids_dicom_series_dict)} BIDS acquisitions:")
+    print(f"Found {len(conversion_plan.acquisitions)} BIDS acquisitions:")
 
-    for bids_acquisition, dicom_series_list in dicom_bids_mapping.bids_dicom_series_dict.items():
-        acquisition_name = f"{bids_acquisition.scan_type}/{bids_acquisition.file_name}"
+    for planned_acquisition in conversion_plan.acquisitions:
+        acquisition_name = f"{planned_acquisition.bids.scan_type}/{planned_acquisition.bids.file_name}"
         print(
             f"- {quote(acquisition_name)}"
-            f" ({len(dicom_series_list)} DICOM series)"
+            f" ({len(planned_acquisition.series)} DICOM series)"
         )
 
 
-def print_found_ignored_dicom_series(dicom_bids_mapping: DicomBidsMapping):
+def print_found_ignored_dicom_series(conversion_plan: ConversionPlan):
     """
     Print the ignored DICOM series found in the DICOM study to the user.
     """
 
-    ignored_dicom_series_list = dicom_bids_mapping.ignored_dicom_series_list
+    ignored_dicom_series_list = conversion_plan.ignored_series
     if ignored_dicom_series_list == []:
         return
 
@@ -78,12 +78,12 @@ def print_found_ignored_dicom_series(dicom_bids_mapping: DicomBidsMapping):
     )
 
 
-def print_found_unknown_dicom_series(dicom_bids_mapping: DicomBidsMapping, unknowns_arg: UnknownsArg):
+def print_found_unknown_dicom_series(conversion_plan: ConversionPlan, unknowns_arg: UnknownsArg):
     """
     Print the unknown DICOM series found in the DICOM study to the user.
     """
 
-    unknown_dicom_series_list = dicom_bids_mapping.unknown_dicom_series_list
+    unknown_dicom_series_list = conversion_plan.unknown_series
     if unknown_dicom_series_list == []:
         return
 

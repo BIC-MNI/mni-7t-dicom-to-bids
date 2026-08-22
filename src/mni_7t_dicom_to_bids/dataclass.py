@@ -1,5 +1,4 @@
 import re
-from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
 from re import Match, Pattern
@@ -81,30 +80,42 @@ class BidsAcquisitionInfo:
     """
 
 
+@dataclass(frozen=True, order=True)
+class PlannedDicomSeries:
+    """
+    A DICOM series and its per-series conversion settings.
+    """
+
+    source: DicomSeriesInfo
+    """
+    The source DICOM series.
+    """
+
+    merge_images: bool = False
+    """
+    Whether dcm2niix should merge the images of the series into a single output.
+    """
+
+
 @dataclass
-class DicomBidsMapping:
+class PlannedAcquisition:
     """
-    A mapping between a set of DICOM series and their BIDS acquisitions.
-    """
-
-    bids_dicom_series_dict: dict[BidsAcquisitionInfo, list[DicomSeriesInfo]] = field(
-        default_factory=lambda: defaultdict(list)
-    )
-    """
-    A mapping between the BIDS acquisitions and their DICOM series. Note that the BIDS acquisitions
-    are mapped to their DICOM series and not the opposite because all the DICOM series of a BIDS
-    acquisition need to be processed together in the conversion process.
+    A BIDS acquisition and the DICOM series that will produce it.
     """
 
-    ignored_dicom_series_list: list[DicomSeriesInfo] = field(default_factory=list[DicomSeriesInfo])
+    bids: BidsAcquisitionInfo
+    series: list[PlannedDicomSeries] = field(default_factory=list[PlannedDicomSeries])
+
+
+@dataclass
+class ConversionPlan:
     """
-    The ignored DICOM series.
+    The complete result of mapping discovered DICOM series to conversion work.
     """
 
-    unknown_dicom_series_list: list[DicomSeriesInfo] = field(default_factory=list[DicomSeriesInfo])
-    """
-    The unrecognized DICOM series.
-    """
+    acquisitions: list[PlannedAcquisition] = field(default_factory=list[PlannedAcquisition])
+    ignored_series: list[DicomSeriesInfo] = field(default_factory=list[DicomSeriesInfo])
+    unknown_series: list[DicomSeriesInfo] = field(default_factory=list[DicomSeriesInfo])
 
 
 @dataclass

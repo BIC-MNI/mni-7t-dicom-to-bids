@@ -4,7 +4,7 @@ from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
 from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
-from mni_7t_dicom_to_bids.map_dicom_series import map_bids_dicom_series
+from mni_7t_dicom_to_bids.map_dicom_series import create_conversion_plan
 from mni_7t_dicom_to_bids.metadata.dataset_description import patch_dataset_description
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import update_scans_tsv
@@ -29,20 +29,20 @@ def mni_7t_dicom_to_bids(args: Args):
 
     print_found_dicom_series(dicom_series_list)
 
-    dicom_bids_mapping = map_bids_dicom_series(dicom_series_list, dictionary)
+    conversion_plan = create_conversion_plan(dicom_series_list, dictionary)
 
-    print_found_mapped_bids_acquisitions(dicom_bids_mapping)
+    print_found_mapped_bids_acquisitions(conversion_plan)
 
-    print_found_ignored_dicom_series(dicom_bids_mapping)
+    print_found_ignored_dicom_series(conversion_plan)
 
-    print_found_unknown_dicom_series(dicom_bids_mapping, args.unknowns)
+    print_found_unknown_dicom_series(conversion_plan, args.unknowns)
 
     bids_session = BidsSessionInfo(
         subject = args.subject,
         session = args.session,
     )
 
-    conversion_result = convert_dicom_series(bids_session, dicom_bids_mapping, args)
+    conversion_result = convert_dicom_series(bids_session, conversion_plan, args)
 
     if conversion_result.scans:
         update_participants_tsv(args.bids_dataset_path, args.subject)

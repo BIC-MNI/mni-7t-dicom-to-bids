@@ -22,6 +22,7 @@ class SeriesMapping:
     series_regex: Pattern[str]
     datatype: str
     filename: str
+    merge_images: bool
 
 
 @dataclass(frozen=True)
@@ -78,10 +79,11 @@ def _load_dicom_dictionary(file_path: Path) -> DicomDictionary:
     for index, value in enumerate(mapping_values):
         location = f'mappings[{index}]'
         mapping = _require_object(value, location)
-        _require_properties(mapping, {'series', 'datatype', 'filename'}, location)
+        _require_properties(mapping, {'series', 'datatype', 'filename'}, location, {'merge-images'})
         series = _require_string(mapping['series'], f'{location}.series')
         datatype = _require_string(mapping['datatype'], f'{location}.datatype')
         filename = _require_string(mapping['filename'], f'{location}.filename')
+        merge_images = _require_bool(mapping.get('merge-images', False), f'{location}.merge-images')
         _require_unique(series, mapping_patterns, f'{location}.series')
 
         if datatype not in SUPPORTED_DATATYPES:
@@ -91,7 +93,9 @@ def _load_dicom_dictionary(file_path: Path) -> DicomDictionary:
         if re.fullmatch(r'[A-Za-z0-9_-]+', filename) is None:
             raise DicomDictionaryError(f"{location}.filename is not a valid BIDS basename: '{filename}'.")
 
-        mappings.append(SeriesMapping(series, _compile_regex(series, f'{location}.series'), datatype, filename))
+        mappings.append(
+            SeriesMapping(series, _compile_regex(series, f'{location}.series'), datatype, filename, merge_images)
+        )
 
     return DicomDictionary(ignored_patterns, suffixes, mappings)
 
@@ -114,11 +118,24 @@ def _require_string(value: object, location: str) -> str:
     return value
 
 
-def _require_properties(value: dict[str, object], expected: set[str], location: str):
+def _require_bool(value: object, location: str) -> bool:
+    if not isinstance(value, bool):
+        raise DicomDictionaryError(f'{location} must be a boolean.')
+    return value
+
+
+def _require_properties(
+    value: dict[str, object],
+    required: set[str],
+    location: str,
+    optional: set[str] | None = None,
+):
+    optional = optional or set()
     properties = set(value)
-    if properties != expected:
-        missing = sorted(expected - properties)
-        unknown = sorted(properties - expected)
+    allowed = required | optional
+    if not required <= properties or not properties <= allowed:
+        missing = sorted(required - properties)
+        unknown = sorted(properties - allowed)
         details: list[str] = []
         if missing:
             details.append(f'missing {missing}')

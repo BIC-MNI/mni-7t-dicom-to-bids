@@ -14,9 +14,9 @@ from mni_7t_dicom_to_bids.dataclass import (
     BidsAcquisitionInfo,
     BidsName,
     BidsSessionInfo,
+    ConversionPlan,
     ConversionResult,
     ConvertedScan,
-    DicomBidsMapping,
     DicomSeriesConversionsCounter,
     DicomSeriesInfo,
 )
@@ -41,7 +41,7 @@ def check_dicom_to_niix():
 
 def convert_dicom_series(
     bids_session: BidsSessionInfo,
-    dicom_bids_mapping: DicomBidsMapping,
+    conversion_plan: ConversionPlan,
     args: Args,
 ) -> ConversionResult:
     """
@@ -50,17 +50,19 @@ def convert_dicom_series(
 
     print('Converting DICOM series to NIfTI...')
 
-    counter = get_conversions_counter(dicom_bids_mapping, args)
+    counter = get_conversions_counter(conversion_plan, args)
     result = ConversionResult()
 
-    for bids_acquisition, dicom_series_list in dicom_bids_mapping.bids_dicom_series_dict.items():
-        for run_number, dicom_series in enumerate(dicom_series_list, 1):
+    for planned_acquisition in conversion_plan.acquisitions:
+        bids_acquisition = planned_acquisition.bids
+        for run_number, planned_series in enumerate(planned_acquisition.series, 1):
+            dicom_series = planned_series.source
             print(
                 f"Processing BIDS acquisition '{bids_acquisition.scan_type}/{bids_acquisition.file_name}'"
                 f" ({counter.count} / {counter.total})."
             )
 
-            if len(dicom_series_list) == 1:
+            if len(planned_acquisition.series) == 1:
                 run_number = None
 
             bids_data_type_path = get_bids_data_type_dir_path(args.bids_dataset_path, bids_session, bids_acquisition)
@@ -78,6 +80,7 @@ def convert_dicom_series(
                     args,
                     tmp_dicom_dir_path,
                     tmp_output_path,
+                    merge_images=planned_series.merge_images,
                 )
             )
 
@@ -88,7 +91,7 @@ def convert_dicom_series(
             )
 
     if isinstance(args.unknowns, ConvertUnknownsArg):
-        for unknown_dicom_series in dicom_bids_mapping.unknown_dicom_series_list:
+        for unknown_dicom_series in conversion_plan.unknown_series:
             print(
                 f"Processing unknown DICOM series '{unknown_dicom_series.description}'"
                 f" ({counter.count} / {counter.total})."
@@ -111,7 +114,7 @@ def convert_dicom_series(
     return result
 
 
-def get_conversions_counter(dicom_bids_mapping: DicomBidsMapping, args: Args) -> DicomSeriesConversionsCounter:
+def get_conversions_counter(conversion_plan: ConversionPlan, args: Args) -> DicomSeriesConversionsCounter:
     """
     Get the total number of conversions needed to convert the BIDS acquisitions to NIfTI.
     """
@@ -119,12 +122,12 @@ def get_conversions_counter(dicom_bids_mapping: DicomBidsMapping, args: Args) ->
     total = 0
 
     # Add the count of DICOM series for each BIDS acquisition.
-    for dicom_series_list in dicom_bids_mapping.bids_dicom_series_dict.values():
-        total += len(dicom_series_list)
+    for planned_acquisition in conversion_plan.acquisitions:
+        total += len(planned_acquisition.series)
 
     # Add the unrecognized DICOM series if the script is configured to convert them.
     if isinstance(args.unknowns, ConvertUnknownsArg):
-        total += len(dicom_bids_mapping.unknown_dicom_series_list)
+        total += len(conversion_plan.unknown_series)
 
     return DicomSeriesConversionsCounter(total)
 
@@ -138,6 +141,8 @@ def convert_bids_dicom_series(
     args: Args,
     tmp_dicom_dir_path: Path,
     tmp_output_dir_path: Path,
+    *,
+    merge_images: bool = False,
 ):
     """
     Convert an unknown DICOM series to NIfTI.
@@ -145,7 +150,13 @@ def convert_bids_dicom_series(
 
     file_name = get_bids_acquisition_file_name(bids_session, bids_acquisition.file_name, run_number)
 
-    run_dicom_to_niix(tmp_dicom_dir_path, tmp_output_dir_path, file_name, args)
+    run_dicom_to_niix(
+        tmp_dicom_dir_path,
+        tmp_output_dir_path,
+        file_name,
+        args,
+        merge_images=merge_images,
+    )
 
     patch_files(Path(tmp_output_dir_path), dicom_series)
 
@@ -232,7 +243,14 @@ def run_conversion_function(
         return []
 
 
-def run_dicom_to_niix(dicom_dir_path: Path, output_dir_path: Path, file_name: str, args: Args):
+def run_dicom_to_niix(
+    dicom_dir_path: Path,
+    output_dir_path: Path,
+    file_name: str,
+    args: Args,
+    *,
+    merge_images: bool = False,
+):
     """
     Run `dcm2niix` on a DICOM series run the post-processings on the result.
     """
@@ -240,10 +258,16 @@ def run_dicom_to_niix(dicom_dir_path: Path, output_dir_path: Path, file_name: st
     command = [
         'dcm2niix',
         '-z', 'y', '-b', 'y',
+    ]
+
+    if merge_images:
+        command.extend(('-m', 'y'))
+
+    command.extend((
         '-o', str(output_dir_path),
         '-f', file_name,
         str(dicom_dir_path),
-    ]
+    ))
 
     print(f"Running dcm2niix with command: '{' '.join(command)}'.")
 
