@@ -60,3 +60,5 @@ locale = "en-us"
 
 [tool.typos.default.extend-words]
 datas = "datas"  # PyInstaller attribute
+ND = "ND" # DICOM series description
+slient = "slient"  # DICOM series description

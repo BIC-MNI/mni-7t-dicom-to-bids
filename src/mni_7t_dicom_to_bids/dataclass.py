@@ -58,7 +58,7 @@ class ConvertedScan:
 @dataclass
 class ConversionResult:
     """
-    A list of succesfully converted scans.
+    A list of successfully converted scans.
     """
 
     scans: list[ConvertedScan] = field(default_factory=list[ConvertedScan])
