@@ -1,10 +1,11 @@
-import fnmatch
-
 from mni_7t_dicom_to_bids.dataclass import BidsAcquisitionInfo, DicomBidsMapping, DicomSeriesInfo
-from mni_7t_dicom_to_bids.dictionary import bids_dicom_mappings, ignored_dicom_series, ignored_dicom_series_suffixes
+from mni_7t_dicom_to_bids.dictionary import DicomDictionary
 
 
-def map_bids_dicom_series(dicom_series_list: list[DicomSeriesInfo]) -> DicomBidsMapping:
+def map_bids_dicom_series(
+    dicom_series_list: list[DicomSeriesInfo],
+    dictionary: DicomDictionary,
+) -> DicomBidsMapping:
     """
     Map the DICOM series of a DICOM study to BIDS acquisition mappings and unknown DICOM series
     according to the MNI 7T DICOM to BIDS converter configuration.
@@ -13,11 +14,11 @@ def map_bids_dicom_series(dicom_series_list: list[DicomSeriesInfo]) -> DicomBids
     dicom_bids_mapping = DicomBidsMapping()
 
     for dicom_series in dicom_series_list:
-        if ignore_dicom_series(dicom_series):
+        if ignore_dicom_series(dicom_series, dictionary):
             dicom_bids_mapping.ignored_dicom_series_list.append(dicom_series)
             continue
 
-        bids_acquisition = get_bids_acquisition_info(dicom_series)
+        bids_acquisition = get_bids_acquisition_info(dicom_series, dictionary)
         if bids_acquisition is not None:
             dicom_bids_mapping.bids_dicom_series_dict[bids_acquisition].append(dicom_series)
             continue
@@ -29,50 +30,47 @@ def map_bids_dicom_series(dicom_series_list: list[DicomSeriesInfo]) -> DicomBids
     return dicom_bids_mapping
 
 
-def ignore_dicom_series(dicom_series: DicomSeriesInfo) -> bool:
+def ignore_dicom_series(dicom_series: DicomSeriesInfo, dictionary: DicomDictionary) -> bool:
     """
     Check if a DICOM series should be ignored as per the MNI 7T DICOM to BIDS converter parameters.
     """
 
-    for bids_dicom_ignore in ignored_dicom_series:
-        if dicom_series.description == bids_dicom_ignore:
+    for ignored_series_regex in dictionary.ignored_series:
+        if ignored_series_regex.fullmatch(dicom_series.description) is not None:
             return True
 
     return False
 
 
-def get_bids_acquisition_info(dicom_series: DicomSeriesInfo) -> BidsAcquisitionInfo | None:
+def get_bids_acquisition_info(
+    dicom_series: DicomSeriesInfo,
+    dictionary: DicomDictionary,
+) -> BidsAcquisitionInfo | None:
     """
     Return the BIDS parameters of a DICOM series as per the MNI 7T DICOM to BIDS converter
     conversion parameters.
     """
 
     # Remove the ignored suffix from the DICOM series description if there is any.
-    trimmed_series_description = trim_series_description_suffix(dicom_series.description)
+    trimmed_series_description = trim_series_description_suffix(dicom_series.description, dictionary)
 
-    for bids_scan_type, bids_dicom_mapping in bids_dicom_mappings.items():
-        for bids_file_name, dicom_series_patterns in bids_dicom_mapping.items():
-            # Convert the pattern to a list if there is a single pattern.
-            if isinstance(dicom_series_patterns, str):
-                dicom_series_patterns = [dicom_series_patterns]
-
-            for dicom_series_pattern in dicom_series_patterns:
-                if fnmatch.fnmatch(trimmed_series_description, dicom_series_pattern):
-                    return BidsAcquisitionInfo(
-                        scan_type = bids_scan_type,
-                        file_name = bids_file_name,
-                    )
+    for mapping in dictionary.mappings:
+        if mapping.series_regex.fullmatch(trimmed_series_description) is not None:
+            return BidsAcquisitionInfo(
+                scan_type = mapping.datatype,
+                file_name = mapping.filename,
+            )
 
     return None
 
 
-def trim_series_description_suffix(series_description: str) -> str:
+def trim_series_description_suffix(series_description: str, dictionary: DicomDictionary) -> str:
     """
     Trim a DICOM series description by removing an ignored suffix if any is found. The trimming is
     only applied once.
     """
 
-    for ignored_suffix in ignored_dicom_series_suffixes:
+    for ignored_suffix in dictionary.trim_series_suffixes:
         if series_description.endswith(ignored_suffix):
             return series_description.removesuffix(ignored_suffix)
 

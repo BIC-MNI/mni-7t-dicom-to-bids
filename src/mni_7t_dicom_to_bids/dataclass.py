@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from re import Match, Pattern
 
-from mni_7t_dicom_to_bids.dictionary import bids_label_order
+from bic_util.bids import BIDS_LABEL_ORDER
 
 
 @dataclass(frozen=True, order=True)
@@ -263,4 +263,4 @@ def _bids_label_key(label: str):
 
 
 # Utility map to sort BIDS parts according to the BIDS label order.
-_bids_label_order_map = {label: index for index, label in enumerate(bids_label_order)}
+_bids_label_order_map = {label: index for index, label in enumerate(BIDS_LABEL_ORDER)}

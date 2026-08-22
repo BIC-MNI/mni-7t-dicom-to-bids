@@ -64,7 +64,41 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 | BIDS Validator     | `v2.4.1`        |
 | dcm2niix           | `v1.0.20260416` |
 
+## Configuration
+
+The MNI 7T DICOM to BIDS converter provides a default dictionary that maps common DICOM series acquired at the MNI 7T MRI scanner. However, a custom dictionary can also be passed to the converter using the `--dictionary <path>` CLI argument.
+
+A dictionary is a JSON or JSON5 file that has the following structure:
+
+```json
+{
+  "ignored-series": [
+    "AAHead_Scout.*",
+  ],
+  "trim-series-suffixes": [
+    "_Pha",
+    "_Motion",
+  ],
+  "mappings": [
+    {
+      "series": "anat-T1w_acq-mprage_.*",
+      "datatype": "anat",
+      "filename": "T1w",
+    },
+  ],
+}
+```
+
+Details:
+- Both JSON and JSON5 files are supported, the latter notably supporting comments.
+- Ignored series and mapping patterns use Python regular expressions with complete-string matching.
+- Trimmed suffixes are literal strings removed from the series description before matching.
+- The mapping order is significant, the first matching entry whose series description pattern matches is used.
+- The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
+
 ## BIDS naming dictionary
+
+The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
 
 ### Anatomical
 

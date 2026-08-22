@@ -5,7 +5,7 @@ from bic_util.tsv import upsert_tsv_row
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 
 
-def update_sessions_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo) -> None:
+def update_sessions_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo):
     """
     Create or update the subject-level sessions TSV file.
     """

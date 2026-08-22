@@ -1,0 +1,563 @@
+{
+  // DICOM series descriptions that are ignored by the converter.
+  "ignored-series": [
+    "AAHead_Scout_32ch-head-coil",
+    "AAHead_Scout_32ch-head-coil_MPR_sag",
+    "AAHead_Scout_32ch-head-coil_MPR_tra",
+    "AAHead_Scout_32ch-head-coil_MPR_cor",
+    "ADD_RUN1-4",
+    "PhoenixZIPReport"
+  ],
+  // Literal suffixes removed before matching a series to a BIDS acquisition.
+  "trim-series-suffixes": [
+    "_Pha",
+    "_Motion"
+  ],
+  "mappings": [
+    // Anatomical images
+    // FLAIR
+    {
+      "series": "anat-flair_acq-0.*7iso_UPAdia",
+      "datatype": "anat",
+      "filename": "FLAIR"
+    },
+    {
+      "series": "anat-flair_acq-0.*7mm_UPAdia",
+      "datatype": "anat",
+      "filename": "FLAIR"
+    },
+    {
+      "series": "anat-flair_acq-0.*7iso_dev3_5SD_UP",
+      "datatype": "anat",
+      "filename": "FLAIR"
+    },
+    // UNIT1
+    {
+      "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_UNI_Images",
+      "datatype": "anat",
+      "filename": "acq-07mm_UNIT1"
+    },
+    {
+      "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_UNI-DEN",
+      "datatype": "anat",
+      "filename": "desc-denoised_UNIT1"
+    },
+    // T1
+    {
+      "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_T1_Images",
+      "datatype": "anat",
+      "filename": "acq-07mm_T1map"
+    },
+    {
+      "series": "anat-T1w_acq_mprage_0.*8mm_CSptx",
+      "datatype": "anat",
+      "filename": "T1w"
+    },
+    {
+      "series": "anat-T1w_acq_mprage_0.*8mm_CSx_ND",
+      "datatype": "anat",
+      "filename": "T1w"
+    },
+    {
+      "series": ".*anat-T1w_acq-mprage_0.*7mm_UP",
+      "datatype": "anat",
+      "filename": "T1w"
+    },
+    // T2 and T2-star
+    {
+      "series": ".*CLEAR-SWI_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-SWI_T2starw"
+    },
+    {
+      "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-romeo_T2starw"
+    },
+    {
+      "series": ".*Romeo_Mask_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-romeo_rec-mask_T2starw"
+    },
+    {
+      "series": ".*Romeo_B0_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-romeo_rec-unwrapped_T2starw"
+    },
+    {
+      "series": "Aspire_M_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-aspire_T2starw"
+    },
+    {
+      "series": "Aspire_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-aspire_T2starw"
+    },
+    {
+      "series": ".*T2star_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-aspire_T2starw"
+    },
+    {
+      "series": ".*EchoCombined_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-aspire_rec-echoCombined_T2starw"
+    },
+    {
+      "series": ".*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
+      "datatype": "anat",
+      "filename": "acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw"
+    },
+    {
+      "series": ".*T2Star_Images",
+      "datatype": "anat",
+      "filename": "T2map"
+    },
+    {
+      "series": ".*anat-T2star_acq-me_gre_07mm.*",
+      "datatype": "anat",
+      "filename": "acq-me_T2starw"
+    },
+    // 0.7 mm MP2RAGE
+    {
+      "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_INV1",
+      "datatype": "anat",
+      "filename": "acq-07mm_inv-1_MP2RAGE"
+    },
+    {
+      "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_INV2",
+      "datatype": "anat",
+      "filename": "acq-07mm_inv-2_MP2RAGE"
+    },
+    // 0.5 mm MP2RAGE
+    {
+      "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_INV1.*",
+      "datatype": "anat",
+      "filename": "acq-05mm_inv-1_MP2RAGE"
+    },
+    {
+      "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_INV2.*",
+      "datatype": "anat",
+      "filename": "acq-05mm_inv-2_MP2RAGE"
+    },
+    {
+      "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_T1_Images.*",
+      "datatype": "anat",
+      "filename": "acq-05mm_T1map"
+    },
+    {
+      "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_UNI_Images.*",
+      "datatype": "anat",
+      "filename": "acq-05mm_UNIT1"
+    },
+    // High-resolution MP2RAGE - CSTFL - compressed sensing turbo flash
+    {
+      "series": ".*cstfl-mp2rage-05mm_INV1",
+      "datatype": "anat",
+      "filename": "acq-cstfl_inv-1_MP2RAGE"
+    },
+    {
+      "series": ".*cstfl-mp2rage-05mm_INV2",
+      "datatype": "anat",
+      "filename": "acq-cstfl_inv-2_MP2RAGE"
+    },
+    {
+      "series": ".*cstfl-mp2rage-05mm_T1_Images",
+      "datatype": "anat",
+      "filename": "acq-cstfl_T1map"
+    },
+    {
+      "series": ".*cstfl-mp2rage-05mm_UNI_Images",
+      "datatype": "anat",
+      "filename": "acq-cstfl_UNIT1"
+    },
+    {
+      "series": ".*cstfl-mp2rage-05mm_UNI-DEN",
+      "datatype": "anat",
+      "filename": "acq-cstflDenoised_UNIT1"
+    },
+    // Magnetization transfer
+    {
+      "series": ".*anat-mtw_acq-T1w_07mm",
+      "datatype": "anat",
+      "filename": "acq-mtw_T1w"
+    },
+    {
+      "series": ".*anat-mtw_acq-MTON_07mm",
+      "datatype": "anat",
+      "filename": "acq-mtw_mt-on_MTR"
+    },
+    {
+      "series": ".*anat-mtw_acq-MTOFF_07mm",
+      "datatype": "anat",
+      "filename": "acq-mtw_mt-off_MTR"
+    },
+    {
+      "series": ".*_T1W",
+      "datatype": "anat",
+      "filename": "acq-MTR_T1w"
+    },
+    // Neuromelanin
+    {
+      "series": "anat-nm_acq-MTboost_sag_0\\.55mm",
+      "datatype": "anat",
+      "filename": "acq-neuromelaninMTw_T1w"
+    },
+    {
+      "series": "CR_tfl_MTboost_sag7deg_0\\.55mm",
+      "datatype": "anat",
+      "filename": "acq-neuromelaninMTw_T1w"
+    },
+    // Angiography
+    {
+      "series": ".*anat-angio_acq-tof_03mm_inplane",
+      "datatype": "anat",
+      "filename": "angio"
+    },
+    {
+      "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_COR",
+      "datatype": "anat",
+      "filename": "acq-cor_angio"
+    },
+    {
+      "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_SAG",
+      "datatype": "anat",
+      "filename": "acq-sag_angio"
+    },
+    {
+      "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_TRA",
+      "datatype": "anat",
+      "filename": "acq-tra_angio"
+    },
+    // Diffusion-weighted images
+    // B0
+    {
+      "series": "dwi_acq_b0_PA_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b0_dir-PA_sbref"
+    },
+    {
+      "series": "dwi_acq_b0_PA_acc9_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b0_dir-PA_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b0.*_PA_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b0_dir-PA_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b0.*_PA",
+      "datatype": "dwi",
+      "filename": "acq-b0_dir-PA_dwi"
+    },
+    {
+      "series": "dwi_acq_b0_PA_acc9",
+      "datatype": "dwi",
+      "filename": "acq-b0_dir-PA_dwi"
+    },
+    {
+      "series": ".*dwi_acq_b0_PA_1p5iso_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b01p5_dir-PA_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b0_PA_1p5iso",
+      "datatype": "dwi",
+      "filename": "acq-b01p5_dir-PA_dwi"
+    },
+    // SBRef
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib38_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9_test_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib38Test_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9_1p5iso_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib381p5_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_multib_70dir_AP_acc9_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib70_dir-AP_sbref"
+    },
+    {
+      "series": "dwi_acq_multib_108dir_AP_acc9_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib108_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_multib_70dir_AP_acc9_1p5iso_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-multib701p5_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b300_10d-dir_AP_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b300_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b700_40d-dir_AP_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b700_dir-AP_sbref"
+    },
+    {
+      "series": ".*dwi_acq_b2000_90d-dir_AP_SBRef",
+      "datatype": "dwi",
+      "filename": "acq-b2000_dir-AP_sbref"
+    },
+    // DWI
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9",
+      "datatype": "dwi",
+      "filename": "acq-multib38_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9_1p5iso",
+      "datatype": "dwi",
+      "filename": "acq-multib381p5_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_multib_38dir_AP_acc9_test",
+      "datatype": "dwi",
+      "filename": "acq-multib38Test_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_multib_70dir_AP_acc9",
+      "datatype": "dwi",
+      "filename": "acq-multib70_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_multib_70dir_AP_acc9_1p5iso",
+      "datatype": "dwi",
+      "filename": "acq-multib701p5_dir-AP_dwi"
+    },
+    {
+      "series": "dwi_acq_multib_108dir_AP_acc9",
+      "datatype": "dwi",
+      "filename": "acq-multib108_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_b300_10d-dir_AP",
+      "datatype": "dwi",
+      "filename": "acq-b300_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_b700_40d-dir_AP",
+      "datatype": "dwi",
+      "filename": "acq-b700_dir-AP_dwi"
+    },
+    {
+      "series": ".*dwi_acq_b2000_90d-dir_AP",
+      "datatype": "dwi",
+      "filename": "acq-b2000_dir-AP_dwi"
+    },
+    // Field maps
+    // TB1TFL
+    {
+      "series": "fmap-b1_tra_p2",
+      "datatype": "fmap",
+      "filename": "acq-anat_TB1TFL"
+    },
+    {
+      "series": "fmap-b1_acq-sag_p2",
+      "datatype": "fmap",
+      "filename": "acq-anat_TB1TFL"
+    },
+    {
+      "series": ".*fmap-b1_acq-.*_p2",
+      "datatype": "fmap",
+      "filename": "acq-anat_TB1TFL"
+    },
+    // EPI
+    {
+      "series": ".*fmap-fmri_acq-mbep2d_SE_19mm_dir-AP",
+      "datatype": "fmap",
+      "filename": "acq-fmri_dir-AP_epi"
+    },
+    {
+      "series": ".*fmap-fmri_acq-mbep2d_SE_19mm_dir-PA",
+      "datatype": "fmap",
+      "filename": "acq-fmri_dir-PA_epi"
+    },
+    {
+      "series": ".*fmap-fmri_acq-mbep2d_SE_19mm_dir-AP_Q1K",
+      "datatype": "fmap",
+      "filename": "acq-fmriQ1K_dir-AP_epi"
+    },
+    {
+      "series": ".*fmap-fmri_acq-mbep2d_SE_19mm_dir-PA_Q1K",
+      "datatype": "fmap",
+      "filename": "acq-fmriQ1K_dir-PA_epi"
+    },
+    // Functional images
+    // BOLD
+    {
+      "series": "func-cloudy_acq-ep2d_MJC_19mm",
+      "datatype": "func",
+      "filename": "task-cloudy_bold"
+    },
+    {
+      "series": "func-present_acq-ep2d_MJC_19mm",
+      "datatype": "func",
+      "filename": "task-present_bold"
+    },
+    {
+      "series": ".*func-semphon1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-semphon1_bold"
+    },
+    {
+      "series": ".*func-semphon2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-semphon2_bold"
+    },
+    {
+      "series": "func-cross_acq-ep2d_MJC_19mm",
+      "datatype": "func",
+      "filename": "task-rest_bold"
+    },
+    {
+      "series": "func-rsfmri_acq-multiE_1\\.9mm",
+      "datatype": "func",
+      "filename": "task-rest_bold"
+    },
+    {
+      "series": ".*func-rsfmri_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-rest_bold"
+    },
+    {
+      "series": ".*func-rsfmri_acq-singleE_1.*",
+      "datatype": "func",
+      "filename": "task-rest_acq-singleE_bold"
+    },
+    {
+      "series": ".*func-rsfmri_acq-mbep2d_ME_19mm_Q1K",
+      "datatype": "func",
+      "filename": "task-rest_acq-Q1K_bold"
+    },
+    {
+      "series": ".*func-epiencode_acq-mbep2d_ME_19mm.*",
+      "datatype": "func",
+      "filename": "task-epiencode_bold"
+    },
+    {
+      "series": ".*func-epiretrieve_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-epiretrieve_bold"
+    },
+    {
+      "series": ".*func-pattersep1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-patternsep1_bold"
+    },
+    {
+      "series": ".*func-patter.*sep2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-patternsep2_bold"
+    },
+    {
+      "series": ".*func-semantic1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-semantic1_bold"
+    },
+    {
+      "series": ".*func-semantic2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-semantic2_bold"
+    },
+    {
+      "series": ".*func-spatial1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-spatial1_bold"
+    },
+    {
+      "series": ".*func-spatial2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-spatial2_bold"
+    },
+    {
+      "series": ".*func-movie.*1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-movies1_bold"
+    },
+    {
+      "series": ".*func-movie.*2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-movies2_bold"
+    },
+    {
+      "series": ".*func-movies3_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-movies3_bold"
+    },
+    {
+      "series": ".*func-movies4_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-movies4_bold"
+    },
+    {
+      "series": ".*func-caddy_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-caddy_bold"
+    },
+    {
+      "series": ".*func-harsh_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-harsh_bold"
+    },
+    {
+      "series": ".*func-pines_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-pines_bold"
+    },
+    {
+      "series": ".*func-bathroom_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-bathroom_bold"
+    },
+    {
+      "series": ".*func-audiobook1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-audiobook1_bold"
+    },
+    {
+      "series": ".*func-audiobook2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-audiobook2_bold"
+    },
+    {
+      "series": ".*func-oceans11_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-oceans11_bold"
+    },
+    {
+      "series": ".*func-social_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-social_bold"
+    },
+    {
+      "series": ".*func-sens1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-sens2_bold"
+    },
+    {
+      "series": ".*func-sens2_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-sens1_bold"
+    },
+    {
+      "series": ".*func-slient1_acq-mbep2d_ME_19mm",
+      "datatype": "func",
+      "filename": "task-salient_bold"
+    }
+  ]
+}

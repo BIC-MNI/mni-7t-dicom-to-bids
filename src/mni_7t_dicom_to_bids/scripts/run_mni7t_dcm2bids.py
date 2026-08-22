@@ -4,8 +4,10 @@ import argparse
 from pathlib import Path
 
 from bic_util.fs import require_empty_directory, require_output_directory, require_readable_directory
+from bic_util.print import print_error_exit
 
 from mni_7t_dicom_to_bids.args import ConvertUnknownsArg, process_args
+from mni_7t_dicom_to_bids.dictionary import DicomDictionaryError
 from mni_7t_dicom_to_bids.pipeline import mni_7t_dicom_to_bids
 from mni_7t_dicom_to_bids.print import get_version
 
@@ -39,6 +41,10 @@ def main():
         required=True,
         help="The BIDS session label of that study.")
 
+    parser.add_argument('--dictionary',
+        type=Path,
+        help="Path of a custom JSON or JSON5 DICOM-to-BIDS dictionary.")
+
     parser.add_argument('--skip-unknowns',
         action='store_true',
         help="Skip unrecognized DICOM series if there are some. Cannot be used with --convert-unknowns.")
@@ -69,13 +75,19 @@ def main():
     require_readable_directory(args.dicom_study_path)
     require_output_directory(args.bids_dataset_path)
 
+    if args.dictionary_path is not None and not args.dictionary_path.is_file():
+        parser.error(f"Dictionary '{args.dictionary_path}' is not a readable file.")
+
     if isinstance(args.unknowns, ConvertUnknownsArg):
         require_output_directory(args.unknowns.dir_path)
         require_empty_directory(args.unknowns.dir_path)
 
     # Run the script.
 
-    mni_7t_dicom_to_bids(args)
+    try:
+        mni_7t_dicom_to_bids(args)
+    except DicomDictionaryError as error:
+        print_error_exit(str(error))
 
     print('Success !')
 

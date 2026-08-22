@@ -42,6 +42,7 @@ class Args:
     bids_dataset_path: Path
     subject: str
     session: str
+    dictionary_path: Path | None
     unknowns: UnknownsArg
     errors: ErrorsArg
     overwrite: bool
@@ -74,6 +75,7 @@ def process_args(args: Namespace) -> Args:
         bids_dataset_path = args.bids_dataset_path.resolve(),
         subject           = args.subject,
         session           = args.session,
+        dictionary_path   = args.dictionary.resolve() if args.dictionary is not None else None,
         unknowns          = unknowns_arg,
         errors            = errors_arg,
         overwrite         = args.overwrite,

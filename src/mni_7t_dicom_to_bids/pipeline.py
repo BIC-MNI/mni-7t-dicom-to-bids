@@ -2,6 +2,7 @@ from mni_7t_dicom_to_bids.args import Args
 from mni_7t_dicom_to_bids.convert_dicom_series import check_dicom_to_niix, convert_dicom_series
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
+from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
 from mni_7t_dicom_to_bids.map_dicom_series import map_bids_dicom_series
 from mni_7t_dicom_to_bids.metadata.dataset_description import patch_dataset_description
@@ -22,11 +23,13 @@ def mni_7t_dicom_to_bids(args: Args):
 
     check_dicom_to_niix()
 
+    dictionary = load_dicom_dictionary(args.dictionary_path)
+
     dicom_series_list = group_dicom_series(args.dicom_study_path)
 
     print_found_dicom_series(dicom_series_list)
 
-    dicom_bids_mapping = map_bids_dicom_series(dicom_series_list)
+    dicom_bids_mapping = map_bids_dicom_series(dicom_series_list, dictionary)
 
     print_found_mapped_bids_acquisitions(dicom_bids_mapping)
 
