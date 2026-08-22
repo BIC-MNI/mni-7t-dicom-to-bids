@@ -5,8 +5,6 @@ from typing import cast
 
 from bic_util.util import find_index
 
-BIDS_VERSION = '1.11.1'
-
 
 class DatasetDescriptionError(ValueError):
     """
@@ -16,20 +14,25 @@ class DatasetDescriptionError(ValueError):
 
 def patch_dataset_description(bids_dataset_path: Path):
     """
-    Patch an existing `dataset_description.json` with the BIDS version and conversion
-    software provenance.
+    Create or patch `dataset_description.json` with the BIDS version and conversion provenance.
 
-    Do nothing if the file does not exist and preserve metadata not managed by the converter.
+    A newly created file describes a raw dataset and uses a generic name. When patching an existing
+    file, preserve metadata not managed by the converter and do not infer its dataset type.
     """
 
     dataset_description_path = bids_dataset_path / 'dataset_description.json'
-    if not dataset_description_path.exists():
-        return
+    dataset_description: dict[str, object]
+    if dataset_description_path.exists():
+        print("Patching 'dataset_description.json'...")
+        dataset_description = _read_dataset_description(dataset_description_path)
+    else:
+        print("File 'dataset_description.json' does not exist in the BIDS directory. Creating...")
+        dataset_description = {
+            'Name': 'MNI 7T BIDS dataset',
+            'BIDSVersion': '1.11.1',
+            'DatasetType': 'raw',
+        }
 
-    print("Patching 'dataset_description.json'...")
-
-    dataset_description = _read_dataset_description(dataset_description_path)
-    dataset_description['BIDSVersion'] = BIDS_VERSION
     dataset_description['GeneratedBy'] = _patch_generated_by(dataset_description.get('GeneratedBy'))
 
     try:
@@ -79,8 +82,8 @@ def _patch_generated_by(value: object | None) -> list[object]:
 
     _patch_generated_by_entry(
         validated_entries,
-        name='mni_7t_dicom_to_bids',
-        software_version=version('mni_7t_dicom_to_bids'),
+        name='mni-7t-dicom-to-bids',
+        software_version=version('mni-7t-dicom-to-bids'),
         code_url='https://github.com/bic-mni/mni-7t-dicom-to-bids',
     )
     _patch_generated_by_entry(

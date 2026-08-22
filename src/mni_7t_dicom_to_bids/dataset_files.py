@@ -20,9 +20,9 @@ def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, di
 
     print("Creating auxiliary files...")
 
-    add_static_dataset_files(bids_dataset_path, overwrite)
-
     add_participants_7t_to_bids_json_file(bids_dataset_path, bids_session, dicom_study_path)
+
+    add_static_dataset_files(bids_dataset_path, overwrite)
 
 
 def add_static_dataset_files(bids_dir_path: Path, overwrite: bool):

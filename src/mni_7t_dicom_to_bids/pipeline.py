@@ -49,4 +49,6 @@ def mni_7t_dicom_to_bids(args: Args):
     if args.dataset_files:
         add_dataset_files(args.bids_dataset_path, bids_session, args.dicom_study_path, args.overwrite)
 
-    patch_dataset_description(args.bids_dataset_path)
+    dataset_description_path = args.bids_dataset_path / 'dataset_description.json'
+    if conversion_result.scans or dataset_description_path.exists():
+        patch_dataset_description(args.bids_dataset_path)
