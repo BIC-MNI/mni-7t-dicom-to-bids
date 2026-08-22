@@ -47,6 +47,24 @@ class BidsSessionInfo:
 
 
 @dataclass(frozen=True, order=True)
+class ConvertedScan:
+    """
+    A successfully converted scan.
+    """
+
+    image_path: Path
+
+
+@dataclass
+class ConversionResult:
+    """
+    A list of succesfully converted scans.
+    """
+
+    scans: list[ConvertedScan] = field(default_factory=list[ConvertedScan])
+
+
+@dataclass(frozen=True, order=True)
 class BidsAcquisitionInfo:
     """
     Information about a BIDS acquisition directory.

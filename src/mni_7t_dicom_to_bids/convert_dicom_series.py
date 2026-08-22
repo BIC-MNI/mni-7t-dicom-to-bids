@@ -14,6 +14,8 @@ from mni_7t_dicom_to_bids.dataclass import (
     BidsAcquisitionInfo,
     BidsName,
     BidsSessionInfo,
+    ConversionResult,
+    ConvertedScan,
     DicomBidsMapping,
     DicomSeriesConversionsCounter,
     DicomSeriesInfo,
@@ -37,7 +39,11 @@ def check_dicom_to_niix():
         )
 
 
-def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: DicomBidsMapping, args: Args):
+def convert_dicom_series(
+    bids_session: BidsSessionInfo,
+    dicom_bids_mapping: DicomBidsMapping,
+    args: Args,
+) -> ConversionResult:
     """
     Convert the mapped BIDS acquisitions and DICOM series to NIfTI.
     """
@@ -45,6 +51,7 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
     print('Converting DICOM series to NIfTI...')
 
     counter = get_conversions_counter(dicom_bids_mapping, args)
+    result = ConversionResult()
 
     for bids_acquisition, dicom_series_list in dicom_bids_mapping.bids_dicom_series_dict.items():
         for run_number, dicom_series in enumerate(dicom_series_list, 1):
@@ -58,7 +65,7 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
 
             bids_data_type_path = get_bids_data_type_dir_path(args.bids_dataset_path, bids_session, bids_acquisition)
 
-            run_conversion_function(
+            image_paths = run_conversion_function(
                 dicom_series,
                 bids_data_type_path,
                 counter,
@@ -72,6 +79,12 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
                     tmp_dicom_dir_path,
                     tmp_output_path,
                 )
+            )
+
+            result.scans.extend(
+                ConvertedScan(path)
+                for path in image_paths
+                if path.name.endswith(('.nii', '.nii.gz'))
             )
 
     if isinstance(args.unknowns, ConvertUnknownsArg):
@@ -94,6 +107,8 @@ def convert_dicom_series(bids_session: BidsSessionInfo, dicom_bids_mapping: Dico
         f"Processed {counter.total} DICOM series, including {counter.successes} successful conversions to BIDS and"
         f" {counter.errors} errors."
     )
+
+    return result
 
 
 def get_conversions_counter(dicom_bids_mapping: DicomBidsMapping, args: Args) -> DicomSeriesConversionsCounter:
@@ -187,7 +202,7 @@ def run_conversion_function(
     output_dir_path: Path,
     counter: DicomSeriesConversionsCounter,
     convert: Callable[[Path, Path], None],
-):
+) -> list[Path]:
     """
     Run the DICOM to NIfTI conversion function with temporary input and output directories, handle
     file copies, and recover from errors.
@@ -203,13 +218,18 @@ def run_conversion_function(
                 convert(Path(tmp_dicom_dir_path), Path(tmp_output_dir_path))
 
                 # Move the output files to their final directory.
+                image_paths: list[Path] = []
                 for file in os.scandir(tmp_output_dir_path):
-                    shutil.move(file.path, output_dir_path)
+                    image_path = output_dir_path / file.name
+                    shutil.move(file.path, image_path)
+                    image_paths.append(image_path)
 
             counter.successes += 1
+            return image_paths
     except Exception as error:
         print_error(str(error))
         counter.errors += 1
+        return []
 
 
 def run_dicom_to_niix(dicom_dir_path: Path, output_dir_path: Path, file_name: str, args: Args):

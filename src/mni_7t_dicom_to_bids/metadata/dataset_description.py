@@ -81,7 +81,7 @@ def _patch_generated_by(value: object | None) -> list[object]:
         validated_entries,
         name='mni_7t_dicom_to_bids',
         software_version=version('mni_7t_dicom_to_bids'),
-        code_url='https://github.com/BIC-MNI/mni-7t-dicom-to-bids',
+        code_url='https://github.com/bic-mni/mni-7t-dicom-to-bids',
     )
     _patch_generated_by_entry(
         validated_entries,

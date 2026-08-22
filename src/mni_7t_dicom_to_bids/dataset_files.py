@@ -8,6 +8,7 @@ from importlib.resources import as_file, files
 from pathlib import Path
 
 from bic_util.print import print_error_exit, print_warning
+from bic_util.tsv import upsert_tsv_row
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 
@@ -22,8 +23,6 @@ def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, di
     add_static_dataset_files(bids_dataset_path, overwrite)
 
     add_participants_7t_to_bids_json_file(bids_dataset_path, bids_session, dicom_study_path)
-
-    add_sessions_tsv_file(bids_dataset_path, bids_session)
 
 
 def add_static_dataset_files(bids_dir_path: Path, overwrite: bool):
@@ -68,49 +67,27 @@ def add_participants_7t_to_bids_json_file(
     """
 
     file_path = bids_dataset_path / 'participants_7t_to_bids.tsv'
-    if file_path.exists():
-        print("File 'participants_7t_to_bids.tsv' already exists.")
-    else:
-        print("Creating file 'participants_7t_to_bids.tsv'...")
-        with file_path.open('w') as file:
-            file.write("sub\tses\tdate\tN.anat\tN.dwi\tN.func\tN.fmap\tdicoms\tuser\n")
-
     anat_count = _count_nifti_files(bids_dataset_path, bids_session, 'anat')
     dwi_count  = _count_nifti_files(bids_dataset_path, bids_session, 'dwi')
     func_count = _count_nifti_files(bids_dataset_path, bids_session, 'func')
     fmap_count = _count_nifti_files(bids_dataset_path, bids_session, 'fmap')
 
-    print("Appending session to file 'participants_7t_to_bids.tsv'...")
+    print("Updating participants_7t_to_bids.tsv metadata...")
 
     time = bids_dataset_path.stat().st_mtime
     date_string = datetime.fromtimestamp(time).strftime('%Y-%m-%d')
 
-    with file_path.open('a') as file:
-        file.write(
-            f"{bids_session.subject}\t{bids_session.session}\t{date_string}\t"
-            f"{anat_count}\t{dwi_count}\t{func_count}\t{fmap_count}\t{dicom_study_path}\t{getpass.getuser()}\n"
-        )
-
-
-def add_sessions_tsv_file(bids_dataset_path: Path, bids_session: BidsSessionInfo):
-    """
-    Create or update the `sub-XXX_sessions.tsv` BIDS file.
-    """
-
-    file_name = f'sub-{bids_session.subject}_sessions.tsv'
-    file_path = bids_dataset_path / f'sub-{bids_session.subject}' / file_name
-
-    if file_path.exists():
-        print(f"File '{file_name}' already exists.")
-    else:
-        print(f"Creating file '{file_name}'...")
-        with file_path.open('w') as file:
-            file.write('session_id\n')
-
-    print(f"Appending session to file '{file_name}'...")
-
-    with file_path.open('a') as file:
-        file.write(f'ses-{bids_session.session}\n')
+    upsert_tsv_row(file_path, ('sub', 'ses'), {
+        'sub': bids_session.subject,
+        'ses': bids_session.session,
+        'date': date_string,
+        'N.anat': str(anat_count),
+        'N.dwi': str(dwi_count),
+        'N.func': str(func_count),
+        'N.fmap': str(fmap_count),
+        'dicoms': str(dicom_study_path),
+        'user': getpass.getuser(),
+    })
 
 
 def _resolve_asset_file_path(file_name: str) -> Traversable:

@@ -65,7 +65,7 @@ def patch_file_path(file_path: Path):
 
     # Replace standalone 'T2starw' with 'T2starmap'.
     if (bids_name.has_value('acq', 'aspire') and bids_name.has('T2starw')
-        and not bids_name.has('desc') and not bids_name.has('part')
+        and not bids_name.has('desc') and not bids_name.has('part') and not bids_name.has('rec')
     ):
         bids_name.remove('run')
         bids_name.remove('T2starw')
