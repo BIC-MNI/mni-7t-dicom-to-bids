@@ -1,9 +1,10 @@
 import math
 from pathlib import Path
 
+from bic_util.bids.name import BidsName
 from bic_util.fs import rename_file
 
-from mni_7t_dicom_to_bids.dataclass import BidsName, DicomSeriesInfo
+from mni_7t_dicom_to_bids.dataclass import DicomSeriesInfo
 from mni_7t_dicom_to_bids.metadata.sidecar import patch_sidecar_metadata
 
 

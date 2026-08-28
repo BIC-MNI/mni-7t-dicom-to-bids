@@ -7,12 +7,12 @@ from collections.abc import Callable
 from pathlib import Path
 from shlex import quote
 
+from bic_util.bids.name import BidsName
 from bic_util.print import print_error, print_error_exit, print_warning, with_print_subscript
 
 from mni_7t_dicom_to_bids.args import Args, ConvertUnknownsArg, IncludeErrorsArg, SkipErrorsArg
 from mni_7t_dicom_to_bids.dataclass import (
     BidsAcquisitionInfo,
-    BidsName,
     BidsSessionInfo,
     ConversionPlan,
     ConversionResult,

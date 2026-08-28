@@ -4,11 +4,12 @@ import re
 from pathlib import Path
 
 import pydicom
+from bic_util.bids.name import BidsName
 from bic_util.json import update_json
 from bic_util.print import print_warning
 from bic_util.util import filter_dict_key
 
-from mni_7t_dicom_to_bids.dataclass import BidsName, DicomSeriesInfo
+from mni_7t_dicom_to_bids.dataclass import DicomSeriesInfo
 
 MP2RAGE_REPETITION_TIME_EXCITATION: dict[str, dict[float | None, float]] = {
     'anat-T1w_acq-mp2rage_0.7mm_CSptx': {None: 0.0078},
