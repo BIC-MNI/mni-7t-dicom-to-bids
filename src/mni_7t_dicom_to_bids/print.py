@@ -48,7 +48,9 @@ def print_found_mapped_bids_acquisitions(conversion_plan: ConversionPlan):
     print(f"Found {len(conversion_plan.acquisitions)} BIDS acquisitions:")
 
     for planned_acquisition in conversion_plan.acquisitions:
-        acquisition_name = f"{planned_acquisition.bids.scan_type}/{planned_acquisition.bids.file_name}"
+        bids = planned_acquisition.bids
+        dataset_prefix = f'derivatives/{bids.dataset.name}/' if bids.dataset.is_derivative else ''
+        acquisition_name = f"{dataset_prefix}{bids.scan_type}/{bids.file_name}"
         print(
             f"- {quote(acquisition_name)}"
             f" ({len(planned_acquisition.series)} DICOM series)"

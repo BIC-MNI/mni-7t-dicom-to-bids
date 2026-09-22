@@ -1,11 +1,18 @@
 from mni_7t_dicom_to_bids.args import Args
-from mni_7t_dicom_to_bids.convert_dicom_series import check_dicom_to_niix, convert_dicom_series
-from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
+from mni_7t_dicom_to_bids.convert_dicom_series import (
+    check_dicom_to_niix,
+    convert_dicom_series,
+    get_bids_dataset_path,
+)
+from mni_7t_dicom_to_bids.dataclass import BidsDatasetInfo, BidsSessionInfo, ConvertedScan
 from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
 from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
 from mni_7t_dicom_to_bids.map_dicom_series import create_conversion_plan
-from mni_7t_dicom_to_bids.metadata.dataset_description import patch_dataset_description
+from mni_7t_dicom_to_bids.metadata.dataset_description import (
+    patch_dataset_description,
+    patch_derivative_dataset_description,
+)
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import update_scans_tsv
 from mni_7t_dicom_to_bids.metadata.sessions import update_sessions_tsv
@@ -44,10 +51,15 @@ def mni_7t_dicom_to_bids(args: Args):
 
     conversion_result = convert_dicom_series(bids_session, conversion_plan, args)
 
-    if conversion_result.scans:
-        update_participants_tsv(args.bids_dataset_path, args.subject)
-        update_sessions_tsv(args.bids_dataset_path, bids_session)
-        update_scans_tsv(args.bids_dataset_path, bids_session, conversion_result.scans)
+    scans_by_dataset: dict[BidsDatasetInfo, list[ConvertedScan]] = {}
+    for scan in conversion_result.scans:
+        scans_by_dataset.setdefault(scan.dataset, []).append(scan)
+
+    for dataset, scans in scans_by_dataset.items():
+        dataset_path = get_bids_dataset_path(args.bids_dataset_path, dataset)
+        update_participants_tsv(dataset_path, args.subject)
+        update_sessions_tsv(dataset_path, bids_session)
+        update_scans_tsv(dataset_path, bids_session, scans)
 
     if args.dataset_files:
         add_dataset_files(args.bids_dataset_path, bids_session, args.dicom_study_path, args.overwrite)
@@ -55,3 +67,7 @@ def mni_7t_dicom_to_bids(args: Args):
     dataset_description_path = args.bids_dataset_path / 'dataset_description.json'
     if conversion_result.scans or dataset_description_path.exists():
         patch_dataset_description(args.bids_dataset_path)
+
+    for dataset in scans_by_dataset:
+        if dataset.is_derivative:
+            patch_derivative_dataset_description(args.bids_dataset_path, dataset)

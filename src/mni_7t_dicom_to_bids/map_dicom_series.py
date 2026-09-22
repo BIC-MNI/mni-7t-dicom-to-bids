@@ -31,6 +31,7 @@ def create_conversion_plan(
         series_mapping = get_series_mapping(dicom_series, dictionary)
         if series_mapping is not None:
             bids_acquisition = BidsAcquisitionInfo(
+                dataset = series_mapping.dataset,
                 scan_type = series_mapping.datatype,
                 file_name = series_mapping.filename,
             )

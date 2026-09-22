@@ -73,44 +73,76 @@
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-romeo_T2starw",
-      "merge-images": true
+      "merge-images": true,
+      "derivative": {
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
+      }
     },
     {
       "series": ".*Romeo_Mask_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_rec-mask_T2starw"
+      "filename": "acq-romeo_rec-mask_T2starw",
+      "derivative": {
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
+      }
     },
     {
       "series": ".*Romeo_B0_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_rec-unwrapped_T2starw"
+      "filename": "acq-romeo_rec-unwrapped_T2starw",
+      "derivative": {
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
+      }
     },
     {
       "series": "Aspire_M_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-aspire_T2starw",
-      "merge-images": true
+      "merge-images": true,
+      "derivative": {
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
+      }
     },
     {
       "series": "Aspire_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-aspire_T2starw",
-      "merge-images": true
+      "merge-images": true,
+      "derivative": {
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
+      }
     },
     {
       "series": ".*T2star_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_T2starw"
+      "filename": "acq-aspire_T2starw",
+      "derivative": {
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
+      }
     },
     {
       "series": ".*EchoCombined_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_rec-echoCombined_T2starw"
+      "filename": "acq-aspire_rec-echoCombined_T2starw",
+      "derivative": {
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
+      }
     },
     {
       "series": ".*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw"
+      "filename": "acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw",
+      "derivative": {
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
+      }
     },
     {
       "series": ".*T2Star_Images",

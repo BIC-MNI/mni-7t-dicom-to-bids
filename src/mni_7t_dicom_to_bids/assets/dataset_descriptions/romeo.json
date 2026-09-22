@@ -1,0 +1,17 @@
+{
+    "Name": "ROMEO phase-unwrapping outputs",
+    "BIDSVersion": "1.11.1",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "ROMEO",
+            "Description": "Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm"
+        }
+    ],
+    "DatasetLinks": {
+        "raw": "../.."
+    },
+    "ReferencesAndLinks": [
+        "https://doi.org/10.1002/mrm.28563"
+    ]
+}

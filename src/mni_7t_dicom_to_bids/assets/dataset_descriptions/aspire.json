@@ -1,0 +1,17 @@
+{
+    "Name": "ASPIRE phase-combination outputs",
+    "BIDSVersion": "1.11.1",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "ASPIRE",
+            "Description": "A Simple Phase Imaging REconstruction method for combining multi-channel phase data from multi-echo acquisitions, implemented in the Siemens image reconstruction environment (ICE)"
+        }
+    ],
+    "DatasetLinks": {
+        "raw": "../.."
+    },
+    "ReferencesAndLinks": [
+        "https://doi.org/10.1002/mrm.26963"
+    ]
+}

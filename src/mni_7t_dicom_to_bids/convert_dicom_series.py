@@ -13,6 +13,7 @@ from bic_util.print import print_error, print_error_exit, print_warning, with_pr
 from mni_7t_dicom_to_bids.args import Args, ConvertUnknownsArg, IncludeErrorsArg, SkipErrorsArg
 from mni_7t_dicom_to_bids.dataclass import (
     BidsAcquisitionInfo,
+    BidsDatasetInfo,
     BidsSessionInfo,
     ConversionPlan,
     ConversionResult,
@@ -85,7 +86,7 @@ def convert_dicom_series(
             )
 
             result.scans.extend(
-                ConvertedScan(path)
+                ConvertedScan(path, bids_acquisition.dataset)
                 for path in image_paths
                 if path.name.endswith(('.nii', '.nii.gz'))
             )
@@ -303,7 +304,7 @@ def get_bids_data_type_dir_path(
     """
 
     bids_data_type_path = (
-        bids_dataset_path
+        get_bids_dataset_path(bids_dataset_path, bids_acquisition.dataset)
         / f'sub-{bids_session.subject}'
         / f'ses-{bids_session.session}'
         / bids_acquisition.scan_type
@@ -311,6 +312,14 @@ def get_bids_data_type_dir_path(
 
     bids_data_type_path.mkdir(parents=True, exist_ok=True)
     return bids_data_type_path
+
+
+def get_bids_dataset_path(bids_dataset_path: Path, dataset: BidsDatasetInfo) -> Path:
+    """Resolve a raw or derivative dataset root below the configured BIDS dataset."""
+
+    if dataset.is_derivative:
+        return bids_dataset_path / 'derivatives' / dataset.name
+    return bids_dataset_path
 
 
 def get_bids_acquisition_file_name(bids_session: BidsSessionInfo, base_name: str, run_number: int | None) -> str:

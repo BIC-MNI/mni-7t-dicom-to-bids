@@ -3,6 +3,21 @@ from pathlib import Path
 
 
 @dataclass(frozen=True, order=True)
+class BidsDatasetInfo:
+    """A raw or named derivative BIDS dataset output target."""
+
+    name: str = ''
+    dataset_description: dict[str, object] | None = field(default=None, compare=False, hash=False)
+
+    @property
+    def is_derivative(self) -> bool:
+        return self.name != ''
+
+
+RAW_BIDS_DATASET = BidsDatasetInfo()
+
+
+@dataclass(frozen=True, order=True)
 class DicomSeriesInfo:
     """
     Information about a DICOM series and its DICOM files found within a DICOM directory.
@@ -48,6 +63,7 @@ class ConvertedScan:
     """
 
     image_path: Path
+    dataset: BidsDatasetInfo = RAW_BIDS_DATASET
 
 
 @dataclass
@@ -63,6 +79,11 @@ class ConversionResult:
 class BidsAcquisitionInfo:
     """
     Information about a BIDS acquisition directory.
+    """
+
+    dataset: BidsDatasetInfo
+    """
+    The raw or derivative BIDS dataset containing the acquisition.
     """
 
     scan_type: str

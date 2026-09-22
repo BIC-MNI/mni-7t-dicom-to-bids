@@ -1,3 +1,4 @@
+from copy import deepcopy
 from importlib.metadata import version
 from pathlib import Path
 
@@ -7,6 +8,8 @@ from bic_util.bids.dataset_description import (
     upsert_generated_by_entry,
     write_dataset_description,
 )
+
+from mni_7t_dicom_to_bids.dataclass import BidsDatasetInfo
 
 
 def patch_dataset_description(bids_dataset_path: Path):
@@ -33,6 +36,48 @@ def patch_dataset_description(bids_dataset_path: Path):
     dataset_description['GeneratedBy'] = _patch_generated_by(dataset_description.get('GeneratedBy'))
 
     write_dataset_description(dataset_description_path, dataset_description)
+
+
+def patch_derivative_dataset_description(bids_dataset_path: Path, dataset: BidsDatasetInfo):
+    """Create or patch the description of a named derivative dataset."""
+
+    if not dataset.is_derivative or dataset.dataset_description is None:
+        raise ValueError('Expected a derivative BIDS dataset with a dataset description template.')
+
+    derivative_path = bids_dataset_path / 'derivatives' / dataset.name
+    derivative_path.mkdir(parents=True, exist_ok=True)
+    dataset_description_path = derivative_path / 'dataset_description.json'
+
+    if dataset_description_path.exists():
+        print(f"Patching 'derivatives/{dataset.name}/dataset_description.json'...")
+        dataset_description = read_dataset_description(dataset_description_path)
+    else:
+        print(f"Creating 'derivatives/{dataset.name}/dataset_description.json'...")
+        dataset_description = deepcopy(dataset.dataset_description)
+
+    dataset_description['GeneratedBy'] = _patch_derivative_generated_by(
+        dataset_description.get('GeneratedBy'),
+        dataset.dataset_description['GeneratedBy'],
+    )
+    write_dataset_description(dataset_description_path, dataset_description)
+
+
+def _patch_derivative_generated_by(value: object | None, template_value: object) -> list[object]:
+    """Keep the template's derivative generator first and add converter provenance."""
+
+    generated_by = get_generated_by(value)
+    template_generated_by = get_generated_by(template_value)
+    template_generator = deepcopy(template_generated_by[0])
+    template_name = template_generator.get('Name')
+
+    for index, entry in enumerate(generated_by):
+        if entry.get('Name') == template_name:
+            template_generator.update(entry)
+            generated_by.pop(index)
+            break
+
+    generated_by.insert(0, template_generator)
+    return _patch_generated_by(generated_by)
 
 
 def _patch_generated_by(value: object | None) -> list[object]:
