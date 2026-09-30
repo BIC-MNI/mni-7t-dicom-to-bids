@@ -27,14 +27,27 @@ MP2RAGE_PATCHED_FIELDS = (
 )
 
 
-def patch_sidecar_metadata(acquisition_path: Path, dicom_series: DicomSeriesInfo):
+def patch_sidecar_metadata(
+    acquisition_path: Path,
+    dicom_series: DicomSeriesInfo,
+    *,
+    merge_images: bool = False,
+):
     """
     Patch generated BIDS JSON sidecars with additional metadata.
     """
 
+    if merge_images:
+        merged_echo_times = get_merged_echo_times(dicom_series)
+    else:
+        merged_echo_times = None
+
     for json_path in acquisition_path.rglob('*.json'):
         bids_name = BidsName.from_string(json_path.name)
         metadata: dict[str, object] = {}
+
+        if merged_echo_times is not None:
+            metadata['EchoTime'] = merged_echo_times
 
         if bids_name.has_value('part', 'phase'):
             metadata['Units'] = 'rad'
@@ -60,6 +73,43 @@ def patch_sidecar_metadata(acquisition_path: Path, dicom_series: DicomSeriesInfo
 
         if metadata:
             update_json(json_path, metadata)
+
+
+def get_merged_echo_times(dicom_series: DicomSeriesInfo) -> list[float] | None:
+    """Get the echo times, in volume order, for a merged multi-echo series."""
+
+    echo_times_by_number: dict[int, float] = {}
+
+    for dicom_path in dicom_series.file_paths:
+        dicom = pydicom.dcmread(
+            dicom_path,
+            stop_before_pixels=True,
+            specific_tags=['EchoNumbers', 'EchoTime'],
+        )  # type: ignore
+
+        try:
+            echo_number = int(dicom.EchoNumbers)
+            echo_time = float(dicom.EchoTime) / 1000
+        except (AttributeError, TypeError, ValueError):
+            print_warning(
+                f"Cannot populate merged EchoTime metadata: '{dicom_path.name}' does not contain valid "
+                "EchoNumbers and EchoTime values."
+            )
+            return None
+
+        existing_echo_time = echo_times_by_number.get(echo_number)
+        if existing_echo_time is not None and not math.isclose(existing_echo_time, echo_time):
+            print_warning(
+                f'Cannot populate merged EchoTime metadata: echo {echo_number} has conflicting echo times.'
+            )
+            return None
+
+        echo_times_by_number[echo_number] = echo_time
+
+    if len(echo_times_by_number) < 2:
+        return None
+
+    return [echo_times_by_number[echo_number] for echo_number in sorted(echo_times_by_number)]
 
 
 def get_mt_flip_angle(dicom_series: DicomSeriesInfo) -> float | None:

@@ -8,7 +8,12 @@ from mni_7t_dicom_to_bids.dataclass import DicomSeriesInfo
 from mni_7t_dicom_to_bids.metadata.sidecar import patch_sidecar_metadata
 
 
-def patch_files(acquisition_dir_path: Path, dicom_series: DicomSeriesInfo):
+def patch_files(
+    acquisition_dir_path: Path,
+    dicom_series: DicomSeriesInfo,
+    *,
+    merge_images: bool = False,
+):
     """
     Patch the output BIDS files with the following:
     - Rename files to match the MNI 7T BIDS naming.
@@ -19,7 +24,7 @@ def patch_files(acquisition_dir_path: Path, dicom_series: DicomSeriesInfo):
     for file_path in acquisition_dir_path.iterdir():
         patch_file_path(file_path)
 
-    patch_sidecar_metadata(acquisition_dir_path, dicom_series)
+    patch_sidecar_metadata(acquisition_dir_path, dicom_series, merge_images=merge_images)
 
 
 def patch_file_path(file_path: Path):

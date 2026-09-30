@@ -20,6 +20,7 @@ from mni_7t_dicom_to_bids.dataclass import (
     ConvertedScan,
     DicomSeriesConversionsCounter,
     DicomSeriesInfo,
+    PlannedDicomSeries,
 )
 from mni_7t_dicom_to_bids.patch_files import patch_files
 from mni_7t_dicom_to_bids.print import print_existing_bids_files
@@ -73,7 +74,7 @@ def convert_dicom_series(
                 bids_data_type_path,
                 counter,
                 lambda tmp_dicom_dir_path, tmp_output_path: convert_bids_dicom_series(
-                    dicom_series,
+                    planned_series,
                     bids_session,
                     bids_acquisition,
                     bids_data_type_path,
@@ -81,7 +82,6 @@ def convert_dicom_series(
                     args,
                     tmp_dicom_dir_path,
                     tmp_output_path,
-                    merge_images=planned_series.merge_images,
                 )
             )
 
@@ -134,7 +134,7 @@ def get_conversions_counter(conversion_plan: ConversionPlan, args: Args) -> Dico
 
 
 def convert_bids_dicom_series(
-    dicom_series: DicomSeriesInfo,
+    planned_series: PlannedDicomSeries,
     bids_session: BidsSessionInfo,
     bids_acquisition: BidsAcquisitionInfo,
     bids_data_type_path: Path,
@@ -142,13 +142,12 @@ def convert_bids_dicom_series(
     args: Args,
     tmp_dicom_dir_path: Path,
     tmp_output_dir_path: Path,
-    *,
-    merge_images: bool = False,
 ):
     """
-    Convert an unknown DICOM series to NIfTI.
+    Convert a planned DICOM series to BIDS NIfTI files.
     """
 
+    dicom_series = planned_series.source
     file_name = get_bids_acquisition_file_name(bids_session, bids_acquisition.file_name, run_number)
 
     run_dicom_to_niix(
@@ -156,10 +155,10 @@ def convert_bids_dicom_series(
         tmp_output_dir_path,
         file_name,
         args,
-        merge_images=merge_images,
+        merge_images=planned_series.merge_images,
     )
 
-    patch_files(Path(tmp_output_dir_path), dicom_series)
+    patch_files(Path(tmp_output_dir_path), dicom_series, merge_images=planned_series.merge_images)
 
     # Check if the files already exist in the target directory.
 
