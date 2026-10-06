@@ -81,11 +81,11 @@ def get_merged_echo_times(dicom_series: DicomSeriesInfo) -> list[float] | None:
     echo_times_by_number: dict[int, float] = {}
 
     for dicom_path in dicom_series.file_paths:
-        dicom = pydicom.dcmread(
+        dicom = pydicom.dcmread(  # pyright: ignore[reportUnknownMemberType]
             dicom_path,
             stop_before_pixels=True,
             specific_tags=['EchoNumbers', 'EchoTime'],
-        )  # type: ignore
+        )
 
         try:
             echo_number = int(dicom.EchoNumbers)

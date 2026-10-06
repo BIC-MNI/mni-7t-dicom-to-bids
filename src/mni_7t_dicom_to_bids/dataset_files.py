@@ -3,8 +3,8 @@ import getpass
 import os
 import shutil
 from datetime import datetime
-from importlib.abc import Traversable
 from importlib.resources import as_file, files
+from importlib.resources.abc import Traversable
 from pathlib import Path
 
 from bic_util.print import print_error_exit, print_warning

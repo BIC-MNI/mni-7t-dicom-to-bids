@@ -2,15 +2,20 @@
 # compatibility with many users.
 FROM debian:11
 
-RUN apt-get update
-
 # Install Python 3.11
 
 # Python 3.11 is not available by default on Debian 11. As such, we compile it from source instead.
 
 # Install the Python build dependencies.
 # Copied from https://github.com/python/cpython/blob/3.11/.github/workflows/posix-deps-apt.sh
-RUN apt-get -yq install \
+# Debian 11 is end-of-life. Use the snapshot sources supplied by the base image so
+# package indexes and archives remain available and reproducible.
+RUN sed -i \
+    -e 's|^# deb http://snapshot|deb http://snapshot|' \
+    -e 's|^deb http://deb|# deb http://deb|' \
+    /etc/apt/sources.list \
+    && apt-get -o Acquire::Check-Valid-Until=false update \
+    && apt-get -yq install \
     build-essential \
     pkg-config \
     ccache \
@@ -31,10 +36,10 @@ RUN apt-get -yq install \
     tk-dev \
     uuid-dev \
     xvfb \
-    zlib1g-dev
-
-# Install an HTTP client to download Python.
-RUN apt-get install -y wget
+    zlib1g-dev \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python 3.11.
 RUN wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz \
@@ -45,10 +50,9 @@ RUN wget https://www.python.org/ftp/python/3.11.9/Python-3.11.9.tgz \
     && cd .. \
     && rm -r Python-3.11.9 Python-3.11.9.tgz
 
-# Install the MNI 7T DICOM to BIDS converter
+RUN ldconfig
 
-# Install Git.
-RUN apt-get install -y git
+# Install the MNI 7T DICOM to BIDS converter
 
 # Copy the project directory.
 COPY . /mni_7t_dicom_to_bids

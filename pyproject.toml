@@ -50,9 +50,9 @@ ignore = ["E203", "E221", "E241", "E251"]
 select = ["E", "F", "I", "N", "PTH", "RUF", "UP", "W"]
 
 [tool.typos.files]
-# Ignore data dictionary.
+# Ignore domain-specific asset data.
 extend-exclude = [
-    "src/mni_7t_dicom_to_bids/dictionary.py",
+    "src/mni_7t_dicom_to_bids/assets/",
 ]
 
 [tool.typos.default]

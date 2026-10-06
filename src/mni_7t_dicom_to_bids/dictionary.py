@@ -2,8 +2,8 @@ import json
 import re
 from collections.abc import Callable
 from dataclasses import dataclass
-from importlib.abc import Traversable
 from importlib.resources import files
+from importlib.resources.abc import Traversable
 from pathlib import Path
 from re import Pattern
 from typing import cast

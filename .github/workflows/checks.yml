@@ -17,7 +17,7 @@ jobs:
 
     steps:
     - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Install MNI 7T BIDS converter
       uses: ./.github/actions/install-project
@@ -31,7 +31,7 @@ jobs:
 
     steps:
     - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Install MNI 7T BIDS converter
       uses: ./.github/actions/install-project
@@ -45,7 +45,7 @@ jobs:
 
     steps:
     - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Install MNI 7T BIDS converter
       uses: ./.github/actions/install-project
@@ -59,7 +59,7 @@ jobs:
 
     steps:
     - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Build Docker image
       run: docker build --tag mni7t-dcm2bids:test .
