@@ -167,10 +167,10 @@ def _load_derivative(
         )
     first_generated_by = cast(dict[object, object], generated_by[0])
     generated_by_name = first_generated_by.get('Name')
-    if not isinstance(generated_by_name, str) or generated_by_name not in name:
+    if not isinstance(generated_by_name, str) or generated_by_name.casefold() not in name.casefold():
         raise DicomDictionaryError(
-            f"The first GeneratedBy.Name in dataset description template '{template_source}' must be a substring"
-            f" of derivative name '{name}'."
+            f"The first GeneratedBy.Name in dataset description template '{template_source}' must be a"
+            f" case-insensitive substring of derivative name '{name}'."
         )
 
     return BidsDatasetInfo(name, template)
