@@ -19,60 +19,60 @@
     {
       "series": "anat-flair_acq-0.*7iso_UPAdia",
       "datatype": "anat",
-      "filename": "FLAIR"
+      "filename": "acq-UPAdia07_FLAIR"
     },
     {
       "series": "anat-flair_acq-0.*7mm_UPAdia",
       "datatype": "anat",
-      "filename": "FLAIR"
+      "filename": "acq-UPAdia07_FLAIR"
     },
     {
       "series": "anat-flair_acq-0.*7iso_dev3_5SD_UP",
       "datatype": "anat",
-      "filename": "FLAIR"
+      "filename": "acq-5SDUP07_FLAIR"
     },
     // UNIT1
     {
       "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_UNI_Images",
       "datatype": "anat",
-      "filename": "acq-07mm_UNIT1"
+      "filename": "acq-mp2rageCSPtx07_UNIT1"
     },
     {
       "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_UNI-DEN",
       "datatype": "anat",
-      "filename": "desc-denoised_UNIT1"
+      "filename": "acq-mp2rageCSPtx07_rec-denoised_UNIT1"
     },
     // T1
     {
       "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_T1_Images",
       "datatype": "anat",
-      "filename": "acq-07mm_T1map"
+      "filename": "acq-mp2rageCSPtx07_T1map"
     },
     {
       "series": "anat-T1w_acq_mprage_0.*8mm_CSptx",
       "datatype": "anat",
-      "filename": "T1w"
+      "filename": "acq-mprageCSPtx08_T1w"
     },
     {
       "series": "anat-T1w_acq_mprage_0.*8mm_CSx_ND",
       "datatype": "anat",
-      "filename": "T1w"
+      "filename": "acq-mprageCSPtx08_T1w"
     },
     {
       "series": ".*anat-T1w_acq-mprage_0.*7mm_UP",
       "datatype": "anat",
-      "filename": "T1w"
+      "filename": "acq-mprageUP07_T1w"
     },
     // T2 and T2-star
     {
       "series": ".*CLEAR-SWI_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-SWI_T2starw"
+      "filename": "acq-megre07_rec-CLEARSWI_swi"
     },
     {
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_T2starw",
+      "filename": "acq-megre07_rec-romeo_part-phase_phase",
       "merge-images": true,
       "derivative": {
         "name": "romeo",
@@ -82,7 +82,7 @@
     {
       "series": ".*Romeo_Mask_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_rec-mask_T2starw",
+      "filename": "acq-megre07_rec-romeo_mask",
       "derivative": {
         "name": "romeo",
         "dataset-description": "dataset_descriptions/romeo.json"
@@ -91,7 +91,7 @@
     {
       "series": ".*Romeo_B0_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-romeo_rec-unwrapped_T2starw",
+      "filename": "acq-megre07_rec-romeo_part-phase_desc-unwrap_phase",
       "derivative": {
         "name": "romeo",
         "dataset-description": "dataset_descriptions/romeo.json"
@@ -100,7 +100,7 @@
     {
       "series": "Aspire_M_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_part-mag_T2starw",
+      "filename": "acq-megre07_rec-aspire_part-mag_MEGRE",
       "merge-images": true,
       "derivative": {
         "name": "aspire",
@@ -110,7 +110,7 @@
     {
       "series": "Aspire_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_part-phase_T2starw",
+      "filename": "acq-megre07_rec-aspire_part-phase_MEGRE",
       "merge-images": true,
       "derivative": {
         "name": "aspire",
@@ -120,7 +120,7 @@
     {
       "series": ".*T2star_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_T2starw",
+      "filename": "acq-megre07_rec-aspire_T2starmap",
       "derivative": {
         "name": "aspire",
         "dataset-description": "dataset_descriptions/aspire.json"
@@ -129,7 +129,7 @@
     {
       "series": ".*EchoCombined_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_rec-echoCombined_T2starw",
+      "filename": "acq-megre07_rec-aspire_desc-combined_T2starw",
       "derivative": {
         "name": "aspire",
         "dataset-description": "dataset_descriptions/aspire.json"
@@ -138,7 +138,7 @@
     {
       "series": ".*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw",
+      "filename": "acq-megre07_rec-aspire_desc-combinedsenscor_T2starw",
       "derivative": {
         "name": "aspire",
         "dataset-description": "dataset_descriptions/aspire.json"
@@ -147,7 +147,7 @@
     {
       "series": ".*T2Star_Images",
       "datatype": "anat",
-      "filename": "T2map"
+      "filename": "acq-me_T2starmap"
     },
     {
       "series": ".*anat-T2star_acq-me_gre_07mm.*",
@@ -158,33 +158,33 @@
     {
       "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_INV1",
       "datatype": "anat",
-      "filename": "acq-07mm_inv-1_MP2RAGE"
+      "filename": "acq-mp2rageCSPtx07_inv-1_MP2RAGE"
     },
     {
       "series": ".*anat-T1w_acq-mp2rage_0.*7mm_CSptx_INV2",
       "datatype": "anat",
-      "filename": "acq-07mm_inv-2_MP2RAGE"
+      "filename": "acq-mp2rageCSPtx07_inv-2_MP2RAGE"
     },
     // 0.5 mm MP2RAGE
     {
       "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_INV1.*",
       "datatype": "anat",
-      "filename": "acq-05mm_inv-1_MP2RAGE"
+      "filename": "acq-mp2rage05_inv-1_MP2RAGE"
     },
     {
       "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_INV2.*",
       "datatype": "anat",
-      "filename": "acq-05mm_inv-2_MP2RAGE"
+      "filename": "acq-mp2rage05_inv-2_MP2RAGE"
     },
     {
       "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_T1_Images.*",
       "datatype": "anat",
-      "filename": "acq-05mm_T1map"
+      "filename": "acq-mp2rage05_T1map"
     },
     {
       "series": ".*anat-T1w_acq-mp2rage_05mm_UP.*_UNI_Images.*",
       "datatype": "anat",
-      "filename": "acq-05mm_UNIT1"
+      "filename": "acq-mp2rage05_UNIT1"
     },
     // High-resolution MP2RAGE - CSTFL - compressed sensing turbo flash
     {
@@ -210,23 +210,23 @@
     {
       "series": ".*cstfl-mp2rage-05mm_UNI-DEN",
       "datatype": "anat",
-      "filename": "acq-cstflDenoised_UNIT1"
+      "filename": "acq-cstfl_rec-denoised_UNIT1"
     },
     // Magnetization transfer
     {
       "series": ".*anat-mtw_acq-T1w_07mm",
       "datatype": "anat",
-      "filename": "acq-mtw_T1w"
+      "filename": "acq-mtw07_T1w"
     },
     {
       "series": ".*anat-mtw_acq-MTON_07mm",
       "datatype": "anat",
-      "filename": "acq-mtw_mt-on_MTR"
+      "filename": "acq-mtw07_mt-on_MTR"
     },
     {
       "series": ".*anat-mtw_acq-MTOFF_07mm",
       "datatype": "anat",
-      "filename": "acq-mtw_mt-off_MTR"
+      "filename": "acq-mtw07_mt-off_MTR"
     },
     {
       "series": ".*_T1W",
@@ -248,22 +248,22 @@
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane",
       "datatype": "anat",
-      "filename": "angio"
+      "filename": "acq-tof03_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_COR",
       "datatype": "anat",
-      "filename": "acq-cor_angio"
+      "filename": "acq-tof03_rec-MIPcor_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_SAG",
       "datatype": "anat",
-      "filename": "acq-sag_angio"
+      "filename": "acq-tof03_rec-MIPsag_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_TRA",
       "datatype": "anat",
-      "filename": "acq-tra_angio"
+      "filename": "acq-tof03_rec-MIPtra_angio"
     },
     // Diffusion-weighted images
     // B0
