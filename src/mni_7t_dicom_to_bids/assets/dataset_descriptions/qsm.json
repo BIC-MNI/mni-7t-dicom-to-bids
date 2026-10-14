@@ -1,17 +1,22 @@
 {
-    "Name": "ASPIRE phase-combination outputs",
+    "Name": "QSM processing derivatives",
     "BIDSVersion": "1.11.1",
     "DatasetType": "derivative",
     "GeneratedBy": [
         {
             "Name": "ASPIRE",
             "Description": "A Simple Phase Imaging REconstruction method for combining multi-channel phase data from multi-echo acquisitions, implemented in the Siemens image reconstruction environment (ICE)"
+        },
+        {
+            "Name": "ROMEO",
+            "Description": "Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm"
         }
     ],
     "DatasetLinks": {
         "raw": "../.."
     },
     "ReferencesAndLinks": [
-        "https://doi.org/10.1002/mrm.26963"
+        "https://doi.org/10.1002/mrm.26963",
+        "https://doi.org/10.1002/mrm.28563"
     ]
 }

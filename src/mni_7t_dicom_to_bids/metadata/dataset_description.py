@@ -63,21 +63,20 @@ def patch_derivative_dataset_description(bids_dataset_path: Path, dataset: BidsD
 
 
 def _patch_derivative_generated_by(value: object | None, template_value: object) -> list[object]:
-    """Keep the template's derivative generator first and add converter provenance."""
+    """Keep the template's derivative generators first and add converter provenance."""
 
     generated_by = get_generated_by(value)
-    template_generated_by = get_generated_by(template_value)
-    template_generator = deepcopy(template_generated_by[0])
-    template_name = template_generator.get('Name')
+    template_generated_by = deepcopy(get_generated_by(template_value))
 
-    for index, entry in enumerate(generated_by):
-        if entry.get('Name') == template_name:
-            template_generator.update(entry)
-            generated_by.pop(index)
-            break
+    for template_generator in template_generated_by:
+        template_name = template_generator.get('Name')
+        for index, entry in enumerate(generated_by):
+            if entry.get('Name') == template_name:
+                template_generator.update(entry)
+                generated_by.pop(index)
+                break
 
-    generated_by.insert(0, template_generator)
-    return _patch_generated_by(generated_by)
+    return _patch_generated_by([*template_generated_by, *generated_by])
 
 
 def _patch_generated_by(value: object | None) -> list[object]:

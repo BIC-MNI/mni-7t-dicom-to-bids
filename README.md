@@ -85,6 +85,10 @@ A dictionary is a JSON or JSON5 file that has the following structure:
       "datatype": "anat",
       "filename": "T1w",
       "merge-images": true,
+      "derivative": {
+        "name": "example",
+        "dataset-description": "dataset_descriptions/example.json",
+      },
     },
   ],
 }
@@ -97,10 +101,15 @@ Details:
 - The mapping order is significant, the first matching entry whose series description pattern matches is used.
 - The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
 - The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
+- The optional `derivative` object writes the mapping below `derivatives/<name>` and supplies that dataset's
+  `dataset_description.json` template. Relative template paths are resolved from the dictionary directory.
 
 ## BIDS naming dictionary
 
 The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
+
+ROMEO and ASPIRE outputs share the `derivatives/qsm` dataset. Their `datatype` remains `anat`, so their complete
+directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`.
 
 ### Anatomical
 
@@ -115,15 +124,15 @@ The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
 | 7 | `anat-T1w_acq_mprage_0*8mm_CSptx` | `T1w` | `anat` |
 | 8 | `anat-T1w_acq_mprage_0*8mm_CSx_ND` | `T1w` | `anat` |
 | 9 | `*anat-T1w_acq-mprage_0*7mm_UP` | `T1w` | `anat` |
-| 10 | `*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-SWI_T2starw` | `anat` |
-| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-romeo_T2starw` | `anat` |
-| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-romeo_rec-mask_T2starw` | `anat` |
-| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-romeo_rec-unwrapped_T2starw` | `anat` |
-| 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-aspire_T2starw` | `anat` |
-| 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-aspire_T2starw` | `anat` |
-| 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-aspire_T2starw` | `anat` |
-| 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-aspire_rec-echoCombined_T2starw` | `anat` |
-| 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-aspire_rec-echoCombinedSensitivityCorrected_T2starw` | `anat` |
+| 10 | `*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-CLEARSWI_swi` | `anat` |
+| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_part-phase_phase` | `derivatives/qsm/anat` |
+| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_mask` | `derivatives/qsm/anat` |
+| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_part-phase_desc-unwrap_phase` | `derivatives/qsm/anat` |
+| 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `derivatives/qsm/anat` |
+| 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `derivatives/qsm/anat` |
+| 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `derivatives/qsm/anat` |
+| 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/qsm/anat` |
+| 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/qsm/anat` |
 | 19 | `*T2Star_Images` | `T2map` | `anat` |
 | 20 | `*anat-T2star_acq-me_gre_07mm*` | `acq-me_T2starw` | `anat` |
 | 21 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1` | `acq-07mm_inv-1_MP2RAGE` | `anat` |

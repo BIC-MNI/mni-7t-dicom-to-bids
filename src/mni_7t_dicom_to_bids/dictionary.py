@@ -160,17 +160,22 @@ def _load_derivative(
         raise DicomDictionaryError(
             f"DatasetType in dataset description template '{template_source}' must be 'derivative'."
         )
-    generated_by = template.get('GeneratedBy')
-    if not isinstance(generated_by, list) or not generated_by or not isinstance(generated_by[0], dict):
+    generated_by = _require_array(
+        template.get('GeneratedBy'),
+        f"GeneratedBy in dataset description template '{template_source}'",
+    )
+    if not generated_by:
         raise DicomDictionaryError(
             f"GeneratedBy in dataset description template '{template_source}' must be a non-empty array of objects."
         )
-    first_generated_by = cast(dict[object, object], generated_by[0])
-    generated_by_name = first_generated_by.get('Name')
-    if not isinstance(generated_by_name, str) or generated_by_name.casefold() not in name.casefold():
-        raise DicomDictionaryError(
-            f"The first GeneratedBy.Name in dataset description template '{template_source}' must be a"
-            f" case-insensitive substring of derivative name '{name}'."
+    for index, value in enumerate(generated_by):
+        generator = _require_object(
+            value,
+            f"GeneratedBy[{index}] in dataset description template '{template_source}'",
+        )
+        _require_string(
+            generator.get('Name'),
+            f"GeneratedBy[{index}].Name in dataset description template '{template_source}'",
         )
 
     return BidsDatasetInfo(name, template)

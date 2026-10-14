@@ -75,8 +75,8 @@
       "filename": "acq-megre07_rec-romeo_part-phase_phase",
       "merge-images": true,
       "derivative": {
-        "name": "romeo",
-        "dataset-description": "dataset_descriptions/romeo.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -84,8 +84,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_mask",
       "derivative": {
-        "name": "romeo",
-        "dataset-description": "dataset_descriptions/romeo.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -93,8 +93,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_part-phase_desc-unwrap_phase",
       "derivative": {
-        "name": "romeo",
-        "dataset-description": "dataset_descriptions/romeo.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -103,8 +103,8 @@
       "filename": "acq-megre07_rec-aspire_part-mag_MEGRE",
       "merge-images": true,
       "derivative": {
-        "name": "aspire",
-        "dataset-description": "dataset_descriptions/aspire.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -113,8 +113,8 @@
       "filename": "acq-megre07_rec-aspire_part-phase_MEGRE",
       "merge-images": true,
       "derivative": {
-        "name": "aspire",
-        "dataset-description": "dataset_descriptions/aspire.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -122,8 +122,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_T2starmap",
       "derivative": {
-        "name": "aspire",
-        "dataset-description": "dataset_descriptions/aspire.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -131,8 +131,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_desc-combined_T2starw",
       "derivative": {
-        "name": "aspire",
-        "dataset-description": "dataset_descriptions/aspire.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
@@ -140,8 +140,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_desc-combinedsenscor_T2starw",
       "derivative": {
-        "name": "aspire",
-        "dataset-description": "dataset_descriptions/aspire.json"
+        "name": "qsm",
+        "dataset-description": "dataset_descriptions/qsm.json"
       }
     },
     {
