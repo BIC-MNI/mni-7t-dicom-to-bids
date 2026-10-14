@@ -57,7 +57,7 @@ def patch_file_path(file_path: Path):
         bids_name.remove('run')
 
     # Remove 'run-?' from MTR files.
-    if bids_name.has_value('acq', 'mtw') and bids_name.has('run'):
+    if bids_name.has_value('acq', 'mtw07') and bids_name.has('run'):
         bids_name.remove('run')
 
     # Replace 'ph' with 'part-phase'.
