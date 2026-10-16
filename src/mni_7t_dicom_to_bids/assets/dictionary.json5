@@ -72,7 +72,7 @@
     {
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-megre07_rec-romeo_part-phase_phase",
+      "filename": "acq-megre07_rec-romeo_desc-phaseunwrap_t2starw",
       "merge-images": true,
       "derivative": {
         "name": "qsm",
@@ -82,7 +82,7 @@
     {
       "series": ".*Romeo_Mask_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-megre07_rec-romeo_mask",
+      "filename": "acq-megre07_rec-romeo_desc-mask_t2starw",
       "derivative": {
         "name": "qsm",
         "dataset-description": "dataset_descriptions/qsm.json"
@@ -91,7 +91,7 @@
     {
       "series": ".*Romeo_B0_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-megre07_rec-romeo_part-phase_desc-unwrap_phase",
+      "filename": "acq-megre07_rec-romeo_desc-B0_t2starw",
       "derivative": {
         "name": "qsm",
         "dataset-description": "dataset_descriptions/qsm.json"

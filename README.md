@@ -115,47 +115,47 @@ directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`.
 
 | **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
 |:-----:|:------------------------------------------|:---------|:-------------:|
-| 1 | `anat-flair_acq-0*7iso_UPAdia` | `FLAIR` | `anat` |
-| 2 | `anat-flair_acq-0*7mm_UPAdia` | `FLAIR` | `anat` |
-| 3 | `anat-flair_acq-0*7iso_dev3_5SD_UP` | `FLAIR` | `anat` |
-| 4 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images` | `acq-07mm_UNIT1` | `anat` |
-| 5 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN` | `desc-denoised_UNIT1` | `anat` |
-| 6 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images` | `acq-07mm_T1map` | `anat` |
-| 7 | `anat-T1w_acq_mprage_0*8mm_CSptx` | `T1w` | `anat` |
-| 8 | `anat-T1w_acq_mprage_0*8mm_CSx_ND` | `T1w` | `anat` |
-| 9 | `*anat-T1w_acq-mprage_0*7mm_UP` | `T1w` | `anat` |
+| 1 | `anat-flair_acq-0*7iso_UPAdia` | `acq-UPAdia07_FLAIR` | `anat` |
+| 2 | `anat-flair_acq-0*7mm_UPAdia` | `acq-UPAdia07_FLAIR` | `anat` |
+| 3 | `anat-flair_acq-0*7iso_dev3_5SD_UP` | `acq-5SDUP07_FLAIR` | `anat` |
+| 4 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images` | `acq-mp2rageCSPtx07_UNIT1` | `anat` |
+| 5 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN` | `acq-mp2rageCSPtx07_rec-denoised_UNIT1` | `anat` |
+| 6 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images` | `acq-mp2rageCSPtx07_T1map` | `anat` |
+| 7 | `anat-T1w_acq_mprage_0*8mm_CSptx` | `acq-mprageCSPtx08_T1w` | `anat` |
+| 8 | `anat-T1w_acq_mprage_0*8mm_CSx_ND` | `acq-mprageCSPtx08_T1w` | `anat` |
+| 9 | `*anat-T1w_acq-mprage_0*7mm_UP` | `acq-mprageUP07_T1w` | `anat` |
 | 10 | `*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-CLEARSWI_swi` | `anat` |
-| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_part-phase_phase` | `derivatives/qsm/anat` |
-| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_mask` | `derivatives/qsm/anat` |
-| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_part-phase_desc-unwrap_phase` | `derivatives/qsm/anat` |
+| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-phaseunwrap_t2starw` | `derivatives/qsm/anat` |
+| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-mask_t2starw` | `derivatives/qsm/anat` |
+| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-B0_t2starw` | `derivatives/qsm/anat` |
 | 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `derivatives/qsm/anat` |
 | 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `derivatives/qsm/anat` |
 | 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `derivatives/qsm/anat` |
 | 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/qsm/anat` |
 | 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/qsm/anat` |
-| 19 | `*T2Star_Images` | `T2map` | `anat` |
+| 19 | `*T2Star_Images` | `acq-me_T2starmap` | `anat` |
 | 20 | `*anat-T2star_acq-me_gre_07mm*` | `acq-me_T2starw` | `anat` |
-| 21 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1` | `acq-07mm_inv-1_MP2RAGE` | `anat` |
-| 22 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2` | `acq-07mm_inv-2_MP2RAGE` | `anat` |
-| 23 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV1*` | `acq-05mm_inv-1_MP2RAGE` | `anat` |
-| 24 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV2*` | `acq-05mm_inv-2_MP2RAGE` | `anat` |
-| 25 | `*anat-T1w_acq-mp2rage_05mm_UP*_T1_Images*` | `acq-05mm_T1map` | `anat` |
-| 26 | `*anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images*` | `acq-05mm_UNIT1` | `anat` |
+| 21 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1` | `acq-mp2rageCSPtx07_inv-1_MP2RAGE` | `anat` |
+| 22 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2` | `acq-mp2rageCSPtx07_inv-2_MP2RAGE` | `anat` |
+| 23 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV1*` | `acq-mp2rage05_inv-1_MP2RAGE` | `anat` |
+| 24 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV2*` | `acq-mp2rage05_inv-2_MP2RAGE` | `anat` |
+| 25 | `*anat-T1w_acq-mp2rage_05mm_UP*_T1_Images*` | `acq-mp2rage05_T1map` | `anat` |
+| 26 | `*anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images*` | `acq-mp2rage05_UNIT1` | `anat` |
 | 27 | `*cstfl-mp2rage-05mm_INV1` | `acq-cstfl_inv-1_MP2RAGE` | `anat` |
 | 28 | `*cstfl-mp2rage-05mm_INV2` | `acq-cstfl_inv-2_MP2RAGE` | `anat` |
 | 29 | `*cstfl-mp2rage-05mm_T1_Images` | `acq-cstfl_T1map` | `anat` |
 | 30 | `*cstfl-mp2rage-05mm_UNI_Images` | `acq-cstfl_UNIT1` | `anat` |
-| 31 | `*cstfl-mp2rage-05mm_UNI-DEN` | `acq-cstflDenoised_UNIT1` | `anat` |
-| 32 | `*anat-mtw_acq-T1w_07mm` | `acq-mtw_T1w` | `anat` |
-| 33 | `*anat-mtw_acq-MTON_07mm` | `acq-mtw_mt-on_MTR` | `anat` |
-| 34 | `*anat-mtw_acq-MTOFF_07mm` | `acq-mtw_mt-off_MTR` | `anat` |
+| 31 | `*cstfl-mp2rage-05mm_UNI-DEN` | `acq-cstfl_rec-denoised_UNIT1` | `anat` |
+| 32 | `*anat-mtw_acq-T1w_07mm` | `acq-mtw07_T1w` | `anat` |
+| 33 | `*anat-mtw_acq-MTON_07mm` | `acq-mtw07_mt-on_MTR` | `anat` |
+| 34 | `*anat-mtw_acq-MTOFF_07mm` | `acq-mtw07_mt-off_MTR` | `anat` |
 | 35 | `*_T1W` | `acq-MTR_T1w` | `anat` |
 | 36 | `anat-nm_acq-MTboost_sag_0.55mm` | `acq-neuromelaninMTw_T1w` | `anat` |
 | 37 | `CR_tfl_MTboost_sag7deg_0.55mm` | `acq-neuromelaninMTw_T1w` | `anat` |
-| 38 | `*anat-angio_acq-tof_03mm_inplane` | `angio` | `anat` |
-| 39 | `*anat-angio_acq-tof_03mm_inplane_MIP_COR` | `acq-cor_angio` | `anat` |
-| 40 | `*anat-angio_acq-tof_03mm_inplane_MIP_SAG` | `acq-sag_angio` | `anat` |
-| 41 | `*anat-angio_acq-tof_03mm_inplane_MIP_TRA` | `acq-tra_angio` | `anat` |
+| 38 | `*anat-angio_acq-tof_03mm_inplane` | `acq-tof03_angio` | `anat` |
+| 39 | `*anat-angio_acq-tof_03mm_inplane_MIP_COR` | `acq-tof03_rec-MIPcor_angio` | `anat` |
+| 40 | `*anat-angio_acq-tof_03mm_inplane_MIP_SAG` | `acq-tof03_rec-MIPsag_angio` | `anat` |
+| 41 | `*anat-angio_acq-tof_03mm_inplane_MIP_TRA` | `acq-tof03_rec-MIPtra_angio` | `anat` |
 
 ### Diffusion-weighted images
 
