@@ -108,8 +108,9 @@ Details:
 
 The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
 
-ROMEO and ASPIRE outputs share the `derivatives/qsm` dataset. Their `datatype` remains `anat`, so their complete
-directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`.
+Derived ROMEO and ASPIRE outputs share the `derivatives/qsm` dataset. Their `datatype` remains `anat`, so their
+complete directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`. The ASPIRE magnitude, phase, and T2-star map
+outputs remain in the raw `anat` directory.
 
 ### Anatomical
 
@@ -128,9 +129,9 @@ directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`.
 | 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-phaseunwrap_t2starw` | `derivatives/qsm/anat` |
 | 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-mask_t2starw` | `derivatives/qsm/anat` |
 | 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-B0_t2starw` | `derivatives/qsm/anat` |
-| 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `derivatives/qsm/anat` |
-| 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `derivatives/qsm/anat` |
-| 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `derivatives/qsm/anat` |
+| 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `anat` |
+| 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `anat` |
+| 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `anat` |
 | 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/qsm/anat` |
 | 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/qsm/anat` |
 | 19 | `*T2Star_Images` | `acq-me_T2starmap` | `anat` |
