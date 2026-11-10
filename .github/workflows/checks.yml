@@ -55,7 +55,7 @@ jobs:
 
   containers:
     name: Containers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Check out MNI 7T BIDS converter
