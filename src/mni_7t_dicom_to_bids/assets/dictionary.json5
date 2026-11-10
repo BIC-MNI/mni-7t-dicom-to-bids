@@ -67,7 +67,10 @@
     {
       "series": ".*CLEAR-SWI_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
-      "filename": "acq-megre07_rec-CLEARSWI_swi"
+      "filename": "acq-megre07_rec-CLEARSWI_swi",
+      "sidecar": {
+        "Description": "Susceptibility-weighted image reconstructed using CLEAR-SWI. Reference: Eckstein K, Bachrata B, Hangel G, Widhalm G, Enzinger C, Barth M, Trattnig S, Robinson SD. Improved susceptibility weighted imaging at ultra-high field using bipolar multi-echo acquisition and optimized image processing: CLEAR-SWI. NeuroImage. 2021;237:118175. https://doi.org/10.1016/j.neuroimage.2021.118175"
+      }
     },
     {
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
