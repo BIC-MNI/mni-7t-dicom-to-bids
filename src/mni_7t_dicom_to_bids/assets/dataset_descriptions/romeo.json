@@ -1,0 +1,17 @@
+{
+    "Name": "ROMEO processing derivatives",
+    "BIDSVersion": "1.11.1",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "ROMEO",
+            "Description": "Phase Unwrapping with a Rapid Opensource Minimum Spanning TreE AlgOrithm. Reference: Dymerska B, Eckstein K, Bachrata B, Siow B, Trattnig S, Shmueli K, Robinson SD. Phase unwrapping with a rapid opensource minimum spanning tree algorithm (ROMEO). Magnetic Resonance in Medicine. 2021;85(4):2294-2308. https://doi.org/10.1002/mrm.28563"
+        }
+    ],
+    "DatasetLinks": {
+        "raw": "../.."
+    },
+    "ReferencesAndLinks": [
+        "https://doi.org/10.1002/mrm.28563"
+    ]
+}

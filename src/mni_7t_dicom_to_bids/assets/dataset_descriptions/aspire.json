@@ -1,0 +1,17 @@
+{
+    "Name": "ASPIRE processing derivatives",
+    "BIDSVersion": "1.11.1",
+    "DatasetType": "derivative",
+    "GeneratedBy": [
+        {
+            "Name": "ASPIRE",
+            "Description": "A Simple Phase Imaging REconstruction method for combining multi-channel phase data from multi-echo acquisitions, implemented in the Siemens image reconstruction environment (ICE). Reference: Eckstein K, Dymerska B, Bachrata B, Bogner W, Poljanc K, Trattnig S, Robinson SD. Computationally efficient combination of multi-channel phase data from multi-echo acquisitions (ASPIRE). Magnetic Resonance in Medicine. 2018;79(6):2996-3006. https://doi.org/10.1002/mrm.26963"
+        }
+    ],
+    "DatasetLinks": {
+        "raw": "../.."
+    },
+    "ReferencesAndLinks": [
+        "https://doi.org/10.1002/mrm.26963"
+    ]
+}

@@ -108,10 +108,6 @@ Details:
 
 The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
 
-Derived ROMEO and ASPIRE outputs share the `derivatives/qsm` dataset. Their `datatype` remains `anat`, so their
-complete directory is `derivatives/qsm/sub-<label>/ses-<label>/anat`. The ASPIRE magnitude, phase, and T2-star map
-outputs remain in the raw `anat` directory.
-
 ### Anatomical
 
 | **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
@@ -126,14 +122,14 @@ outputs remain in the raw `anat` directory.
 | 8 | `anat-T1w_acq_mprage_0*8mm_CSx_ND` | `acq-mprageCSPtx08_T1w` | `anat` |
 | 9 | `*anat-T1w_acq-mprage_0*7mm_UP` | `acq-mprageUP07_T1w` | `anat` |
 | 10 | `*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-CLEARSWI_swi` | `anat` |
-| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-phaseunwrap_t2starw` | `derivatives/qsm/anat` |
-| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-mask_t2starw` | `derivatives/qsm/anat` |
-| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-B0_t2starw` | `derivatives/qsm/anat` |
+| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-phaseunwrap_t2starw` | `derivatives/romeo/anat` |
+| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-mask_t2starw` | `derivatives/romeo/anat` |
+| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-B0_t2starw` | `derivatives/romeo/anat` |
 | 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `anat` |
 | 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `anat` |
 | 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `anat` |
-| 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/qsm/anat` |
-| 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/qsm/anat` |
+| 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/aspire/anat` |
+| 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/aspire/anat` |
 | 19 | `*T2Star_Images` | `acq-me_T2starmap` | `anat` |
 | 20 | `*anat-T2star_acq-me_gre_07mm*` | `acq-me_T2starw` | `anat` |
 | 21 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1` | `acq-mp2rageCSPtx07_inv-1_MP2RAGE` | `anat` |

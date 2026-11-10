@@ -75,8 +75,8 @@
       "filename": "acq-megre07_rec-romeo_desc-phaseunwrap_t2starw",
       "merge-images": true,
       "derivative": {
-        "name": "qsm",
-        "dataset-description": "dataset_descriptions/qsm.json"
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
       }
     },
     {
@@ -84,8 +84,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_desc-mask_t2starw",
       "derivative": {
-        "name": "qsm",
-        "dataset-description": "dataset_descriptions/qsm.json"
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
       }
     },
     {
@@ -93,8 +93,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_desc-B0_t2starw",
       "derivative": {
-        "name": "qsm",
-        "dataset-description": "dataset_descriptions/qsm.json"
+        "name": "romeo",
+        "dataset-description": "dataset_descriptions/romeo.json"
       }
     },
     {
@@ -119,8 +119,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_desc-combined_T2starw",
       "derivative": {
-        "name": "qsm",
-        "dataset-description": "dataset_descriptions/qsm.json"
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
       }
     },
     {
@@ -128,8 +128,8 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_desc-combinedsenscor_T2starw",
       "derivative": {
-        "name": "qsm",
-        "dataset-description": "dataset_descriptions/qsm.json"
+        "name": "aspire",
+        "dataset-description": "dataset_descriptions/aspire.json"
       }
     },
     {
