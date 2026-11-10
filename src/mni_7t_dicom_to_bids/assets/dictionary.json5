@@ -209,12 +209,18 @@
     {
       "series": ".*anat-mtw_acq-MTON_07mm",
       "datatype": "anat",
-      "filename": "acq-mtw07_mt-on_MTR"
+      "filename": "acq-mtw07_mt-on_MTR",
+      "sidecar": {
+        "MTState": true
+      }
     },
     {
       "series": ".*anat-mtw_acq-MTOFF_07mm",
       "datatype": "anat",
-      "filename": "acq-mtw07_mt-off_MTR"
+      "filename": "acq-mtw07_mt-off_MTR",
+      "sidecar": {
+        "MTState": false
+      }
     },
     {
       "series": ".*_T1W",

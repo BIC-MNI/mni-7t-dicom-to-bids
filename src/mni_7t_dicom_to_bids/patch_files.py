@@ -13,6 +13,7 @@ def patch_files(
     dicom_series: DicomSeriesInfo,
     *,
     merge_images: bool = False,
+    sidecar: dict[str, object] | None = None,
 ):
     """
     Patch the output BIDS files with the following:
@@ -24,7 +25,7 @@ def patch_files(
     for file_path in acquisition_dir_path.iterdir():
         patch_file_path(file_path)
 
-    patch_sidecar_metadata(acquisition_dir_path, dicom_series, merge_images=merge_images)
+    patch_sidecar_metadata(acquisition_dir_path, dicom_series, merge_images=merge_images, sidecar=sidecar)
 
 
 def patch_file_path(file_path: Path):

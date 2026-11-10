@@ -85,6 +85,9 @@ A dictionary is a JSON or JSON5 file that has the following structure:
       "datatype": "anat",
       "filename": "T1w",
       "merge-images": true,
+      "sidecar": {
+        "Description": "An anatomical image processed by the example pipeline.",
+      },
       "derivative": {
         "name": "example",
         "dataset-description": "dataset_descriptions/example.json",
@@ -101,6 +104,13 @@ Details:
 - The mapping order is significant, the first matching entry whose series description pattern matches is used.
 - The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
 - The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
+- The optional `sidecar` object adds or replaces metadata fields in every output JSON sidecar from the
+  matching series. It is applied after dcm2niix metadata and the converter's automatic corrections, so
+  configured values take precedence. Other fields are preserved. Values must be literal JSON values;
+  nested objects and arrays replace the entire existing value rather than being merged recursively.
+  `null` writes a JSON null; it does not delete a field. Omitting `sidecar` is equivalent to `{}`.
+  The default dictionary uses this option to set `MTState` for MT-on and MT-off acquisitions. Custom
+  dictionaries with these acquisitions should also specify `MTState` explicitly.
 - The optional `derivative` object writes the mapping below `derivatives/<name>` and supplies that dataset's
   `dataset_description.json` template. Relative template paths are resolved from the dictionary directory.
 

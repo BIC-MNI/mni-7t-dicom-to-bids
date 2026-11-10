@@ -1,7 +1,7 @@
 import json
 import re
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib.resources import files
 from importlib.resources.abc import Traversable
 from pathlib import Path
@@ -29,6 +29,7 @@ class SeriesMapping:
     filename: str
     merge_images: bool
     dataset: BidsDatasetInfo
+    sidecar: dict[str, object] = field(default_factory=dict[str, object])
 
 
 @dataclass(frozen=True)
@@ -105,11 +106,18 @@ def _parse_dicom_dictionary(
     for index, value in enumerate(mapping_values):
         location = f'mappings[{index}]'
         mapping = _require_object(value, location)
-        _require_properties(mapping, {'series', 'datatype', 'filename'}, location, {'merge-images', 'derivative'})
+        _require_properties(
+            mapping, {'series', 'datatype', 'filename'}, location, {'merge-images', 'derivative', 'sidecar'}
+        )
         series = _require_string(mapping['series'], f'{location}.series')
         datatype = _require_string(mapping['datatype'], f'{location}.datatype')
         filename = _require_string(mapping['filename'], f'{location}.filename')
         merge_images = _require_bool(mapping.get('merge-images', False), f'{location}.merge-images')
+        sidecar = _require_object(mapping.get('sidecar', {}), f'{location}.sidecar')
+        try:
+            json.dumps(sidecar, allow_nan=False)
+        except (TypeError, ValueError) as error:
+            raise DicomDictionaryError(f'{location}.sidecar must contain valid JSON values: {error}') from error
         dataset = _load_derivative(mapping.get('derivative'), f'{location}.derivative', read_template)
         if dataset.is_derivative:
             existing_template = derivatives.setdefault(dataset.name, dataset.dataset_description or {})
@@ -133,6 +141,7 @@ def _parse_dicom_dictionary(
             filename,
             merge_images,
             dataset,
+            sidecar,
         ))
 
     return DicomDictionary(ignored_patterns, suffixes, mappings)

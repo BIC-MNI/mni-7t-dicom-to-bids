@@ -37,7 +37,11 @@ def create_conversion_plan(
             )
 
             acquisition_series[bids_acquisition].append(
-                PlannedDicomSeries(source=dicom_series, merge_images=series_mapping.merge_images)
+                PlannedDicomSeries(
+                    source=dicom_series,
+                    merge_images=series_mapping.merge_images,
+                    sidecar=series_mapping.sidecar,
+                )
             )
 
             continue

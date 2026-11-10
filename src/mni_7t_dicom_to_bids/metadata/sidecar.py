@@ -32,9 +32,10 @@ def patch_sidecar_metadata(
     dicom_series: DicomSeriesInfo,
     *,
     merge_images: bool = False,
+    sidecar: dict[str, object] | None = None,
 ):
     """
-    Patch generated BIDS JSON sidecars with additional metadata.
+    Patch generated BIDS JSON sidecars, applying configured overrides last.
     """
 
     if merge_images:
@@ -52,12 +53,6 @@ def patch_sidecar_metadata(
         if bids_name.has_value('part', 'phase'):
             metadata['Units'] = 'rad'
 
-        if bids_name.has_value('mt', 'off'):
-            metadata['MTState'] = False
-
-        if bids_name.has_value('mt', 'on'):
-            metadata['MTState'] = True
-
         if bids_name.has_value('acq', 'neuromelaninMTw'):
             mt_flip_angle = get_mt_flip_angle(dicom_series)
             if mt_flip_angle is not None:
@@ -70,6 +65,9 @@ def patch_sidecar_metadata(
 
         if bids_name.has('MP2RAGE'):
             metadata.update(get_mp2rage_metadata(json_path, dicom_series))
+
+        if sidecar is not None:
+            metadata.update(sidecar)
 
         if metadata:
             update_json(json_path, metadata)

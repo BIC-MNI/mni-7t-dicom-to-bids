@@ -158,7 +158,12 @@ def convert_bids_dicom_series(
         merge_images=planned_series.merge_images,
     )
 
-    patch_files(Path(tmp_output_dir_path), dicom_series, merge_images=planned_series.merge_images)
+    patch_files(
+        Path(tmp_output_dir_path),
+        dicom_series,
+        merge_images=planned_series.merge_images,
+        sidecar=planned_series.sidecar,
+    )
 
     # Check if the files already exist in the target directory.
 

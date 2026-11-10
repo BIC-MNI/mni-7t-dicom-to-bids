@@ -113,6 +113,11 @@ class PlannedDicomSeries:
     Whether dcm2niix should merge the images of the series into a single output.
     """
 
+    sidecar: dict[str, object] = field(default_factory=dict[str, object], compare=False)
+    """
+    Literal metadata overrides applied to every output JSON sidecar of this series.
+    """
+
 
 @dataclass
 class PlannedAcquisition:
