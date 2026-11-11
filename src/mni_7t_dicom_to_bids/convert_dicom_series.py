@@ -86,7 +86,7 @@ def convert_dicom_series(
             )
 
             result.scans.extend(
-                ConvertedScan(path, bids_acquisition.dataset)
+                ConvertedScan(path, bids_acquisition.dataset, planned_series.credit)
                 for path in image_paths
                 if path.name.endswith(('.nii', '.nii.gz'))
             )
@@ -158,11 +158,22 @@ def convert_bids_dicom_series(
         merge_images=planned_series.merge_images,
     )
 
+    sidecar = dict(planned_series.sidecar)
+    if planned_series.credit is not None:
+        credit = planned_series.credit
+        description = credit.acknowledgement
+        if credit.references:
+            description += ' References: ' + '; '.join(reference.render() for reference in credit.references)
+        existing_description = sidecar.get('Description')
+        if isinstance(existing_description, str):
+            description = existing_description + '\n\n' + description
+        sidecar['Description'] = description
+
     patch_files(
         Path(tmp_output_dir_path),
         dicom_series,
         merge_images=planned_series.merge_images,
-        sidecar=planned_series.sidecar,
+        sidecar=sidecar,
     )
 
     # Check if the files already exist in the target directory.

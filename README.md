@@ -70,15 +70,22 @@ The MNI 7T DICOM to BIDS converter provides a default dictionary that maps commo
 
 A dictionary is a JSON or JSON5 file that has the following structure:
 
-```json
+```json5
 {
-  "ignored-series": [
-    "AAHead_Scout.*",
-  ],
-  "trim-series-suffixes": [
-    "_Pha",
-    "_Motion",
-  ],
+  "ignored-series": ["AAHead_Scout.*"],
+  "trim-series-suffixes": ["_Pha", "_Motion"],
+  "references": {
+    "example-method": {
+      "text": "Example method reference.",
+      "url": "https://example.org/method"
+    }
+  },
+  "derivatives": {
+    "example": {
+      "name": "example",
+      "dataset-description": "dataset_descriptions/example.json"
+    }
+  },
   "mappings": [
     {
       "series": "anat-T1w_acq-mprage_.*",
@@ -86,14 +93,15 @@ A dictionary is a JSON or JSON5 file that has the following structure:
       "filename": "T1w",
       "merge-images": true,
       "sidecar": {
-        "Description": "An anatomical image processed by the example pipeline.",
+        "Description": "An anatomical image processed by the example pipeline."
       },
-      "derivative": {
-        "name": "example",
-        "dataset-description": "dataset_descriptions/example.json",
-      },
-    },
-  ],
+      "derivative": "example",
+      "credit": {
+        "acknowledgement": "Sequence and reconstruction attribution.",
+        "references": ["example-method"]
+      }
+    }
+  ]
 }
 ```
 
@@ -111,8 +119,19 @@ Details:
   `null` writes a JSON null; it does not delete a field. Omitting `sidecar` is equivalent to `{}`.
   The default dictionary uses this option to set `MTState` for MT-on and MT-off acquisitions. Custom
   dictionaries with these acquisitions should also specify `MTState` explicitly.
-- The optional `derivative` object writes the mapping below `derivatives/<name>` and supplies that dataset's
-  `dataset_description.json` template. Relative template paths are resolved from the dictionary directory.
+- The optional top-level `references` object defines citations once, keyed by non-empty names.
+  Each definition contains non-empty `text` and HTTP(S) `url` strings. A credit's `references` array
+  selects these definitions by name. Inline `{ "text": "...", "url": "..." }` objects remain supported,
+  including mixed lists of names and inline objects. Omitted credit references default to `[]`.
+- The optional top-level `derivatives` object defines derivative destinations once, keyed by non-empty
+  names. Each definition supplies `name` (the output directory label) and `dataset-description`
+  (the JSON template path). A mapping selects a definition with `"derivative": "example"`.
+  Inline derivative objects remain supported. Omitting `derivative` targets the raw dataset.
+  Relative template paths are resolved from the dictionary directory, including named definitions.
+- Both definition sections default to `{}`. Definitions are validated when the dictionary is loaded,
+  including unused definitions. Undefined names report the location of the mapping or credit that
+  uses them. Conflicting descriptions for the same derivative output directory are rejected.
+  Definitions cannot alias other definitions; their names are internal and are not exported to BIDS.
 
 ## BIDS naming dictionary
 

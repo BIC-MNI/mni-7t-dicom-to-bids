@@ -9,6 +9,7 @@ from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
 from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
 from mni_7t_dicom_to_bids.map_dicom_series import create_conversion_plan
+from mni_7t_dicom_to_bids.metadata.credits import patch_dataset_credits
 from mni_7t_dicom_to_bids.metadata.dataset_description import (
     patch_dataset_description,
     patch_derivative_dataset_description,
@@ -67,7 +68,12 @@ def mni_7t_dicom_to_bids(args: Args):
     dataset_description_path = args.bids_dataset_path / 'dataset_description.json'
     if conversion_result.scans or dataset_description_path.exists():
         patch_dataset_description(args.bids_dataset_path)
+        patch_dataset_credits(args.bids_dataset_path, conversion_result.scans)
 
     for dataset in scans_by_dataset:
         if dataset.is_derivative:
             patch_derivative_dataset_description(args.bids_dataset_path, dataset)
+            patch_dataset_credits(
+                get_bids_dataset_path(args.bids_dataset_path, dataset),
+                scans_by_dataset[dataset],
+            )

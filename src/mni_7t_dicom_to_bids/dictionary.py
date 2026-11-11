@@ -10,7 +10,7 @@ from typing import cast
 
 import json5
 
-from mni_7t_dicom_to_bids.dataclass import RAW_BIDS_DATASET, BidsDatasetInfo
+from mni_7t_dicom_to_bids.dataclass import RAW_BIDS_DATASET, BidsDatasetInfo, Citation, SequenceCredit
 
 SUPPORTED_DATATYPES = {'anat', 'dwi', 'fmap', 'func'}
 
@@ -30,6 +30,7 @@ class SeriesMapping:
     merge_images: bool
     dataset: BidsDatasetInfo
     sidecar: dict[str, object] = field(default_factory=dict[str, object])
+    credit: SequenceCredit | None = None
 
 
 @dataclass(frozen=True)
@@ -78,11 +79,30 @@ def _parse_dicom_dictionary(
     read_template: Callable[[str], tuple[object, str]],
 ) -> DicomDictionary:
     root = _require_object(value, 'dictionary')
-    _require_properties(root, {'ignored-series', 'trim-series-suffixes', 'mappings'}, 'dictionary')
+    _require_properties(
+        root, {'ignored-series', 'trim-series-suffixes', 'mappings'}, 'dictionary', {'references', 'derivatives'}
+    )
 
     ignored_values = _require_array(root['ignored-series'], 'ignored-series')
     suffix_values = _require_array(root['trim-series-suffixes'], 'trim-series-suffixes')
     mapping_values = _require_array(root['mappings'], 'mappings')
+    reference_values = _require_object(root.get('references', {}), 'references')
+    derivative_values = _require_object(root.get('derivatives', {}), 'derivatives')
+    references: dict[str, Citation] = {}
+    for name, definition in reference_values.items():
+        _require_string(name, 'reference definition name')
+        references[name] = _parse_citation(definition, f'references.{name}')
+
+    derivative_definitions: dict[str, BidsDatasetInfo] = {}
+    derivatives: dict[str, dict[str, object]] = {}
+    for name, definition in derivative_values.items():
+        _require_string(name, 'derivative definition name')
+        location = f'derivatives.{name}'
+        # Definitions must describe a derivative, rather than an alias or raw dataset.
+        _require_object(definition, location)
+        dataset = _load_derivative(definition, location, read_template)
+        _check_derivative_consistency(dataset, derivatives, location)
+        derivative_definitions[name] = dataset
 
     ignored_patterns: list[Pattern[str]] = []
     ignored_strings: set[str] = set()
@@ -102,29 +122,30 @@ def _parse_dicom_dictionary(
 
     mappings: list[SeriesMapping] = []
     mapping_patterns: set[str] = set()
-    derivatives: dict[str, dict[str, object]] = {}
     for index, value in enumerate(mapping_values):
         location = f'mappings[{index}]'
         mapping = _require_object(value, location)
         _require_properties(
-            mapping, {'series', 'datatype', 'filename'}, location, {'merge-images', 'derivative', 'sidecar'}
+            mapping, {'series', 'datatype', 'filename'}, location, {'merge-images', 'derivative', 'sidecar', 'credit'}
         )
         series = _require_string(mapping['series'], f'{location}.series')
         datatype = _require_string(mapping['datatype'], f'{location}.datatype')
         filename = _require_string(mapping['filename'], f'{location}.filename')
         merge_images = _require_bool(mapping.get('merge-images', False), f'{location}.merge-images')
         sidecar = _require_object(mapping.get('sidecar', {}), f'{location}.sidecar')
+        credit = _parse_credit(mapping.get('credit'), f'{location}.credit', references)
         try:
             json.dumps(sidecar, allow_nan=False)
         except (TypeError, ValueError) as error:
             raise DicomDictionaryError(f'{location}.sidecar must contain valid JSON values: {error}') from error
-        dataset = _load_derivative(mapping.get('derivative'), f'{location}.derivative', read_template)
-        if dataset.is_derivative:
-            existing_template = derivatives.setdefault(dataset.name, dataset.dataset_description or {})
-            if existing_template != dataset.dataset_description:
-                raise DicomDictionaryError(
-                    f"{location}.derivative conflicts with another definition of derivative '{dataset.name}'."
-                )
+        derivative = mapping.get('derivative')
+        if isinstance(derivative, str):
+            if derivative not in derivative_definitions:
+                raise DicomDictionaryError(f"{location}.derivative uses undefined derivative '{derivative}'.")
+            dataset = derivative_definitions[derivative]
+        else:
+            dataset = _load_derivative(derivative, f'{location}.derivative', read_template)
+        _check_derivative_consistency(dataset, derivatives, f'{location}.derivative')
         _require_unique(series, mapping_patterns, f'{location}.series')
 
         if datatype not in SUPPORTED_DATATYPES:
@@ -142,9 +163,57 @@ def _parse_dicom_dictionary(
             merge_images,
             dataset,
             sidecar,
+            credit,
         ))
 
     return DicomDictionary(ignored_patterns, suffixes, mappings)
+
+
+def _parse_credit(
+    value: object,
+    location: str,
+    definitions: dict[str, Citation] | None = None,
+) -> SequenceCredit | None:
+    if value is None:
+        return None
+    credit = _require_object(value, location)
+    _require_properties(credit, {'acknowledgement'}, location, {'references'})
+    acknowledgement = _require_string(credit['acknowledgement'], f'{location}.acknowledgement')
+    references = _require_array(credit.get('references', []), f'{location}.references')
+    citations: dict[str, Citation] = {}
+    for index, reference in enumerate(references):
+        reference_location = f'{location}.references[{index}]'
+        if isinstance(reference, str):
+            if definitions is None or reference not in definitions:
+                raise DicomDictionaryError(f"{reference_location} uses undefined reference '{reference}'.")
+            citation = definitions[reference]
+        else:
+            citation = _parse_citation(reference, reference_location)
+        citations.setdefault(citation.url, citation)
+    return SequenceCredit(acknowledgement, tuple(citations.values()))
+
+
+def _parse_citation(value: object, location: str) -> Citation:
+    citation = _require_object(value, location)
+    _require_properties(citation, {'text', 'url'}, location)
+    citation_text = _require_string(citation['text'], f'{location}.text')
+    url = _require_string(citation['url'], f'{location}.url')
+    if re.fullmatch(r'https?://[^\s/]+(?:/[^\s]*)?', url) is None:
+        raise DicomDictionaryError(f'{location}.url must be an HTTP(S) URL.')
+    return Citation(citation_text, url)
+
+
+def _check_derivative_consistency(
+    dataset: BidsDatasetInfo,
+    derivatives: dict[str, dict[str, object]],
+    location: str,
+):
+    if dataset.is_derivative:
+        existing_template = derivatives.setdefault(dataset.name, dataset.dataset_description or {})
+        if existing_template != dataset.dataset_description:
+            raise DicomDictionaryError(
+                f"{location} conflicts with another definition of derivative '{dataset.name}'."
+            )
 
 
 def _load_derivative(

@@ -17,6 +17,25 @@ class BidsDatasetInfo:
 RAW_BIDS_DATASET = BidsDatasetInfo()
 
 
+@dataclass(frozen=True)
+class Citation:
+    """A reference kept structured internally and rendered as text for BIDS metadata."""
+
+    text: str
+    url: str
+
+    def render(self) -> str:
+        return f'{self.text} {self.url}'
+
+
+@dataclass(frozen=True)
+class SequenceCredit:
+    """Sequence attribution and references."""
+
+    acknowledgement: str
+    references: tuple[Citation, ...] = ()
+
+
 @dataclass(frozen=True, order=True)
 class DicomSeriesInfo:
     """
@@ -64,6 +83,7 @@ class ConvertedScan:
 
     image_path: Path
     dataset: BidsDatasetInfo = RAW_BIDS_DATASET
+    credit: SequenceCredit | None = field(default=None, compare=False)
 
 
 @dataclass
@@ -117,6 +137,8 @@ class PlannedDicomSeries:
     """
     Literal metadata overrides applied to every output JSON sidecar of this series.
     """
+
+    credit: SequenceCredit | None = field(default=None, compare=False)
 
 
 @dataclass
