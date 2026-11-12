@@ -358,7 +358,7 @@
       "datatype": "anat",
       "filename": "acq-neuromelaninMTw_T1w",
       "credit": {
-        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif."
+        "acknowledgement": "Neuromelanin MTboost: IR Leppert, CD Rowley, L Chougar and CL Tardif."
       }
     },
     {
@@ -366,7 +366,7 @@
       "datatype": "anat",
       "filename": "acq-neuromelaninMTw_T1w",
       "credit": {
-        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif."
+        "acknowledgement": "Neuromelanin MTboost: IR Leppert, CD Rowley, L Chougar and CL Tardif."
       }
     },
     // Angiography
