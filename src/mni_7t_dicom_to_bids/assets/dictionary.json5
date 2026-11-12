@@ -48,14 +48,6 @@
       "text": "Wu et al. (2018). The travelling pulses: multicenter evaluation of universal pulses at 7T. ISMRM abstract 1133.",
       "url": "https://archive.ismrm.org/2018/1133.html"
     },
-    "mp2rage": {
-      "text": "Marques et al. (2010). MP2RAGE, a self bias-field corrected sequence for improved segmentation and T1-mapping at high field.",
-      "url": "https://doi.org/10.1016/j.neuroimage.2009.10.002"
-    },
-    "cs-mp2rage": {
-      "text": "Mussard et al. (2020). Accelerated MP2RAGE imaging using Cartesian phyllotaxis readout and compressed sensing reconstruction.",
-      "url": "https://doi.org/10.1002/mrm.28244"
-    },
     "aspire": {
       "text": "Eckstein et al. (2018). Computationally efficient combination of multi-channel phase data from multi-echo acquisitions (ASPIRE).",
       "url": "https://doi.org/10.1002/mrm.26963"
@@ -71,26 +63,6 @@
     "t2star-quantification": {
       "text": "Hagberg et al. (2002). Real-time quantification of T(2)(*) changes using multiecho planar imaging and numerical methods.",
       "url": "https://doi.org/10.1002/mrm.10283"
-    },
-    "cortical-mtsat": {
-      "text": "Thevakumaran, Couch, Narayanan, Arnold and Rudko (2023). Optimized 7 T Cortical Magnetization Transfer Saturation Imaging: Application to Cortical Myelin Imaging in Multiple Sclerosis. ISMRM abstract 0078.",
-      "url": "https://doi.org/10.58530/2023/0078"
-    },
-    "neuromelanin-background": {
-      "text": "Sasaki et al. (2006). Neuromelanin magnetic resonance imaging of locus ceruleus and substantia nigra in Parkinson's disease.",
-      "url": "https://doi.org/10.1097/01.wnr.0000227984.84927.a7"
-    },
-    "sms-diffusion": {
-      "text": "Setsompop et al. (2012). Improving diffusion MRI using simultaneous multi-slice echo planar imaging.",
-      "url": "https://doi.org/10.1016/j.neuroimage.2012.06.033"
-    },
-    "time-shifted-multiband": {
-      "text": "Auerbach et al. (2013). Multiband accelerated spin-echo echo planar imaging with reduced peak RF power using time-shifted RF pulses.",
-      "url": "https://doi.org/10.1002/mrm.24719"
-    },
-    "b1-turboflash": {
-      "text": "Chung et al. (2010). Rapid B1+ mapping using a preconditioning RF pulse with TurboFLASH readout.",
-      "url": "https://doi.org/10.1002/mrm.22423"
     }
   },
   "mappings": [
@@ -101,7 +73,7 @@
       "datatype": "anat",
       "filename": "acq-UPAdia07_FLAIR",
       "credit": {
-        "acknowledgement": "FLAIR with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
+        "acknowledgement": "FLAIR with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
         "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
@@ -110,7 +82,7 @@
       "datatype": "anat",
       "filename": "acq-UPAdia07_FLAIR",
       "credit": {
-        "acknowledgement": "FLAIR with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
+        "acknowledgement": "FLAIR with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
         "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
@@ -125,8 +97,7 @@
       "datatype": "anat",
       "filename": "acq-mp2rageCSPtx07_UNIT1",
       "credit": {
-        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "cs-mp2rage"]
+        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     {
@@ -134,8 +105,7 @@
       "datatype": "anat",
       "filename": "acq-mp2rageCSPtx07_rec-denoised_UNIT1",
       "credit": {
-        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "cs-mp2rage"]
+        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     // T1
@@ -144,8 +114,7 @@
       "datatype": "anat",
       "filename": "acq-mp2rageCSPtx07_T1map",
       "credit": {
-        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "cs-mp2rage"]
+        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     {
@@ -153,8 +122,7 @@
       "datatype": "anat",
       "filename": "acq-mprageCSPtx08_T1w",
       "credit": {
-        "acknowledgement": "Compressed-sensing MPRAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": []
+        "acknowledgement": "Compressed-sensing MPRAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     {
@@ -173,7 +141,7 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-CLEARSWI_swi",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. Susceptibility-weighted image reconstructed using CLEAR-SWI; reconstruction is credited to Eckstein and colleagues.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "clear-swi"]
       }
     },
@@ -184,7 +152,7 @@
       "merge-images": true,
       "derivative": "romeo",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ROMEO phase unwrapping is credited to Dymerska and colleagues.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "romeo"]
       }
     },
@@ -194,7 +162,7 @@
       "filename": "acq-megre07_rec-romeo_desc-mask_t2starw",
       "derivative": "romeo",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ROMEO phase unwrapping is credited to Dymerska and colleagues.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "romeo"]
       }
     },
@@ -204,7 +172,7 @@
       "filename": "acq-megre07_rec-romeo_desc-B0_t2starw",
       "derivative": "romeo",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ROMEO phase unwrapping is credited to Dymerska and colleagues.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "romeo"]
       }
     },
@@ -214,7 +182,7 @@
       "filename": "acq-megre07_rec-aspire_part-mag_MEGRE",
       "merge-images": true,
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ASPIRE reconstruction reference is provided for the ASPIRE-labelled acquisition.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire"]
       }
     },
@@ -224,7 +192,7 @@
       "filename": "acq-megre07_rec-aspire_part-phase_MEGRE",
       "merge-images": true,
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ASPIRE reconstruction reference is provided for the ASPIRE-labelled acquisition.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire"]
       }
     },
@@ -233,7 +201,7 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_T2starmap",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "t2star-quantification"]
       }
     },
@@ -243,7 +211,7 @@
       "filename": "acq-megre07_rec-aspire_desc-combined_T2starw",
       "derivative": "aspire",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ASPIRE reconstruction reference is provided for the ASPIRE-labelled acquisition.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire"]
       }
     },
@@ -253,7 +221,7 @@
       "filename": "acq-megre07_rec-aspire_desc-combinedsenscor_T2starw",
       "derivative": "aspire",
       "credit": {
-        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna, according to the local protocol credit list. ASPIRE reconstruction reference is provided for the ASPIRE-labelled acquisition.",
+        "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire"]
       }
     },
@@ -273,8 +241,7 @@
       "datatype": "anat",
       "filename": "acq-mp2rageCSPtx07_inv-1_MP2RAGE",
       "credit": {
-        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "cs-mp2rage"]
+        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     {
@@ -282,8 +249,7 @@
       "datatype": "anat",
       "filename": "acq-mp2rageCSPtx07_inv-2_MP2RAGE",
       "credit": {
-        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "cs-mp2rage"]
+        "acknowledgement": "Compressed-sensing MP2RAGE with pTx: Marcus Couch (Siemens WIP with pTx), Tobias Kober, Tom Hilbert, and Patrick Liebig."
       }
     },
     // 0.5 mm MP2RAGE
@@ -292,8 +258,8 @@
       "datatype": "anat",
       "filename": "acq-mp2rage05_inv-1_MP2RAGE",
       "credit": {
-        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "up-excitation", "universal-pulses", "up-off-resonance", "travelling-pulses"]
+        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
+        "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
     {
@@ -301,8 +267,8 @@
       "datatype": "anat",
       "filename": "acq-mp2rage05_inv-2_MP2RAGE",
       "credit": {
-        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "up-excitation", "universal-pulses", "up-off-resonance", "travelling-pulses"]
+        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
+        "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
     {
@@ -310,8 +276,8 @@
       "datatype": "anat",
       "filename": "acq-mp2rage05_T1map",
       "credit": {
-        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "up-excitation", "universal-pulses", "up-off-resonance", "travelling-pulses"]
+        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
+        "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
     {
@@ -319,8 +285,8 @@
       "datatype": "anat",
       "filename": "acq-mp2rage05_UNIT1",
       "credit": {
-        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant are acknowledged according to the local protocol credit list.",
-        "references": ["mp2rage", "up-excitation", "universal-pulses", "up-off-resonance", "travelling-pulses"]
+        "acknowledgement": "MP2RAGE with universal pulses: C2P from NeuroSpin; Franck Mauconduit and Nicolas Boulant.",
+        "references": ["up-excitation", "up-refocusing", "up-flair", "universal-pulses", "up-off-resonance", "travelling-pulses"]
       }
     },
     // High-resolution MP2RAGE - CSTFL - compressed sensing turbo flash
@@ -355,8 +321,7 @@
       "datatype": "anat",
       "filename": "acq-mtw07_T1w",
       "credit": {
-        "acknowledgement": "MTSat: Risa and David Rudko are acknowledged according to the local protocol credit list.",
-        "references": ["cortical-mtsat"]
+        "acknowledgement": "MTSat: Risa and David Rudko."
       }
     },
     {
@@ -367,8 +332,7 @@
         "MTState": true
       },
       "credit": {
-        "acknowledgement": "MTSat: Risa and David Rudko are acknowledged according to the local protocol credit list.",
-        "references": ["cortical-mtsat"]
+        "acknowledgement": "MTSat: Risa and David Rudko."
       }
     },
     {
@@ -379,8 +343,7 @@
         "MTState": false
       },
       "credit": {
-        "acknowledgement": "MTSat: Risa and David Rudko are acknowledged according to the local protocol credit list.",
-        "references": ["cortical-mtsat"]
+        "acknowledgement": "MTSat: Risa and David Rudko."
       }
     },
     {
@@ -394,8 +357,7 @@
       "datatype": "anat",
       "filename": "acq-neuromelaninMTw_T1w",
       "credit": {
-        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif are acknowledged according to the local protocol credit list.",
-        "references": ["neuromelanin-background"]
+        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif."
       }
     },
     {
@@ -403,46 +365,29 @@
       "datatype": "anat",
       "filename": "acq-neuromelaninMTw_T1w",
       "credit": {
-        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif are acknowledged according to the local protocol credit list.",
-        "references": ["neuromelanin-background"]
+        "acknowledgement": "Neuromelanin MTboost: Ilana Leppert and Christine Tardif."
       }
     },
     // Angiography
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane",
       "datatype": "anat",
-      "filename": "acq-tof03_angio",
-      "credit": {
-        "acknowledgement": "TOF angiography: Siemens product sequence, according to the local protocol credit list.",
-        "references": []
-      }
+      "filename": "acq-tof03_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_COR",
       "datatype": "anat",
-      "filename": "acq-tof03_rec-MIPcor_angio",
-      "credit": {
-        "acknowledgement": "TOF angiography: Siemens product sequence, according to the local protocol credit list.",
-        "references": []
-      }
+      "filename": "acq-tof03_rec-MIPcor_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_SAG",
       "datatype": "anat",
-      "filename": "acq-tof03_rec-MIPsag_angio",
-      "credit": {
-        "acknowledgement": "TOF angiography: Siemens product sequence, according to the local protocol credit list.",
-        "references": []
-      }
+      "filename": "acq-tof03_rec-MIPsag_angio"
     },
     {
       "series": ".*anat-angio_acq-tof_03mm_inplane_MIP_TRA",
       "datatype": "anat",
-      "filename": "acq-tof03_rec-MIPtra_angio",
-      "credit": {
-        "acknowledgement": "TOF angiography: Siemens product sequence, according to the local protocol credit list.",
-        "references": []
-      }
+      "filename": "acq-tof03_rec-MIPtra_angio"
     },
     // Diffusion-weighted images
     // B0
@@ -487,8 +432,7 @@
       "datatype": "dwi",
       "filename": "acq-multib38_dir-AP_sbref",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -496,8 +440,7 @@
       "datatype": "dwi",
       "filename": "acq-multib38Test_dir-AP_sbref",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -505,8 +448,7 @@
       "datatype": "dwi",
       "filename": "acq-multib381p5_dir-AP_sbref",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -514,8 +456,7 @@
       "datatype": "dwi",
       "filename": "acq-multib70_dir-AP_sbref",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -528,8 +469,7 @@
       "datatype": "dwi",
       "filename": "acq-multib701p5_dir-AP_sbref",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -553,8 +493,7 @@
       "datatype": "dwi",
       "filename": "acq-multib38_dir-AP_dwi",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -562,8 +501,7 @@
       "datatype": "dwi",
       "filename": "acq-multib381p5_dir-AP_dwi",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -571,8 +509,7 @@
       "datatype": "dwi",
       "filename": "acq-multib38Test_dir-AP_dwi",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -580,8 +517,7 @@
       "datatype": "dwi",
       "filename": "acq-multib70_dir-AP_dwi",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -589,8 +525,7 @@
       "datatype": "dwi",
       "filename": "acq-multib701p5_dir-AP_dwi",
       "credit": {
-        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P sequence provided by CMRR, University of Minnesota; Edward Auerbach is acknowledged according to the local protocol credit list.",
-        "references": ["sms-diffusion", "time-shifted-multiband"]
+        "acknowledgement": "Diffusion multib_38dir/70dir_AP_acc9: C2P from CMRR, Edward Auerbach."
       }
     },
     {
@@ -618,11 +553,7 @@
     {
       "series": "fmap-b1_tra_p2",
       "datatype": "fmap",
-      "filename": "acq-anat_TB1TFL",
-      "credit": {
-        "acknowledgement": "B1 mapping fmap-b1_tra_p2: no contributor was specified in the local protocol credit list.",
-        "references": ["b1-turboflash"]
-      }
+      "filename": "acq-anat_TB1TFL"
     },
     {
       "series": "fmap-b1_acq-sag_p2",
@@ -662,8 +593,7 @@
       "datatype": "func",
       "filename": "task-cloudy_bold",
       "credit": {
-        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch is acknowledged for the sequence, according to the local protocol credit list.",
-        "references": []
+        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch."
       }
     },
     {
@@ -671,8 +601,7 @@
       "datatype": "func",
       "filename": "task-present_bold",
       "credit": {
-        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch is acknowledged for the sequence, according to the local protocol credit list.",
-        "references": []
+        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch."
       }
     },
     {
@@ -690,8 +619,7 @@
       "datatype": "func",
       "filename": "task-rest_bold",
       "credit": {
-        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch is acknowledged for the sequence, according to the local protocol credit list.",
-        "references": []
+        "acknowledgement": "fMRI ep2d_MJC_19mm: Marcus Couch."
       }
     },
     {

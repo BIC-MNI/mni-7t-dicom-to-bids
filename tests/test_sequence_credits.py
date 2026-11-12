@@ -21,7 +21,6 @@ def test_protocol_credits_and_unrelated_variants():
     dictionary = load_dicom_dictionary()
     descriptions = [
         "func-cloudy_acq-ep2d_MJC_19mm",
-        "fmap-b1_tra_p2",
         "anat-T1w_acq-mp2rage_0.7mm_CSptx_INV1",
         "anat-T1w_acq_mprage_0.8mm_CSptx",
         "dwi_acq_multib_38dir_AP_acc9",
@@ -32,14 +31,35 @@ def test_protocol_credits_and_unrelated_variants():
         "anat-mtw_acq-MTON_07mm",
         "anat-mtw_acq-MTOFF_07mm",
         "anat-nm_acq-MTboost_sag_0.55mm",
-        "anat-angio_acq-tof_03mm_inplane",
     ]
     plan = create_conversion_plan([DicomSeriesInfo(name, i, []) for i, name in enumerate(descriptions)], dictionary)
     assert not plan.unknown_series
     assert len(descriptions) == sum(len(a.series) for a in plan.acquisitions)
     assert all(s.credit for a in plan.acquisitions for s in a.series)
-    unrelated = create_conversion_plan([DicomSeriesInfo("dwi_acq_multib_108dir_AP_acc9", 1, [])], dictionary)
-    assert unrelated.acquisitions[0].series[0].credit is None
+    uncredited = ["dwi_acq_multib_108dir_AP_acc9", "fmap-b1_tra_p2", "anat-angio_acq-tof_03mm_inplane"]
+    unrelated = create_conversion_plan([DicomSeriesInfo(name, i, []) for i, name in enumerate(uncredited)], dictionary)
+    assert not unrelated.unknown_series
+    assert all(s.credit is None for a in unrelated.acquisitions for s in a.series)
+    neurospin_urls = {
+        "https://doi.org/10.1371/journal.pone.0183562",
+        "https://doi.org/10.1002/mrm.27001",
+        "https://doi.org/10.1002/mrm.27645",
+        "https://doi.org/10.1002/mrm.26148",
+        "https://doi.org/10.1002/mrm.28441",
+        "https://archive.ismrm.org/2018/1133.html",
+    }
+    for mapping in dictionary.mappings:
+        if mapping.credit:
+            expected = neurospin_urls if "NeuroSpin" in mapping.credit.acknowledgement else set()
+            if "ASPIRE" in mapping.series:
+                expected = {"https://doi.org/10.1002/mrm.26963"}
+                if "CLEAR-SWI" in mapping.series:
+                    expected.add("https://doi.org/10.1016/j.neuroimage.2021.118175")
+                elif "Romeo_" in mapping.series:
+                    expected.add("https://doi.org/10.1002/mrm.28563")
+                elif "T2star_anat" in mapping.series:
+                    expected.add("https://doi.org/10.1002/mrm.10283")
+            assert {ref.url for ref in mapping.credit.references} == expected
 
 
 def test_merge_preserves_metadata_and_readme_and_is_idempotent(tmp_path: Path):
@@ -131,7 +151,7 @@ def test_sidecar_credit_and_successful_scan_propagation(tmp_path: Path, monkeypa
     source = root / "input.dcm"
     source.write_bytes(b"fixture")
     plan = create_conversion_plan(
-        [DicomSeriesInfo("anat-angio_acq-tof_03mm_inplane", 1, [source])], load_dicom_dictionary()
+        [DicomSeriesInfo("CLEAR-SWI_anat-T2star_acq-me_gre_0.7iso_ASPIRE", 1, [source])], load_dicom_dictionary()
     )
     planned = plan.acquisitions[0].series[0]
     planned.sidecar["Description"] = "Configured description."
@@ -149,7 +169,7 @@ def test_sidecar_credit_and_successful_scan_propagation(tmp_path: Path, monkeypa
     metadata = json.loads(sidecar.read_text())
     assert metadata["Manufacturer"] == "Siemens"
     assert metadata["Description"].startswith("Configured description.")
-    assert "Siemens product sequence" in metadata["Description"]
+    assert "Simon Robinson" in metadata["Description"]
 
     def failed_niix(*args, **kwargs):
         raise RuntimeError("Simulated failed conversion")
@@ -180,17 +200,20 @@ def test_pipeline_routes_derivative_credits_and_honors_no_dataset_files(
     mni_7t_dicom_to_bids(args)
     raw = json.loads((root / "dataset_description.json").read_text())
     derivative = json.loads((root / "derivatives/aspire/dataset_description.json").read_text())
-    assert "Siemens product sequence" in raw["Acknowledgements"]
+    assert "Siemens product sequence" not in raw["Acknowledgements"]
     assert "Simon Robinson" in raw["Acknowledgements"]
     assert "Simon Robinson" in derivative["Acknowledgements"]
-    assert any("10.1002/mrm.26963" in ref for ref in derivative["ReferencesAndLinks"])
+    # The derivative template retains its own processing provenance reference.
+    assert derivative["ReferencesAndLinks"] == ["https://doi.org/10.1002/mrm.26963"]
+    assert len(raw["ReferencesAndLinks"]) == 2
+    assert sum("10.1002/mrm.26963" in ref for ref in raw["ReferencesAndLinks"]) == 1
     sidecar = next((root / "derivatives/aspire").rglob("*T2starw.json"))
-    assert "10.1002/mrm.26963" in json.loads(sidecar.read_text())["Description"]
+    assert "Simon Robinson" in json.loads(sidecar.read_text())["Description"]
     clear_sidecar = next(root.rglob("*rec-CLEARSWI_swi.json"))
     clear_description = json.loads(clear_sidecar.read_text())["Description"]
+    assert "Simon Robinson" in clear_description
+    assert "Eckstein" in clear_description
     assert clear_description.count("10.1016/j.neuroimage.2021.118175") == 1
-    assert "Eckstein K, Bachrata B" in clear_description
-    assert "Susceptibility-weighted image reconstructed using CLEAR-SWI" in clear_description
-    assert sum("10.1016/j.neuroimage.2021.118175" in ref for ref in raw["ReferencesAndLinks"]) == 1
+    assert "10.1002/mrm.26963" in clear_description
     assert "Siemens product sequence" not in derivative["Acknowledgements"]
     assert not list(root.rglob("README*"))
