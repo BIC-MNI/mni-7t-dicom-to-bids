@@ -171,6 +171,7 @@
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_desc-B0_t2starw",
       "derivative": "romeo",
+      "sidecar": { "Units": "Hz" },
       "credit": {
         "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "romeo"]
