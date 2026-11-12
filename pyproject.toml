@@ -13,6 +13,7 @@ dependencies = [
     "bic_util @ git+https://github.com/bic-mni/bic-mri-pipeline-util",
     "dcm2niix==1.0.20260416",
     "json5",
+    "pydantic>=2,<3",
     "pydicom",
 ]
 
