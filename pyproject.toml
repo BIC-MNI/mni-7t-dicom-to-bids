@@ -27,6 +27,15 @@ validator = [
     "bids-validator-deno==2.4.1",
 ]
 
+[dependency-groups]
+test = [
+    "pytest>=9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--import-mode=importlib", "--strict-config", "--strict-markers"]
+
 [project.scripts]
 mni7t_dcm2bids = "mni_7t_dicom_to_bids.scripts.run_mni7t_dcm2bids:main"
 

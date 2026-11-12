@@ -1,16 +1,17 @@
-name: Install MNI 7T BIDS converter
-description: Install the MNI 7T BIDS converter and all its dependencies.
+name: Install project
+description: Set up uv and Python, then install the locked project and development dependencies.
 
 runs:
   using: composite
 
   steps:
-    - name: Set up Python
-      uses: actions/setup-python@v7
+    - name: Set up uv and Python
+      uses: astral-sh/setup-uv@v10.3.3
       with:
-        python-version: 3.11
-        cache: pip
+        version: "0.8.22"
+        python-version: "3.11"
+        enable-cache: true
 
-    - name: Install MNI 7T BIDS converter
+    - name: Install project and development dependencies
       shell: bash
-      run: pip install .[dev]
+      run: uv sync --locked --extra dev --group test

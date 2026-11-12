@@ -2,56 +2,81 @@ name: Checks
 
 on:
   push:
-    branches:
-      - main
-      - 'release-*'
+    branches: [main, 'release-*']
   pull_request:
-    branches:
-      - main
-      - 'release-*'
+    branches: [main, 'release-*']
+
+permissions:
+  contents: read
 
 jobs:
-  typos:
-    name: Typos
-    runs-on: ubuntu-latest
+  tests:
+    name: Unit tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
-    - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v7
+      - name: Check out MNI 7T BIDS converter
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
 
-    - name: Install MNI 7T BIDS converter
-      uses: ./.github/actions/install-project
+      - name: Install project
+        uses: ./.github/actions/install-project
 
-    - name: Run Typos
-      run: typos
+      - name: Run Unit tests
+        run: uv run --locked --extra dev --group test pytest
 
   ruff:
     name: Lints
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
-    - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v7
+      - name: Check out MNI 7T BIDS converter
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
 
-    - name: Install MNI 7T BIDS converter
-      uses: ./.github/actions/install-project
+      - name: Install project
+        uses: ./.github/actions/install-project
 
-    - name: Run Ruff
-      run: ruff check --output-format=github
+      - name: Run Lints
+        run: uv run --locked --extra dev --group test ruff check --output-format=github
 
   pyright:
     name: Type checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
 
     steps:
-    - name: Check out MNI 7T BIDS converter
-      uses: actions/checkout@v7
+      - name: Check out MNI 7T BIDS converter
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
 
-    - name: Install MNI 7T BIDS converter
-      uses: ./.github/actions/install-project
+      - name: Install project
+        uses: ./.github/actions/install-project
 
-    - name: Run Pyright
-      run: pyright
+      - name: Run Type checks
+        run: uv run --locked --extra dev --group test pyright
+
+  typos:
+    name: Typos
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out MNI 7T BIDS converter
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Install project
+        uses: ./.github/actions/install-project
+
+      - name: Run Typos
+        run: uv run --locked --extra dev --group test typos
 
   containers:
     name: Containers
@@ -60,6 +85,9 @@ jobs:
     steps:
     - name: Check out MNI 7T BIDS converter
       uses: actions/checkout@v7
+
+    - name: Install project
+      uses: ./.github/actions/install-project
 
     - name: Build Docker image
       run: docker build --tag mni7t-dcm2bids:test .

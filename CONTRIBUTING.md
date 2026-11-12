@@ -8,28 +8,19 @@ The GitHub repository of the project can be found at https://github.com/bic-mni/
 
 ## Python installation
 
-To install the converter as an editable Python package, start by installing the BIC utilities Python package.
-
-```sh
-pip install git+https://github.com/bic-mni/bic-mri-pipeline-util
-```
-
-Then, clone the MNI 7T DICOM to BIDS converter Git repository to your machine:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then clone the converter repository:
 
 ```sh
 git clone https://github.com/bic-mni/mni-7t-dicom-to-bids
+cd mni-7t-dicom-to-bids
 ```
 
-Then, install the MNI 7T DICOM to BIDS converter Python package in development mode:
+Install the converter and its development and test dependencies using the committed lockfile:
 
 ```sh
-pip install -e mni-7t-dicom-to-bids[dev]
+uv sync --locked --extra dev --group test
 ```
 
-In this command:
-- `mni-7t-dicom-to-bids` is the path of the repository you just cloned (if you moved into the project directory, then that path would be `.`).
-- `-e` (or `--editable` in its long form) keeps the package modifiable instead of simply copying the current code.
-- `[dev]` also installs the development tools.
 
 ## Docker build
 
@@ -66,6 +57,14 @@ A type checker is a tool that ensures the soundness of the way data flows in the
 To check the types in the code, use the following command in the project root directory:
 ```sh
 pyright
+```
+
+### Pytest
+
+Run the existing unit tests with the following command:
+
+```sh
+pytest
 ```
 
 ## Getting help
