@@ -3,6 +3,7 @@ from importlib.metadata import version
 from pathlib import Path
 
 from bic_util.bids.dataset_description import (
+    DatasetDescriptionError,
     get_generated_by,
     read_dataset_description,
     upsert_generated_by_entry,
@@ -12,7 +13,28 @@ from bic_util.bids.dataset_description import (
 from mni_7t_dicom_to_bids.dataclass import BidsDatasetInfo
 
 
-def patch_dataset_description(bids_dataset_path: Path):
+def read_or_create_dataset_description(
+    bids_dataset_path: Path,
+    bids_version: str,
+    template: dict[str, object] | None = None,
+) -> dict[str, object]:
+    """Select the existing description or template and check its declared BIDS version."""
+
+    path = bids_dataset_path / 'dataset_description.json'
+    if path.exists():
+        description = read_dataset_description(path)
+    else:
+        description = deepcopy(template) if template is not None else {}
+    if 'BIDSVersion' in description and description['BIDSVersion'] != bids_version:
+        raise DatasetDescriptionError(
+            f"Description for '{path}' declares BIDSVersion {description['BIDSVersion']!r}, "
+            f"but the dictionary targets {bids_version!r}."
+        )
+    description.setdefault('BIDSVersion', bids_version)
+    return description
+
+
+def patch_dataset_description(bids_dataset_path: Path, bids_version: str):
     """
     Create or patch `dataset_description.json` with the BIDS version and conversion provenance.
 
@@ -21,24 +43,26 @@ def patch_dataset_description(bids_dataset_path: Path):
     """
 
     dataset_description_path = bids_dataset_path / 'dataset_description.json'
-    dataset_description: dict[str, object]
     if dataset_description_path.exists():
         print("Patching 'dataset_description.json'...")
-        dataset_description = read_dataset_description(dataset_description_path)
     else:
         print("File 'dataset_description.json' does not exist in the BIDS directory. Creating...")
-        dataset_description = {
+
+    dataset_description = read_or_create_dataset_description(
+        bids_dataset_path,
+        bids_version,
+        {
             'Name': 'MNI 7T BIDS dataset',
-            'BIDSVersion': '1.11.1',
             'DatasetType': 'raw',
-        }
+        },
+    )
 
     dataset_description['GeneratedBy'] = _patch_generated_by(dataset_description.get('GeneratedBy'))
 
     write_dataset_description(dataset_description_path, dataset_description)
 
 
-def patch_derivative_dataset_description(bids_dataset_path: Path, dataset: BidsDatasetInfo):
+def patch_derivative_dataset_description(bids_dataset_path: Path, dataset: BidsDatasetInfo, bids_version: str):
     """Create or patch the description of a named derivative dataset."""
 
     if not dataset.is_derivative or dataset.dataset_description is None:
@@ -50,11 +74,10 @@ def patch_derivative_dataset_description(bids_dataset_path: Path, dataset: BidsD
 
     if dataset_description_path.exists():
         print(f"Patching 'derivatives/{dataset.name}/dataset_description.json'...")
-        dataset_description = read_dataset_description(dataset_description_path)
     else:
         print(f"Creating 'derivatives/{dataset.name}/dataset_description.json'...")
-        dataset_description = deepcopy(dataset.dataset_description)
 
+    dataset_description = read_or_create_dataset_description(derivative_path, bids_version, dataset.dataset_description)
     dataset_description['GeneratedBy'] = _patch_derivative_generated_by(
         dataset_description.get('GeneratedBy'),
         dataset.dataset_description['GeneratedBy'],

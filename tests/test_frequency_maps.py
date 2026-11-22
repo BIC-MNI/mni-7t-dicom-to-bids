@@ -60,11 +60,14 @@ def test_pipeline_corrects_final_units_before_pairing_and_retains_scan_metadata(
     }
     if units_from_override:
         frequency_mapping['sidecar'] = {'Units': 'Hz'}
-    dictionary.write_text(json.dumps({'ignored-series': [], 'trim-series-suffixes': [], 'mappings': [
-        {'series': 'magnitude', 'datatype': 'anat', 'filename': 'desc-frequency_T2starw'},
-        frequency_mapping,
-        {'series': 'phase', 'datatype': 'anat', 'filename': 'desc-unwrapped_T2starw'},
-    ]}))
+    dictionary.write_text(json.dumps({
+        'bids-version': '1.11.1', 'ignored-series': [], 'trim-series-suffixes': [],
+        'mappings': [
+            {'series': 'magnitude', 'datatype': 'anat', 'filename': 'desc-frequency_T2starw'},
+            frequency_mapping,
+            {'series': 'phase', 'datatype': 'anat', 'filename': 'desc-unwrapped_T2starw'},
+        ],
+    }))
     sources = [DicomSeriesInfo(name, i, []) for i, name in enumerate(['magnitude', 'frequency', 'phase'])]
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix', lambda: None)
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', lambda *args: sources)

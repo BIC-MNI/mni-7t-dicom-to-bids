@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from mni_7t_dicom_to_bids.dictionary import DicomDictionaryError, load_dicom_dictionary
 
 
@@ -18,6 +19,7 @@ def dictionary_value(tmp_path: Path):
         )
     )
     return {
+        "bids-version": "1.11.1",
         "ignored-series": [],
         "trim-series-suffixes": [],
         "references": {"paper": {"text": "Example paper.", "url": "https://example.org/paper"}},
@@ -128,7 +130,7 @@ def test_conflicting_named_and_inline_derivatives_are_rejected(tmp_path: Path, d
 def test_duplicate_definition_keys_are_rejected(tmp_path: Path):
     path = tmp_path / "dictionary.json5"
     path.write_text("""{
-      "ignored-series": [], "trim-series-suffixes": [], "mappings": [],
+      "bids-version": "1.11.1", "ignored-series": [], "trim-series-suffixes": [], "mappings": [],
       "references": {
         "paper": {"text": "First", "url": "https://example.org/first"},
         "paper": {"text": "Second", "url": "https://example.org/second"}
@@ -136,3 +138,26 @@ def test_duplicate_definition_keys_are_rejected(tmp_path: Path):
     }""")
     with pytest.raises(DicomDictionaryError):
         load_dicom_dictionary(path)
+
+
+@pytest.mark.parametrize('value', [None, '', '1.11', '1.11.1\n', 1.11])
+def test_invalid_bids_version_is_rejected(dictionary_value, load_dictionary, value):
+    dictionary_value['bids-version'] = value
+    with pytest.raises(DicomDictionaryError, match='bids-version'):
+        load_dictionary(dictionary_value)
+
+
+def test_bids_version_is_required(dictionary_value, load_dictionary):
+    dictionary_value.pop('bids-version')
+    with pytest.raises(DicomDictionaryError, match='bids-version'):
+        load_dictionary(dictionary_value)
+
+
+def test_derivative_template_version_may_differ_from_dictionary(tmp_path: Path, dictionary_value, load_dictionary):
+    path = tmp_path / 'templates/example.json'
+    template = json.loads(path.read_text())
+    template['BIDSVersion'] = '1.10.0'
+    path.write_text(json.dumps(template))
+    dictionary = load_dictionary(dictionary_value)
+    assert dictionary.bids_version == '1.11.1'
+    assert dictionary.mappings[0].dataset.dataset_description['BIDSVersion'] == '1.10.0'

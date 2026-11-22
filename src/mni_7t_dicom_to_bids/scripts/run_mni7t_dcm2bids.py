@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 
+from bic_util.bids.dataset_description import DatasetDescriptionError
 from bic_util.fs import require_empty_directory, require_output_directory, require_readable_directory
 from bic_util.print import print_error_exit
 
@@ -86,7 +87,7 @@ def main():
 
     try:
         mni_7t_dicom_to_bids(args)
-    except DicomDictionaryError as error:
+    except (DicomDictionaryError, DatasetDescriptionError) as error:
         print_error_exit(str(error))
 
     print('Success !')

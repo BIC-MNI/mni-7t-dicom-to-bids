@@ -109,7 +109,7 @@ def test_merge_preserves_metadata_and_readme_and_is_idempotent(tmp_path: Path):
 def test_invalid_credit_rejected_and_omitted_credit_supported(tmp_path: Path, credit):
     path = tmp_path / "dictionary.json"
     mapping = {"series": "example", "datatype": "anat", "filename": "T1w"}
-    value = {"ignored-series": [], "trim-series-suffixes": [], "mappings": [mapping]}
+    value = {"bids-version": "1.11.1", "ignored-series": [], "trim-series-suffixes": [], "mappings": [mapping]}
     path.write_text(json.dumps(value))
     assert load_dicom_dictionary(path).mappings[0].credit is None
     mapping["credit"] = credit
@@ -122,6 +122,7 @@ def test_structured_references_deduplicate_by_url(tmp_path: Path):
     root = tmp_path
     url = "https://doi.org/10.1002/mrm.26963"
     value = {
+        "bids-version": "1.11.1",
         "ignored-series": [],
         "trim-series-suffixes": [],
         "mappings": [

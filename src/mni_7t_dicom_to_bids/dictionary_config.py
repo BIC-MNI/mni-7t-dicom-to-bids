@@ -42,6 +42,7 @@ class MappingConfig(DictionaryConfigModel):
 
 
 class DictionaryConfig(DictionaryConfigModel):
+    bids_version: Annotated[str, Field(pattern=r'^\d+\.\d+\.\d+\Z')] = Field(alias='bids-version')
     ignored_series: list[NonEmptyString] = Field(alias='ignored-series')
     trim_series_suffixes: list[NonEmptyString] = Field(alias='trim-series-suffixes')
     mappings: list[MappingConfig]

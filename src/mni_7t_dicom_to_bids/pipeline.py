@@ -16,6 +16,7 @@ from mni_7t_dicom_to_bids.metadata.credits import patch_dataset_credits
 from mni_7t_dicom_to_bids.metadata.dataset_description import (
     patch_dataset_description,
     patch_derivative_dataset_description,
+    read_or_create_dataset_description,
 )
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import update_scans_tsv
@@ -42,6 +43,16 @@ def mni_7t_dicom_to_bids(args: Args):
     print_found_dicom_series(dicom_series_list)
 
     conversion_plan = create_conversion_plan(dicom_series_list, dictionary)
+
+    read_or_create_dataset_description(args.bids_dataset_path, dictionary.bids_version)
+
+    for dataset in {acquisition.bids.dataset for acquisition in conversion_plan.acquisitions}:
+        if dataset.is_derivative:
+            read_or_create_dataset_description(
+                get_bids_dataset_path(args.bids_dataset_path, dataset),
+                dictionary.bids_version,
+                dataset.dataset_description,
+            )
 
     print_found_mapped_bids_acquisitions(conversion_plan)
 
@@ -80,12 +91,12 @@ def mni_7t_dicom_to_bids(args: Args):
 
     dataset_description_path = args.bids_dataset_path / 'dataset_description.json'
     if conversion_result.scans or dataset_description_path.exists():
-        patch_dataset_description(args.bids_dataset_path)
+        patch_dataset_description(args.bids_dataset_path, dictionary.bids_version)
         patch_dataset_credits(args.bids_dataset_path, conversion_result.scans)
 
     for dataset in scans_by_dataset:
         if dataset.is_derivative:
-            patch_derivative_dataset_description(args.bids_dataset_path, dataset)
+            patch_derivative_dataset_description(args.bids_dataset_path, dataset, dictionary.bids_version)
             patch_dataset_credits(
                 get_bids_dataset_path(args.bids_dataset_path, dataset),
                 scans_by_dataset[dataset],

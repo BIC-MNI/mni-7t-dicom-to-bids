@@ -98,6 +98,7 @@ A dictionary is a JSON or JSON5 file that has the following structure:
 
 ```json5
 {
+  "bids-version": "1.11.1",
   "ignored-series": ["AAHead_Scout.*"],
   "trim-series-suffixes": ["_Pha", "_Motion"],
   "references": {
@@ -132,6 +133,7 @@ A dictionary is a JSON or JSON5 file that has the following structure:
 ```
 
 Details:
+- The `bids-version` string declares the target BIDS specification version (`major.minor.patch`).
 - Both JSON and JSON5 files are supported, the latter notably supporting comments.
 - Ignored series and mapping patterns use Python regular expressions with complete-string matching.
 - Trimmed suffixes are literal strings removed from the series description before matching.

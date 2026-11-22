@@ -39,6 +39,7 @@ class SeriesMapping:
 
 @dataclass(frozen=True)
 class DicomDictionary:
+    bids_version: str
     ignored_series: list[Pattern[str]]
     trim_series_suffixes: list[str]
     mappings: list[SeriesMapping]
@@ -132,7 +133,7 @@ def _parse_dicom_dictionary(
             credit=_resolve_credit(mapping.credit, f'{location}.credit', references),
         ))
 
-    return DicomDictionary(ignored_patterns, config.trim_series_suffixes, mappings)
+    return DicomDictionary(config.bids_version, ignored_patterns, config.trim_series_suffixes, mappings)
 
 
 def _resolve_credit(
