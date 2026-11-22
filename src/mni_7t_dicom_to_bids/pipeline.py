@@ -1,3 +1,6 @@
+from dataclasses import replace
+from pathlib import Path
+
 from mni_7t_dicom_to_bids.args import Args
 from mni_7t_dicom_to_bids.convert_dicom_series import (
     check_dicom_to_niix,
@@ -17,6 +20,7 @@ from mni_7t_dicom_to_bids.metadata.dataset_description import (
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import update_scans_tsv
 from mni_7t_dicom_to_bids.metadata.sessions import update_sessions_tsv
+from mni_7t_dicom_to_bids.patch_files import patch_frequency_maps, patch_magnitude_counterparts
 from mni_7t_dicom_to_bids.print import (
     print_found_dicom_series,
     print_found_ignored_dicom_series,
@@ -52,6 +56,15 @@ def mni_7t_dicom_to_bids(args: Args):
 
     conversion_result = convert_dicom_series(bids_session, conversion_plan, args)
 
+    renamed_images: dict[Path, Path] = {}
+    for patch in (patch_frequency_maps, patch_magnitude_counterparts):
+        renames = patch(conversion_result.scans, overwrite=args.overwrite)
+        renamed_images.update(renames)
+        conversion_result.scans = [
+            replace(scan, image_path=renames.get(scan.image_path, scan.image_path))
+            for scan in conversion_result.scans
+        ]
+
     scans_by_dataset: dict[BidsDatasetInfo, list[ConvertedScan]] = {}
     for scan in conversion_result.scans:
         scans_by_dataset.setdefault(scan.dataset, []).append(scan)
@@ -60,7 +73,7 @@ def mni_7t_dicom_to_bids(args: Args):
         dataset_path = get_bids_dataset_path(args.bids_dataset_path, dataset)
         update_participants_tsv(dataset_path, args.subject)
         update_sessions_tsv(dataset_path, bids_session)
-        update_scans_tsv(dataset_path, bids_session, scans)
+        update_scans_tsv(dataset_path, bids_session, scans, renamed_images)
 
     if args.dataset_files:
         add_dataset_files(args.bids_dataset_path, bids_session, args.dicom_study_path, args.overwrite)

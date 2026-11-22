@@ -51,7 +51,9 @@ def patch_sidecar_metadata(
             metadata['EchoTime'] = merged_echo_times
 
         if bids_name.has_value('part', 'phase'):
-            metadata['Units'] = 'rad'
+            with json_path.open() as file:
+                existing: dict[str, object] = json.load(file)
+            metadata['Units'] = existing.get('Units', 'rad')
 
         if bids_name.has_value('acq', 'neuromelaninMTw'):
             mt_flip_angle = get_mt_flip_angle(dicom_series)

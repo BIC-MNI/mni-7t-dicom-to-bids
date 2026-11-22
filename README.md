@@ -58,6 +58,20 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 
 ## Scan metadata
 
+Before magnitude/phase pairing, images whose final JSON sidecar has `Units: Hz` lose any `part-phase`
+label. This applies whether the units came from dcm2niix or a dictionary override.
+
+After conversion, magnitude images with matching `part-phase` images receive `part-mag` in their
+filenames. Components are paired by directory, filename entities other than `part`/`run`, and the JSON
+sidecar's `AcquisitionTime`. The phase image takes the magnitude image's run label; repeated acquisitions
+retain separate magnitude run labels. When acquisition time is missing, run labels must also match.
+Ambiguous pairs raise an error.
+
+Magnitude is identified by `M` in `ImageType`. Siemens DWI sidecars can omit `M`/`P`; an unlabelled `dwi`
+image with `DIFFUSION` in `ImageType` is also accepted when it has a matching `part-phase` counterpart.
+Magnitude-only images keep their filenames. Renames include sidecars and gradient files and are
+reflected in `scans.tsv`, retaining existing custom metadata.
+
 The session `scans.tsv` includes a `scanner` column for successfully converted scans,
 including derivative outputs. The scanner is identified during post-processing from each scan's JSON sidecar:
 

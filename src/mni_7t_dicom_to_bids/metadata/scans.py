@@ -32,7 +32,12 @@ def get_scanner(json_path: Path) -> str:
             return 'n/a'
 
 
-def update_scans_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo, converted_scans: list[ConvertedScan]):
+def update_scans_tsv(
+    bids_dataset_path: Path,
+    bids_session: BidsSessionInfo,
+    converted_scans: list[ConvertedScan],
+    renamed_images: dict[Path, Path] | None = None,
+):
     """
     Create or update the session-level scans TSV with successfully converted images.
     """
@@ -46,6 +51,18 @@ def update_scans_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo, con
         return
 
     scans = BidsScansTsvFile.read_or_create(file_path)
+
+    # Perform renamings if any.
+    if renamed_images is not None:
+        for source, target in renamed_images.items():
+            if not source.is_relative_to(session_path):
+                continue
+
+            row = scans.get_row(source.relative_to(session_path).as_posix())
+            if row is not None:
+                row.set_file_name(target.name)
+
+    # Add Terra / Terra.X scanner metadata.
     for scan in converted_scans:
         filename = scan.image_path.relative_to(session_path).as_posix()
         print(f"Updating scans.tsv metadata for '{filename}'...")
