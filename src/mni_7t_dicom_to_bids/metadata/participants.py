@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from bic_util.tsv import upsert_tsv_row
+from bic_util.bids.participants import BidsParticipantsTsvFile, BidsParticipantTsvRow
 
 
 def update_participants_tsv(bids_dataset_path: Path, subject: str):
@@ -13,4 +13,6 @@ def update_participants_tsv(bids_dataset_path: Path, subject: str):
 
     participant_id = f'sub-{subject}'
     print(f"Updating participants.tsv metadata for '{participant_id}'...")
-    upsert_tsv_row(bids_dataset_path / 'participants.tsv', 'participant_id', {'participant_id': participant_id})
+    participants = BidsParticipantsTsvFile.read_or_create(bids_dataset_path / 'participants.tsv')
+    participants.upsert_row(BidsParticipantTsvRow({'participant_id': participant_id}))
+    participants.write()

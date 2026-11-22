@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from bic_util.tsv import upsert_tsv_row
+from bic_util.bids.scans import BidsScansTsvFile, BidsScanTsvRow
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
 
 
-def update_scans_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo, scans: list[ConvertedScan]):
+def update_scans_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo, converted_scans: list[ConvertedScan]):
     """
     Create or update the session-level scans TSV with successfully converted images.
     """
@@ -15,7 +15,12 @@ def update_scans_tsv(bids_dataset_path: Path, bids_session: BidsSessionInfo, sca
     session_path = bids_dataset_path / participant_id / session_id
     file_path = session_path / f'{participant_id}_{session_id}_scans.tsv'
 
-    for scan in scans:
+    if not converted_scans:
+        return
+
+    scans = BidsScansTsvFile.read_or_create(file_path)
+    for scan in converted_scans:
         filename = scan.image_path.relative_to(session_path).as_posix()
         print(f"Updating scans.tsv metadata for '{filename}'...")
-        upsert_tsv_row(file_path, 'filename', {'filename': filename})
+        scans.upsert_row(BidsScanTsvRow({'filename': filename}))
+    scans.write()
