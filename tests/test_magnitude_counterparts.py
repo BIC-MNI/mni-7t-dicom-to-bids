@@ -63,11 +63,11 @@ def test_different_entities_or_directories_do_not_pair(tmp_path: Path, other_nam
 
 
 @pytest.mark.parametrize('image_type', [[], ['P'], ['DERIVED', 'PRIMARY']])
-def test_unlabelled_image_must_be_identified_as_magnitude(tmp_path: Path, image_type: list[str]):
-    unlabelled = write_scan(tmp_path, 'sub-01_T1w.nii.gz', image_type)
+def test_unlabeled_image_must_be_identified_as_magnitude(tmp_path: Path, image_type: list[str]):
+    unlabeled = write_scan(tmp_path, 'sub-01_T1w.nii.gz', image_type)
     phase = write_scan(tmp_path, 'sub-01_part-phase_T1w.nii.gz', ['P'])
-    assert patch_magnitude_counterparts([unlabelled, phase]) == {}
-    assert unlabelled.image_path.exists()
+    assert patch_magnitude_counterparts([unlabeled, phase]) == {}
+    assert unlabeled.image_path.exists()
 
 
 def test_magnitude_only_and_explicit_pairs_are_unchanged(tmp_path: Path):

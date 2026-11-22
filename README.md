@@ -67,7 +67,7 @@ sidecar's `AcquisitionTime`. The phase image takes the magnitude image's run lab
 retain separate magnitude run labels. When acquisition time is missing, run labels must also match.
 Ambiguous pairs raise an error.
 
-Magnitude is identified by `M` in `ImageType`. Siemens DWI sidecars can omit `M`/`P`; an unlabelled `dwi`
+Magnitude is identified by `M` in `ImageType`. Siemens DWI sidecars can omit `M`/`P`; an unlabeled `dwi`
 image with `DIFFUSION` in `ImageType` is also accepted when it has a matching `part-phase` counterpart.
 Magnitude-only images keep their filenames. Renames include sidecars and gradient files and are
 reflected in `scans.tsv`, retaining existing custom metadata.

@@ -93,7 +93,7 @@ wheels = [
 [[package]]
 name = "bic-util"
 version = "0.1.0"
-source = { git = "https://github.com/bic-mni/bic-mri-pipeline-util#22c44554262b0d6abadcc5f87ec692e6fc80b22d" }
+source = { git = "https://github.com/bic-mni/bic-mri-pipeline-util#ea5ab25839304e04c011e334c93673f8bcb934bb" }
 dependencies = [
     { name = "paramiko" },
     { name = "pydicom" },
