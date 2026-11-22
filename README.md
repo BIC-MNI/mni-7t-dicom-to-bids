@@ -56,6 +56,18 @@ To also the recommended version of the BIDS validator, use the `validator` extra
 pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mni-7t-dicom-to-bids"
 ```
 
+## Scan metadata
+
+The session `scans.tsv` includes a `scanner` column for successfully converted scans,
+including derivative outputs. The scanner is identified during post-processing from each scan's JSON sidecar:
+
+| ManufacturersModelName | SoftwareVersions | scanner |
+|---|---|---|
+| `MAGNETOM Terra` | Any | `Terra` |
+| `MAGNETOM Terra.X` | Any | `Terra.X` |
+| `Investigational_Device_7T` | `syngo MR E12` | `Terra` |
+| Otherwise (including missing metadata) | | `n/a`, with a warning |
+
 ## Target software version
 
 | **Software**       | **Version**     |

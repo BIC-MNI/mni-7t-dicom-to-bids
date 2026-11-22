@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from mni_7t_dicom_to_bids.args import Args, SkipErrorsArg, SkipUnknownsArg
 from mni_7t_dicom_to_bids.convert_dicom_series import convert_dicom_series
 from mni_7t_dicom_to_bids.dataclass import (
@@ -192,7 +193,9 @@ def test_pipeline_routes_derivative_credits_and_honors_no_dataset_files(
 
     def fake_niix(dicom_path, output_path, filename, args, **kwargs):
         (output_path / (filename + ".nii.gz")).write_bytes(b"fixture")
-        (output_path / (filename + ".json")).write_text("{}")
+        (output_path / (filename + ".json")).write_text(
+            json.dumps({"ManufacturersModelName": "Investigational_Device_7T", "SoftwareVersions": "syngo MR E12"})
+        )
 
     monkeypatch.setattr("mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix", lambda: None)
     monkeypatch.setattr("mni_7t_dicom_to_bids.pipeline.group_dicom_series", lambda *args: sources)
@@ -217,3 +220,9 @@ def test_pipeline_routes_derivative_credits_and_honors_no_dataset_files(
     assert "10.1002/mrm.26963" in clear_description
     assert "Siemens product sequence" not in derivative["Acknowledgements"]
     assert not list(root.rglob("README*"))
+    scans_paths = list(root.rglob('*_scans.tsv'))
+    assert len(scans_paths) == 2
+    for scans_path in scans_paths:
+        lines = scans_path.read_text().splitlines()
+        assert lines[0] == 'filename\tscanner'
+        assert all(line.endswith('\tTerra') for line in lines[1:])
