@@ -1,6 +1,6 @@
 {
     "Name": "ASPIRE processing derivatives",
-    "BIDSVersion": "1.11.1",
+    "BIDSVersion": "1.11.2",
     "DatasetType": "derivative",
     "GeneratedBy": [
         {

@@ -86,7 +86,7 @@ including derivative outputs. The scanner is identified during post-processing f
 
 | **Software**       | **Version**     |
 |--------------------|-----------------|
-| BIDS Specification | `v1.11.1`       |
+| BIDS Specification | `v1.11.2`       |
 | BIDS Validator     | `v2.4.1`        |
 | dcm2niix           | `v1.0.20260416` |
 
@@ -98,7 +98,7 @@ A dictionary is a JSON or JSON5 file that has the following structure:
 
 ```json5
 {
-  "bids-version": "1.11.1",
+  "bids-version": "1.11.2",
   "ignored-series": ["AAHead_Scout.*"],
   "trim-series-suffixes": ["_Pha", "_Motion"],
   "references": {

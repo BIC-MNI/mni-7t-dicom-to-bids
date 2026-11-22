@@ -1,6 +1,6 @@
 {
   // BIDS specification version targeted by these mappings.
-  "bids-version": "1.11.1",
+  "bids-version": "1.11.2",
   // DICOM series descriptions that are ignored by the converter.
   "ignored-series": [
     "AAHead_Scout_32ch-head-coil",
