@@ -32,7 +32,7 @@ docker build -t mni-7t-dicom-to-bids .
 
 ## Development tools
 
-This project uses the [Ruff](https://github.com/astral-sh/ruff) linter and the [Pyright](https://github.com/microsoft/pyright) type checker. All code must comply with these checks to be merged into the project.
+This project uses the [Ruff](https://github.com/astral-sh/ruff) linter and the [Pyrefly](https://pyrefly.org/) type checker. All code must comply with these checks to be merged into the project.
 
 ### Ruff
 
@@ -48,7 +48,7 @@ Ruff also has an option to automatically fix many style inconsistencies, to do s
 ruff check --fix
 ```
 
-### Pyright
+### Pyrefly
 
 A type checker is a tool that ensures the soundness of the way data flows in the code. This check is done in two steps:
 - First, the code declares the type of the data (`int`, `str`, `list`...) it receives and returns in functions and classes.
@@ -56,7 +56,7 @@ A type checker is a tool that ensures the soundness of the way data flows in the
 
 To check the types in the code, use the following command in the project root directory:
 ```sh
-pyright
+pyrefly check
 ```
 
 ### Pytest

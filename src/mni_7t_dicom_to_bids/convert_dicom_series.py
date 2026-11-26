@@ -189,7 +189,7 @@ def get_existing_bids_file_paths(tmp_output_dir_path: Path, bids_data_type_path:
     BIDS dataset.
     """
 
-    existing_file_paths: list[Path] = []
+    existing_file_paths = []
 
     for file in os.scandir(tmp_output_dir_path):
         output_file_path = bids_data_type_path / file.name
@@ -242,7 +242,7 @@ def run_conversion_function(
                 convert(Path(tmp_dicom_dir_path), Path(tmp_output_dir_path))
 
                 # Move the output files to their final directory.
-                image_paths: list[Path] = []
+                image_paths = []
                 for file in os.scandir(tmp_output_dir_path):
                     image_path = output_dir_path / file.name
                     shutil.move(file.path, image_path)

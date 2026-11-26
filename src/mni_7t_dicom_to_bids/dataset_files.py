@@ -71,7 +71,7 @@ def ensure_bidsignore(dataset_path: Path) -> Path:
 
 def update_bidsignore(dataset_path: Path, scans: list[ConvertedScan]):
     """Append exact final paths for flagged scans and their associated files."""
-    entries: set[str] = set()
+    entries = set()
     for scan in scans:
         if not scan.bidsignore:
             continue

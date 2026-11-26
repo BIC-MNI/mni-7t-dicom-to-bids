@@ -55,7 +55,7 @@ def load_dicom_dictionary(file_path: Path | None = None) -> DicomDictionary:
         resource = files('mni_7t_dicom_to_bids').joinpath('assets/dictionary.json5')
         try:
             with resource.open(encoding='utf-8') as file:
-                value: object = json5.load(file, allow_duplicate_keys=False)  # pyright: ignore[reportUnknownMemberType]
+                value: object = json5.load(file, allow_duplicate_keys=False)
         except (OSError, ValueError) as error:
             raise DicomDictionaryError(f"Cannot read valid JSON5 from dictionary '{resource}': {error}") from error
 
@@ -70,7 +70,7 @@ def load_dicom_dictionary(file_path: Path | None = None) -> DicomDictionary:
 def _load_dicom_dictionary(file_path: Path) -> DicomDictionary:
     try:
         with file_path.open(encoding='utf-8') as file:
-            value: object = json5.load(file, allow_duplicate_keys=False)  # pyright: ignore[reportUnknownMemberType]
+            value: object = json5.load(file, allow_duplicate_keys=False)
     except (OSError, ValueError) as error:
         raise DicomDictionaryError(f"Cannot read valid JSON5 from dictionary '{file_path}': {error}") from error
 
@@ -91,26 +91,26 @@ def _parse_dicom_dictionary(
 
     references = {name: Citation(citation.text, citation.url) for name, citation in config.references.items()}
     derivatives: dict[str, dict[str, object]] = {}
-    derivative_definitions: dict[str, BidsDatasetInfo] = {}
+    derivative_definitions = {}
     for name, definition in config.derivatives.items():
         location = f'derivatives.{name}'
         dataset = _load_derivative(definition, location, read_template)
         _check_derivative_consistency(dataset, derivatives, location)
         derivative_definitions[name] = dataset
 
-    ignored_patterns: list[Pattern[str]] = []
-    ignored_strings: set[str] = set()
+    ignored_patterns = []
+    ignored_strings = set()
     for index, pattern in enumerate(config.ignored_series):
         location = f'ignored-series[{index}]'
         _require_unique(pattern, ignored_strings, location)
         ignored_patterns.append(_compile_regex(pattern, location))
 
-    suffixes: set[str] = set()
+    suffixes = set()
     for index, suffix in enumerate(config.trim_series_suffixes):
         _require_unique(suffix, suffixes, f'trim-series-suffixes[{index}]')
 
-    mappings: list[SeriesMapping] = []
-    mapping_patterns: set[str] = set()
+    mappings = []
+    mapping_patterns = set()
     for index, mapping in enumerate(config.mappings):
         location = f'mappings[{index}]'
         derivative = mapping.derivative
@@ -145,7 +145,7 @@ def _resolve_credit(
 ) -> SequenceCredit | None:
     if credit is None:
         return None
-    citations: dict[str, Citation] = {}
+    citations = {}
     for index, reference in enumerate(credit.references):
         if isinstance(reference, str):
             if reference not in definitions:
@@ -188,7 +188,7 @@ def _load_derivative(
 
 def _configuration_error(error: ValidationError, source: str) -> DicomDictionaryError:
     """Keep validation errors readable at the CLI, including array indices."""
-    messages: list[str] = []
+    messages = []
     for detail in error.errors(include_url=False):
         location = ''
         for part in detail['loc']:

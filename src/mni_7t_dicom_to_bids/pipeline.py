@@ -7,7 +7,7 @@ from mni_7t_dicom_to_bids.convert_dicom_series import (
     convert_dicom_series,
     get_bids_dataset_path,
 )
-from mni_7t_dicom_to_bids.dataclass import BidsDatasetInfo, BidsSessionInfo, ConvertedScan
+from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
 from mni_7t_dicom_to_bids.dataset_files import add_dataset_files, update_bidsignore
 from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
@@ -78,7 +78,7 @@ def mni_7t_dicom_to_bids(args: Args):
             for scan in conversion_result.scans
         ]
 
-    scans_by_dataset: dict[BidsDatasetInfo, list[ConvertedScan]] = {}
+    scans_by_dataset = {}
     for scan in conversion_result.scans:
         scans_by_dataset.setdefault(scan.dataset, []).append(scan)
 

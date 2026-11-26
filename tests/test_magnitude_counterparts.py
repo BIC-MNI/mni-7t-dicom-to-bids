@@ -119,7 +119,7 @@ def test_runs_align_by_acquisition_time(tmp_path: Path, suffix: str, magnitude_p
 
 
 def test_repeated_acquisitions_keep_separate_magnitude_runs(tmp_path: Path):
-    scans: list[ConvertedScan] = []
+    scans = []
     for mag_run, phase_run, time in [(1, 2, '10:00:00'), (3, 4, '11:00:00')]:
         scans.extend([
             write_scan(tmp_path, f'sub-01_task-rest_run-{mag_run}_echo-1_bold.nii.gz', ['M'], time),

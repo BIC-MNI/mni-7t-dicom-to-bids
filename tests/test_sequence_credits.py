@@ -52,7 +52,7 @@ def test_protocol_credits_and_unrelated_variants():
     }
     for mapping in dictionary.mappings:
         if mapping.credit:
-            expected: set[str] = neurospin_urls if "NeuroSpin" in mapping.credit.acknowledgement else set()
+            expected = neurospin_urls if "NeuroSpin" in mapping.credit.acknowledgement else set()
             if "ASPIRE" in mapping.series:
                 expected = {"https://doi.org/10.1002/mrm.26963"}
                 if "CLEAR-SWI" in mapping.series:
@@ -110,7 +110,10 @@ def test_merge_preserves_metadata_and_readme_and_is_idempotent(tmp_path: Path):
 def test_invalid_credit_rejected_and_omitted_credit_supported(tmp_path: Path, credit: dict[str, object]):
     path = tmp_path / "dictionary.json"
     mapping: dict[str, object] = {"series": "example", "datatype": "anat", "filename": "T1w"}
-    value = {"bids-version": "1.11.1", "ignored-series": [], "trim-series-suffixes": [], "mappings": [mapping]}
+    value = {
+        "bids-version": "1.11.1", "ignored-series": list[str](), "trim-series-suffixes": list[str](),
+        "mappings": [mapping],
+    }
     path.write_text(json.dumps(value))
     assert load_dicom_dictionary(path).mappings[0].credit is None
     mapping["credit"] = credit
@@ -124,8 +127,8 @@ def test_structured_references_deduplicate_by_url(tmp_path: Path):
     url = "https://doi.org/10.1002/mrm.26963"
     value = {
         "bids-version": "1.11.1",
-        "ignored-series": [],
-        "trim-series-suffixes": [],
+        "ignored-series": list[str](),
+        "trim-series-suffixes": list[str](),
         "mappings": [
             {
                 "series": "example",

@@ -19,9 +19,9 @@ def create_conversion_plan(
     according to the MNI 7T DICOM to BIDS converter configuration.
     """
 
-    acquisition_series: dict[BidsAcquisitionInfo, list[PlannedDicomSeries]] = defaultdict(list)
-    ignored_series: list[DicomSeriesInfo] = []
-    unknown_series: list[DicomSeriesInfo] = []
+    acquisition_series = defaultdict(list)
+    ignored_series = []
+    unknown_series = []
 
     for dicom_series in dicom_series_list:
         if ignore_dicom_series(dicom_series, dictionary):

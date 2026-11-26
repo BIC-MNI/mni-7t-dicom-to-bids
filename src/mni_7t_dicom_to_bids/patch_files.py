@@ -42,7 +42,7 @@ def get_magnitude_phase_renames(scans: list[ConvertedScan]) -> dict[Path, Path]:
         magnitudes, phases = groups.setdefault((path.parent, str(name), acquisition_time), ([], []))
         (phases if part == 'phase' else magnitudes).append(path)
 
-    renames: dict[Path, Path] = {}
+    renames = {}
     for magnitudes, phases in groups.values():
         if not magnitudes or not phases:
             continue
@@ -61,7 +61,7 @@ def get_magnitude_phase_renames(scans: list[ConvertedScan]) -> dict[Path, Path]:
 def patch_frequency_maps(scans: list[ConvertedScan], *, overwrite: bool = False) -> dict[Path, Path]:
     """Remove part-phase from frequency maps using their final JSON sidecar units."""
 
-    renamed_images: dict[Path, Path] = {}
+    renamed_images = {}
     for scan in scans:
         path = scan.image_path
         name = BidsName.from_string(path.name)
@@ -103,7 +103,7 @@ def patch_singleton_runs(scans: list[ConvertedScan], *, overwrite: bool = False)
         return path.parent, str(name)
 
     affected_groups = {group_key(scan.image_path) for scan in scans}
-    groups: dict[tuple[Path, str], list[Path]] = {}
+    groups = {}
     for directory in sorted({scan.image_path.parent for scan in scans}):
         for path in sorted(directory.iterdir()):
             if not path.name.endswith(('.nii', '.nii.gz')) or not path.is_file():
@@ -112,7 +112,7 @@ def patch_singleton_runs(scans: list[ConvertedScan], *, overwrite: bool = False)
             if key in affected_groups:
                 groups.setdefault(key, []).append(path)
 
-    renamed_images: dict[Path, Path] = {}
+    renamed_images = {}
     for paths in groups.values():
         runs = {BidsName.from_string(path.name).entries.get('run') for path in paths}
         runs.discard(None)
@@ -131,7 +131,7 @@ def patch_singleton_runs(scans: list[ConvertedScan], *, overwrite: bool = False)
 def rename_image_files(renamed_images: dict[Path, Path], *, overwrite: bool = False):
     """Apply image renames to all associated files, checking destinations first."""
 
-    renamed_files: dict[Path, Path] = {}
+    renamed_files = {}
     for source, target in renamed_images.items():
         json_path = source.with_name(source.name.removesuffix('.gz')).with_suffix('.json')
         for file_path in source.parent.glob(json_path.stem + '.*'):

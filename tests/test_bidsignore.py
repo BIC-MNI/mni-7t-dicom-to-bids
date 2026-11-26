@@ -123,7 +123,7 @@ def test_pipeline_propagates_flag_and_ignores_final_names_in_each_dataset(
         name = 'sub-01_ses-01_run-1_T1w' if source.description == 'regular' else (
             'sub-01_ses-01_acq-custom_run-1_swi'
         )
-        paths: list[Path] = []
+        paths = []
         for extension in ['nii.gz', 'json']:
             path = directory / f'{name}.{extension}'
             path.write_text('{}' if extension == 'json' else 'image')

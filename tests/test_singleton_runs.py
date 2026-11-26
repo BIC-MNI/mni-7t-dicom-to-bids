@@ -144,7 +144,7 @@ def test_single_series_gets_provisional_run():
 def test_sequence_cleanup_preserves_runs_until_shared_pass(
     tmp_path: Path, source: str, normalized: str, run_count: int
 ):
-    scans: list[ConvertedScan] = []
+    scans = []
     for run in range(1, run_count + 1):
         original = write_image(tmp_path, 'sub-01_' + source.format(run=run) + '.nii.gz')
         patch_file_path(original)
@@ -163,7 +163,7 @@ def test_sequence_cleanup_preserves_runs_until_shared_pass(
 
 @pytest.mark.parametrize('run_count', [1, 2])
 def test_dwi_component_identification_defers_run_cleanup(tmp_path: Path, run_count: int):
-    scans: list[ConvertedScan] = []
+    scans = []
     for acquisition in range(run_count):
         for component, run in [('M', acquisition * 2 + 1), ('P', acquisition * 2 + 2)]:
             # The first phase series uses the legacy run-2 fallback; later phases use dcm2niix's ph token.
@@ -193,7 +193,7 @@ def test_dwi_component_identification_defers_run_cleanup(tmp_path: Path, run_cou
 
 @pytest.mark.parametrize('pair_count', [1, 2])
 def test_tb1tfl_pair_decoding_defers_singleton_cleanup(tmp_path: Path, pair_count: int):
-    scans: list[ConvertedScan] = []
+    scans = []
     for run in range(1, pair_count * 2 + 1):
         original = write_image(tmp_path, f'sub-01_acq-anat_run-{run}_TB1TFL.nii.gz')
         patch_file_path(original)
@@ -229,7 +229,7 @@ def test_pipeline_preserves_metadata_through_pairing_and_cleanup_of_existing_ech
     )
 
     def fake_conversion(*args: object):
-        scans: list[ConvertedScan] = []
+        scans = []
         for filename, component in [(original_mag, 'M'), (original_phase, 'P')]:
             image = write_image(directory, filename)
             image.with_name(image.name.removesuffix('.nii.gz') + '.json').write_text(json.dumps({

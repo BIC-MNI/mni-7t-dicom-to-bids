@@ -20,7 +20,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pyinstaller",
-    "pyright",
+    "pyrefly>=1.5",
     "ruff",
     "typos",
 ]
@@ -46,9 +46,17 @@ packages = ["src/mni_7t_dicom_to_bids"]
 [tool.hatch.metadata]
 allow-direct-references = true
 
-[tool.pyright]
-include = ["src", "tests"]
-strict = ["src", "tests"]
+[tool.pyrefly]
+project-includes = ["src", "tests"]
+preset = "strict"
+
+[tool.pyrefly.errors]
+unknown-attribute-access = "error"
+unknown-attribute-type = "error"
+unknown-variable-type = "error"
+unknown-return-type = "error"
+unknown-argument-type = "error"
+unknown-from-error = "error"
 
 [tool.ruff]
 include = ["src/**/*.py", "tests/**/*.py"]
@@ -57,7 +65,8 @@ preview = true
 
 [tool.ruff.lint]
 ignore = ["E203", "E221", "E241", "E251"]
-select = ["E", "F", "I", "N", "PTH", "RUF", "UP", "W"]
+# Require parameter annotations even when a default lets Pyrefly infer a type.
+select = ["ANN001", "ANN002", "ANN003", "E", "F", "I", "N", "PTH", "RUF", "UP", "W"]
 
 [tool.typos.files]
 # Ignore domain-specific asset data.

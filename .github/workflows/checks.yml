@@ -44,7 +44,7 @@ jobs:
       - name: Run Lints
         run: uv run --locked --extra dev --group test ruff check --output-format=github
 
-  pyright:
+  pyrefly:
     name: Type checks
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -59,7 +59,7 @@ jobs:
         uses: ./.github/actions/install-project
 
       - name: Run Type checks
-        run: uv run --locked --extra dev --group test pyright
+        run: uv run --locked --extra dev --group test pyrefly check --output-format=github
 
   typos:
     name: Typos
