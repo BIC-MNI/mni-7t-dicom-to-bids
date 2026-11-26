@@ -74,7 +74,7 @@ def test_participants_sidecar_merges_asset_and_preserves_custom_columns(tmp_path
     content = path.read_text()
     metadata = json.loads(content)
     assert metadata['custom'] == custom_definition
-    assert metadata['group']['Levels']['Healthy'] == 'Healthy control'
+    assert set(metadata) == {'participant_id', 'custom'}
     if overwrite:
         assert metadata['participant_id']['LongName'] == 'Participant identification label sub-'
     else:
