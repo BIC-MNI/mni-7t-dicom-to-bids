@@ -182,9 +182,9 @@ def test_pipeline_records_final_paths_and_preserves_existing_metadata(
     scans_path = session_path / 'sub-01_ses-01_scans.tsv'
     mag_run, phase_run = ('_run-1', '_run-2') if with_runs else ('', '')
     old_name = f'sub-01_ses-01{mag_run}_T1w.nii.gz'
-    new_name = f'sub-01_ses-01{mag_run}_part-mag_T1w.nii.gz'
+    new_name = 'sub-01_ses-01_part-mag_T1w.nii.gz'
     old_phase = f'sub-01_ses-01{phase_run}_part-phase_T1w.nii.gz'
-    new_phase = f'sub-01_ses-01{mag_run}_part-phase_T1w.nii.gz'
+    new_phase = 'sub-01_ses-01_part-phase_T1w.nii.gz'
     scans_path.write_text(f'filename\tnote\nanat/{old_name}\tkeep\nanat/{old_phase}\tphase note\n')
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix', lambda: None)
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', lambda *args: [])

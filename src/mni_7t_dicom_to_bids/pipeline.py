@@ -21,7 +21,7 @@ from mni_7t_dicom_to_bids.metadata.dataset_description import (
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import update_scans_tsv
 from mni_7t_dicom_to_bids.metadata.sessions import update_sessions_tsv
-from mni_7t_dicom_to_bids.patch_files import patch_frequency_maps, patch_magnitude_counterparts
+from mni_7t_dicom_to_bids.patch_files import patch_frequency_maps, patch_magnitude_counterparts, patch_singleton_runs
 from mni_7t_dicom_to_bids.print import (
     print_found_dicom_series,
     print_found_ignored_dicom_series,
@@ -68,8 +68,10 @@ def mni_7t_dicom_to_bids(args: Args):
     conversion_result = convert_dicom_series(bids_session, conversion_plan, args)
 
     renamed_images: dict[Path, Path] = {}
-    for patch in (patch_frequency_maps, patch_magnitude_counterparts):
+    for patch in (patch_frequency_maps, patch_magnitude_counterparts, patch_singleton_runs):
         renames = patch(conversion_result.scans, overwrite=args.overwrite)
+        # Keep original and intermediate paths pointing to the final filename for scans.tsv.
+        renamed_images = {source: renames.get(target, target) for source, target in renamed_images.items()}
         renamed_images.update(renames)
         conversion_result.scans = [
             replace(scan, image_path=renames.get(scan.image_path, scan.image_path))

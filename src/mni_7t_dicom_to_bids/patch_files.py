@@ -87,6 +87,47 @@ def patch_magnitude_counterparts(scans: list[ConvertedScan], *, overwrite: bool 
     return renamed_images
 
 
+def patch_singleton_runs(scans: list[ConvertedScan], *, overwrite: bool = False) -> dict[Path, Path]:
+    """Remove singleton run labels across components and echoes of affected acquisition groups.
+
+    Include existing images in the same directories, so partial conversions neither strip real
+    repeat labels nor leave other components of a singleton run behind. Runless destinations
+    are handled by the usual collision checks, including overwrite on repeated conversions.
+    """
+
+    def group_key(path: Path) -> tuple[Path, str]:
+        name = BidsName.from_string(path.name)
+        for entity in ('run', 'part', 'echo'):
+            name.entries.pop(entity, None)
+        name.extension = None
+        return path.parent, str(name)
+
+    affected_groups = {group_key(scan.image_path) for scan in scans}
+    groups: dict[tuple[Path, str], list[Path]] = {}
+    for directory in sorted({scan.image_path.parent for scan in scans}):
+        for path in sorted(directory.iterdir()):
+            if not path.name.endswith(('.nii', '.nii.gz')) or not path.is_file():
+                continue
+            key = group_key(path)
+            if key in affected_groups:
+                groups.setdefault(key, []).append(path)
+
+    renamed_images: dict[Path, Path] = {}
+    for paths in groups.values():
+        runs = {BidsName.from_string(path.name).entries.get('run') for path in paths}
+        runs.discard(None)
+        if len(runs) != 1:
+            continue
+        for path in paths:
+            name = BidsName.from_string(path.name)
+            if name.has('run'):
+                name.remove('run')
+                renamed_images[path] = path.with_name(str(name))
+
+    rename_image_files(renamed_images, overwrite=overwrite)
+    return renamed_images
+
+
 def rename_image_files(renamed_images: dict[Path, Path], *, overwrite: bool = False):
     """Apply image renames to all associated files, checking destinations first."""
 

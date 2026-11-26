@@ -72,6 +72,14 @@ image with `DIFFUSION` in `ImageType` is also accepted when it has a matching `p
 Magnitude-only images keep their filenames. Renames include sidecars and gradient files and are
 reflected in `scans.tsv`, retaining existing custom metadata.
 
+After frequency-map correction and magnitude/phase pairing, singleton `run` labels are removed.
+Acquisition groups share a directory and all filename entities other than `run`, `part`, and `echo`
+(ignoring the image extension). A group with only one distinct run label loses that label across
+all components and echoes; groups with multiple runs retain their labels, including gaps in numbering
+and incomplete component/echo sets. Existing images in affected groups participate in this check and
+are renamed consistently; unrelated groups are left alone. Existing runless destinations use the
+normal overwrite checks. Sidecars, gradients, and `scans.tsv` follow the final filenames.
+
 The session `scans.tsv` includes a `scanner` column for successfully converted scans,
 including derivative outputs. The scanner is identified during post-processing from each scan's JSON sidecar:
 
