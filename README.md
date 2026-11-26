@@ -153,11 +153,15 @@ Details:
 - The mapping order is significant, the first matching entry whose series description pattern matches is used.
 - The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
 - The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
-- The optional `bidsignore` boolean defaults to `false`. When `true`, the converter appends the
+- The optional `bidsignore` accepts a boolean or a nonempty, single-line string and defaults to
+  `false` (add nothing). When `true`, the converter appends the
   final dataset-relative paths of the series' images and associated files (including JSON sidecars)
-  to that output dataset's `.bidsignore`, including for derivative datasets. Files remain in the
-  dataset but are excluded from validation. The default dictionary enables this for CLEAR-SWI and
-  merged ASPIRE MEGRE outputs. This also works without `--dataset-files`.
+  to that output dataset's `.bidsignore`, including for derivative datasets. A string is appended
+  verbatim as an ignore pattern relative to that dataset's root, for example
+  `"bidsignore": "**/*_rec-CLEARSWI*_swi.*"`. Patterns apply across participants and sessions;
+  include the extensions you want to ignore (e.g. `.*` covers images and sidecars). Files remain in
+  the dataset but are excluded from validation. The default dictionary uses patterns for CLEAR-SWI
+  and merged ASPIRE MEGRE outputs. This also works without `--dataset-files`.
   A missing `.bidsignore` is initialized from the packaged template. Existing content is preserved,
   even with `--overwrite`, and duplicate entries are not appended. Changing the flag back to `false`
   does not remove previous entries; remove obsolete entries manually.

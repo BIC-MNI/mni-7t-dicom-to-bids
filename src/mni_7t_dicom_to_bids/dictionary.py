@@ -35,7 +35,7 @@ class SeriesMapping:
     dataset: BidsDatasetInfo
     sidecar: dict[str, object] = field(default_factory=dict[str, object])
     credit: SequenceCredit | None = None
-    bidsignore: bool = False
+    bidsignore: bool | str = False
 
 
 @dataclass(frozen=True)

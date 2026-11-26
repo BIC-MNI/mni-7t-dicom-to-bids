@@ -48,10 +48,13 @@ def ensure_bidsignore(dataset_path: Path) -> Path:
 
 
 def update_bidsignore(dataset_path: Path, scans: list[ConvertedScan]):
-    """Append exact final paths for flagged scans and their associated files."""
+    """Append configured patterns or exact final paths for scans and their associated files."""
     entries = set()
     for scan in scans:
         if not scan.bidsignore:
+            continue
+        if isinstance(scan.bidsignore, str):
+            entries.add(scan.bidsignore)
             continue
         name = BidsName.from_string(scan.image_path.name)
         name.extension = None
@@ -65,7 +68,7 @@ def update_bidsignore(dataset_path: Path, scans: list[ConvertedScan]):
 
     path = ensure_bidsignore(dataset_path)
     content = path.read_text(encoding='utf-8')
-    existing = {line.strip() for line in content.splitlines()}
+    existing = set(content.splitlines())
     missing = sorted(entries - existing)
     if missing:
         with path.open('a', encoding='utf-8') as file:

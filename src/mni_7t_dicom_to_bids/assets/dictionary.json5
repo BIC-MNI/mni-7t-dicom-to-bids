@@ -142,7 +142,7 @@
       "series": ".*CLEAR-SWI_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-megre07_rec-CLEARSWI_swi",
-      "bidsignore": true,
+      "bidsignore": "**/*_acq-megre07_rec-CLEARSWI*_swi.*",
       "credit": {
         "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
         "references": ["aspire", "clear-swi"]
@@ -184,7 +184,7 @@
       "series": "Aspire_M_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_part-mag_MEGRE",
-      "bidsignore": true,
+      "bidsignore": "**/*_acq-megre07_rec-aspire*_part-mag_MEGRE.*",
       "merge-images": true,
       "credit": {
         "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
@@ -195,7 +195,7 @@
       "series": "Aspire_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-megre07_rec-aspire_part-phase_MEGRE",
-      "bidsignore": true,
+      "bidsignore": "**/*_acq-megre07_rec-aspire*_part-phase_MEGRE.*",
       "merge-images": true,
       "credit": {
         "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",

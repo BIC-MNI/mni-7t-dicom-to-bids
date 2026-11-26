@@ -1,5 +1,6 @@
 import json
 from collections.abc import Callable
+from fnmatch import fnmatchcase
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -18,7 +19,7 @@ from mni_7t_dicom_to_bids.dictionary import DicomDictionaryError, load_dicom_dic
 from mni_7t_dicom_to_bids.pipeline import mni_7t_dicom_to_bids
 
 
-def write_scan(root: Path, name: str = 'sub-01_ses-01_acq-custom_run-1_swi', *, bidsignore: bool = True):
+def write_scan(root: Path, name: str = 'sub-01_ses-01_acq-custom_run-1_swi', *, bidsignore: bool | str = True):
     directory = root / 'sub-01/ses-01/anat'
     directory.mkdir(parents=True, exist_ok=True)
     for extension in ['nii.gz', 'json', 'bval', 'bvec']:
@@ -41,6 +42,21 @@ def test_initializes_template_and_appends_all_companions_once(tmp_path: Path):
         for file in scan.image_path.parent.iterdir() if file != unrelated
     }
     update_bidsignore(tmp_path, [scan])
+    assert path.read_text() == content
+
+
+def test_patterns_are_appended_verbatim_once_across_scans_and_updates(tmp_path: Path):
+    pattern = '**/*_acq-custom*_swi.*'
+    scans = [
+        write_scan(tmp_path, bidsignore=pattern),
+        write_scan(tmp_path, 'sub-01_ses-01_acq-custom_run-2_swi', bidsignore=pattern),
+    ]
+    path = tmp_path / '.bidsignore'
+    path.write_text('# manual rules\ncustom/')
+    update_bidsignore(tmp_path, scans)
+    content = path.read_text()
+    assert content == f'# manual rules\ncustom/\n{pattern}\n'
+    update_bidsignore(tmp_path, scans)
     assert path.read_text() == content
 
 
@@ -69,7 +85,7 @@ def test_unflagged_scans_do_not_create_ignore_file(tmp_path: Path):
     assert not (tmp_path / '.bidsignore').exists()
 
 
-@pytest.mark.parametrize('value', [None, False, True, 'true', 1])
+@pytest.mark.parametrize('value', [None, False, True, '**/*_swi.*', 'true', '', 'a\nb', 'a\rb', 0, 1, [], {}])
 def test_dictionary_bidsignore_is_strict_and_defaults_false(tmp_path: Path, value: object):
     mapping: dict[str, object] = {'series': 'custom', 'datatype': 'anat', 'filename': 'swi'}
     if value is not None:
@@ -79,15 +95,32 @@ def test_dictionary_bidsignore_is_strict_and_defaults_false(tmp_path: Path, valu
         'bids-version': '1.11.2', 'ignored-series': [], 'trim-series-suffixes': [],
         'mappings': [mapping],
     }))
-    if isinstance(value, str) or type(value) is int:
+    if (isinstance(value, str) and (not value or '\n' in value or '\r' in value)) or (
+        value is not None and not isinstance(value, (bool, str))
+    ):
         with pytest.raises(DicomDictionaryError, match='bidsignore'):
             load_dicom_dictionary(dictionary)
     else:
-        assert load_dicom_dictionary(dictionary).mappings[0].bidsignore is (value is True)
+        assert load_dicom_dictionary(dictionary).mappings[0].bidsignore == (False if value is None else value)
 
 
 def test_default_dictionary_flags_only_swi_and_merged_megre():
     mappings = load_dicom_dictionary().mappings
+    for mapping in mappings:
+        if not mapping.bidsignore:
+            continue
+        assert isinstance(mapping.bidsignore, str)
+        for run in ['', '_run-2']:
+            # Runs precede part entities, or the suffix when no part is present.
+            stem, suffix = mapping.filename.rsplit('_', 1)
+            if '_part-' in stem:
+                stem = stem.replace('_part-', f'{run}_part-')
+            else:
+                stem += run
+            for extension in ['nii.gz', 'json', 'bval', 'bvec']:
+                path = f'sub-02/ses-03/anat/sub-02_ses-03_{stem}_{suffix}.{extension}'
+                assert fnmatchcase(path, mapping.bidsignore)
+        assert not fnmatchcase('sub-02/ses-03/anat/sub-02_ses-03_T1w.nii.gz', mapping.bidsignore)
     assert {mapping.filename for mapping in mappings if mapping.bidsignore} == {
         'acq-megre07_rec-CLEARSWI_swi',
         'acq-megre07_rec-aspire_part-mag_MEGRE',
@@ -95,8 +128,9 @@ def test_default_dictionary_flags_only_swi_and_merged_megre():
     }
 
 
+@pytest.mark.parametrize('rule', [True, '**/*_acq-custom*_swi.*'])
 def test_pipeline_propagates_flag_and_ignores_final_names_in_each_dataset(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, rule: bool | str
 ):
     template = tmp_path / 'description.json'
     template.write_text(json.dumps({'DatasetType': 'derivative', 'GeneratedBy': [{'Name': 'custom'}]}))
@@ -104,8 +138,8 @@ def test_pipeline_propagates_flag_and_ignores_final_names_in_each_dataset(
     dictionary.write_text(json.dumps({
         'bids-version': '1.11.2', 'ignored-series': [], 'trim-series-suffixes': [],
         'mappings': [
-            {'series': 'raw', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': True},
-            {'series': 'derived', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': True,
+            {'series': 'raw', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': rule},
+            {'series': 'derived', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': rule,
              'derivative': {'name': 'custom', 'dataset-description': str(template)}},
             {'series': 'regular', 'datatype': 'anat', 'filename': 'T1w'},
         ],
@@ -137,6 +171,10 @@ def test_pipeline_propagates_flag_and_ignores_final_names_in_each_dataset(
     for dataset in [RAW_BIDS_DATASET, BidsDatasetInfo('custom')]:
         root = tmp_path / 'derivatives/custom' if dataset.is_derivative else tmp_path
         content = (root / '.bidsignore').read_text()
+        if isinstance(rule, str):
+            assert content.splitlines().count(rule) == 1
+            assert not any(line.startswith('sub-') for line in content.splitlines())
+            continue
         assert {line for line in content.splitlines() if line.startswith('sub-')} == {
             f'sub-01/ses-01/anat/sub-01_ses-01_acq-custom_swi.{extension}'
             for extension in ['nii.gz', 'json']
