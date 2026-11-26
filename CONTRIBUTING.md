@@ -32,7 +32,7 @@ docker build -t mni-7t-dicom-to-bids .
 
 ## Development tools
 
-This project uses the [Ruff](https://github.com/astral-sh/ruff) linter and the [Pyright](https://github.com/microsoft/pyright) type checker. All code must comply with both these tools to be merged into the project.
+This project uses the [Ruff](https://github.com/astral-sh/ruff) linter and the [Pyright](https://github.com/microsoft/pyright) type checker. All code must comply with these checks to be merged into the project.
 
 ### Ruff
 

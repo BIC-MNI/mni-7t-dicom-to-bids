@@ -70,7 +70,9 @@ def test_unknown_scanner_replaces_previous_classification(tmp_path: Path):
         (None, None, 'n/a'),
     ],
 )
-def test_scanner_classification(tmp_path: Path, capsys: pytest.CaptureFixture[str], model, software, expected):
+def test_scanner_classification(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], model: str | None, software: str | None, expected: str
+):
     metadata = {}
     if model is not None:
         metadata['ManufacturersModelName'] = model

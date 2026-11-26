@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -118,7 +119,7 @@ def test_runs_align_by_acquisition_time(tmp_path: Path, suffix: str, magnitude_p
 
 
 def test_repeated_acquisitions_keep_separate_magnitude_runs(tmp_path: Path):
-    scans = []
+    scans: list[ConvertedScan] = []
     for mag_run, phase_run, time in [(1, 2, '10:00:00'), (3, 4, '11:00:00')]:
         scans.extend([
             write_scan(tmp_path, f'sub-01_task-rest_run-{mag_run}_echo-1_bold.nii.gz', ['M'], time),
@@ -187,9 +188,9 @@ def test_pipeline_records_final_paths_and_preserves_existing_metadata(
     new_phase = 'sub-01_ses-01_part-phase_T1w.nii.gz'
     scans_path.write_text(f'filename\tnote\nanat/{old_name}\tkeep\nanat/{old_phase}\tphase note\n')
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix', lambda: None)
-    monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', lambda *args: [])
+    monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', Mock(return_value=[]))
 
-    def fake_conversion(*args):
+    def fake_conversion(*args: object):
         return ConversionResult([
             write_scan(anat, old_name, ['M'], '10:00:00'),
             write_scan(anat, old_phase, ['P'], '10:00:00'),

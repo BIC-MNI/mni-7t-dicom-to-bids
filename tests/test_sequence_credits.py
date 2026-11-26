@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -51,7 +52,7 @@ def test_protocol_credits_and_unrelated_variants():
     }
     for mapping in dictionary.mappings:
         if mapping.credit:
-            expected = neurospin_urls if "NeuroSpin" in mapping.credit.acknowledgement else set()
+            expected: set[str] = neurospin_urls if "NeuroSpin" in mapping.credit.acknowledgement else set()
             if "ASPIRE" in mapping.series:
                 expected = {"https://doi.org/10.1002/mrm.26963"}
                 if "CLEAR-SWI" in mapping.series:
@@ -106,9 +107,9 @@ def test_merge_preserves_metadata_and_readme_and_is_idempotent(tmp_path: Path):
         pytest.param({"acknowledgement": "A", "unexpected": True}, id="unexpected-field"),
     ],
 )
-def test_invalid_credit_rejected_and_omitted_credit_supported(tmp_path: Path, credit):
+def test_invalid_credit_rejected_and_omitted_credit_supported(tmp_path: Path, credit: dict[str, object]):
     path = tmp_path / "dictionary.json"
-    mapping = {"series": "example", "datatype": "anat", "filename": "T1w"}
+    mapping: dict[str, object] = {"series": "example", "datatype": "anat", "filename": "T1w"}
     value = {"bids-version": "1.11.1", "ignored-series": [], "trim-series-suffixes": [], "mappings": [mapping]}
     path.write_text(json.dumps(value))
     assert load_dicom_dictionary(path).mappings[0].credit is None
@@ -140,6 +141,7 @@ def test_structured_references_deduplicate_by_url(tmp_path: Path):
     dictionary_path = root / "dictionary.json"
     dictionary_path.write_text(json.dumps(value))
     credit = load_dicom_dictionary(dictionary_path).mappings[0].credit
+    assert credit is not None
     assert credit.references == (Citation("Paper A", url),)
     description_path = root / "dataset_description.json"
     for existing in (url, "Existing citation " + url):
@@ -159,7 +161,7 @@ def test_sidecar_credit_and_successful_scan_propagation(tmp_path: Path, monkeypa
     planned.sidecar["Description"] = "Configured description."
     args = Args(root, root / "bids", "01", "01", None, SkipUnknownsArg(), SkipErrorsArg(), False, True)
 
-    def fake_niix(dicom_path, output_path, filename, args, **kwargs):
+    def fake_niix(dicom_path: Path, output_path: Path, filename: str, args: object, **kwargs: object):
         (output_path / (filename + ".nii.gz")).write_bytes(b"fixture")
         (output_path / (filename + ".json")).write_text('{"Manufacturer": "Siemens"}')
 
@@ -173,7 +175,7 @@ def test_sidecar_credit_and_successful_scan_propagation(tmp_path: Path, monkeypa
     assert metadata["Description"].startswith("Configured description.")
     assert "Simon Robinson" in metadata["Description"]
 
-    def failed_niix(*args, **kwargs):
+    def failed_niix(*args: object, **kwargs: object):
         raise RuntimeError("Simulated failed conversion")
 
     monkeypatch.setattr("mni_7t_dicom_to_bids.convert_dicom_series.run_dicom_to_niix", failed_niix)
@@ -192,14 +194,14 @@ def test_pipeline_routes_derivative_credits_and_honors_no_dataset_files(
     ]
     args = Args(root, root, "01", "01", None, SkipUnknownsArg(), SkipErrorsArg(), False, False)
 
-    def fake_niix(dicom_path, output_path, filename, args, **kwargs):
+    def fake_niix(dicom_path: Path, output_path: Path, filename: str, args: object, **kwargs: object):
         (output_path / (filename + ".nii.gz")).write_bytes(b"fixture")
         (output_path / (filename + ".json")).write_text(
             json.dumps({"ManufacturersModelName": "Investigational_Device_7T", "SoftwareVersions": "syngo MR E12"})
         )
 
     monkeypatch.setattr("mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix", lambda: None)
-    monkeypatch.setattr("mni_7t_dicom_to_bids.pipeline.group_dicom_series", lambda *args: sources)
+    monkeypatch.setattr("mni_7t_dicom_to_bids.pipeline.group_dicom_series", Mock(return_value=sources))
     monkeypatch.setattr("mni_7t_dicom_to_bids.convert_dicom_series.run_dicom_to_niix", fake_niix)
     mni_7t_dicom_to_bids(args)
     raw = json.loads((root / "dataset_description.json").read_text())

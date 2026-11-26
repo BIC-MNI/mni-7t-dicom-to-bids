@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -55,7 +56,7 @@ def test_pipeline_corrects_final_units_before_pairing_and_retains_scan_metadata(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, units_from_override: bool
 ):
     dictionary = tmp_path / 'dictionary.json'
-    frequency_mapping = {
+    frequency_mapping: dict[str, object] = {
         'series': 'frequency', 'datatype': 'anat', 'filename': 'desc-frequency_T2starw',
     }
     if units_from_override:
@@ -70,9 +71,9 @@ def test_pipeline_corrects_final_units_before_pairing_and_retains_scan_metadata(
     }))
     sources = [DicomSeriesInfo(name, i, []) for i, name in enumerate(['magnitude', 'frequency', 'phase'])]
     monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.check_dicom_to_niix', lambda: None)
-    monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', lambda *args: sources)
+    monkeypatch.setattr('mni_7t_dicom_to_bids.pipeline.group_dicom_series', Mock(return_value=sources))
 
-    def fake_niix(dicom_path, output_path, filename, args, **kwargs):
+    def fake_niix(dicom_path: Path, output_path: Path, filename: str, args: object, **kwargs: object):
         phase = '_run-2_' in filename or 'desc-unwrapped' in filename
         metadata = {
             'ManufacturersModelName': 'MAGNETOM Terra',

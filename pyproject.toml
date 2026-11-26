@@ -47,11 +47,11 @@ packages = ["src/mni_7t_dicom_to_bids"]
 allow-direct-references = true
 
 [tool.pyright]
-include = ["src"]
-strict = ["src"]
+include = ["src", "tests"]
+strict = ["src", "tests"]
 
 [tool.ruff]
-include = ["src/**/*.py"]
+include = ["src/**/*.py", "tests/**/*.py"]
 line-length = 120
 preview = true
 

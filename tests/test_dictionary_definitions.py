@@ -1,14 +1,16 @@
 import copy
 import json
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import pytest
 
-from mni_7t_dicom_to_bids.dictionary import DicomDictionaryError, load_dicom_dictionary
+from mni_7t_dicom_to_bids.dictionary import DicomDictionary, DicomDictionaryError, load_dicom_dictionary
 
 
 @pytest.fixture
-def dictionary_value(tmp_path: Path):
+def dictionary_value(tmp_path: Path) -> dict[str, Any]:
     (tmp_path / "templates").mkdir()
     (tmp_path / "templates/example.json").write_text(
         json.dumps(
@@ -37,8 +39,8 @@ def dictionary_value(tmp_path: Path):
 
 
 @pytest.fixture
-def load_dictionary(tmp_path: Path):
-    def load(value):
+def load_dictionary(tmp_path: Path) -> Callable[[dict[str, Any]], DicomDictionary]:
+    def load(value: dict[str, Any]) -> DicomDictionary:
         path = tmp_path / "dictionary.json"
         path.write_text(json.dumps(value))
         return load_dicom_dictionary(path)
@@ -46,7 +48,9 @@ def load_dictionary(tmp_path: Path):
     return load
 
 
-def test_named_definitions_match_inline_values_and_resolve_relative_templates(dictionary_value, load_dictionary):
+def test_named_definitions_match_inline_values_and_resolve_relative_templates(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
     named = load_dictionary(dictionary_value)
     inline = copy.deepcopy(dictionary_value)
     inline.pop("references")
@@ -55,16 +59,24 @@ def test_named_definitions_match_inline_values_and_resolve_relative_templates(di
     inline["mappings"][0]["credit"]["references"] = [dictionary_value["references"]["paper"]]
     assert named == load_dictionary(inline)
     assert named.mappings[0].dataset.name == "example"
+    assert named.mappings[0].dataset.dataset_description is not None
     assert named.mappings[0].dataset.dataset_description["DatasetType"] == "derivative"
+    assert named.mappings[0].credit is not None
     assert named.mappings[0].credit.references[0].url == dictionary_value["references"]["paper"]["url"]
 
 
-def test_mixed_references_deduplicate_by_url_and_default_to_empty(dictionary_value, load_dictionary):
+def test_mixed_references_deduplicate_by_url_and_default_to_empty(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
     mapping = dictionary_value["mappings"][0]
     mapping["credit"]["references"] = ["paper", dictionary_value["references"]["paper"]]
-    assert len(load_dictionary(dictionary_value).mappings[0].credit.references) == 1
+    credit = load_dictionary(dictionary_value).mappings[0].credit
+    assert credit is not None
+    assert len(credit.references) == 1
     mapping["credit"].pop("references")
-    assert load_dictionary(dictionary_value).mappings[0].credit.references == ()
+    credit = load_dictionary(dictionary_value).mappings[0].credit
+    assert credit is not None
+    assert credit.references == ()
     mapping.pop("derivative")
     assert not load_dictionary(dictionary_value).mappings[0].dataset.is_derivative
 
@@ -76,7 +88,10 @@ def test_mixed_references_deduplicate_by_url_and_default_to_empty(dictionary_val
         ("derivatives", r"mappings\[0\].derivative.*undefined derivative 'processed'"),
     ],
 )
-def test_undefined_names_report_mapping_location(dictionary_value, load_dictionary, field, pattern):
+def test_undefined_names_report_mapping_location(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary],
+    field: str, pattern: str
+):
     dictionary_value[field] = {}
     with pytest.raises(DicomDictionaryError, match=pattern):
         load_dictionary(dictionary_value)
@@ -95,20 +110,27 @@ def test_undefined_names_report_mapping_location(dictionary_value, load_dictiona
         pytest.param("derivatives", "processed", id="derivative-alias"),
     ],
 )
-def test_invalid_unused_definitions_are_rejected(dictionary_value, load_dictionary, section, definition):
+def test_invalid_unused_definitions_are_rejected(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary],
+    section: str, definition: object
+):
     dictionary_value[section]["unused"] = definition
     with pytest.raises(DicomDictionaryError, match=section + r"\.unused"):
         load_dictionary(dictionary_value)
 
 
 @pytest.mark.parametrize("section", ["references", "derivatives"])
-def test_invalid_definition_sections_are_rejected(dictionary_value, load_dictionary, section):
+def test_invalid_definition_sections_are_rejected(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary], section: str
+):
     dictionary_value[section] = []
     with pytest.raises(DicomDictionaryError):
         load_dictionary(dictionary_value)
 
 
-def test_conflicting_named_and_inline_derivatives_are_rejected(tmp_path: Path, dictionary_value, load_dictionary):
+def test_conflicting_named_and_inline_derivatives_are_rejected(
+    tmp_path: Path, dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
     (tmp_path / "templates/other.json").write_text(
         json.dumps(
             {
@@ -141,23 +163,30 @@ def test_duplicate_definition_keys_are_rejected(tmp_path: Path):
 
 
 @pytest.mark.parametrize('value', [None, '', '1.11', '1.11.1\n', 1.11])
-def test_invalid_bids_version_is_rejected(dictionary_value, load_dictionary, value):
+def test_invalid_bids_version_is_rejected(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary], value: object
+):
     dictionary_value['bids-version'] = value
     with pytest.raises(DicomDictionaryError, match='bids-version'):
         load_dictionary(dictionary_value)
 
 
-def test_bids_version_is_required(dictionary_value, load_dictionary):
+def test_bids_version_is_required(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
     dictionary_value.pop('bids-version')
     with pytest.raises(DicomDictionaryError, match='bids-version'):
         load_dictionary(dictionary_value)
 
 
-def test_derivative_template_version_may_differ_from_dictionary(tmp_path: Path, dictionary_value, load_dictionary):
+def test_derivative_template_version_may_differ_from_dictionary(
+    tmp_path: Path, dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
     path = tmp_path / 'templates/example.json'
     template = json.loads(path.read_text())
     template['BIDSVersion'] = '1.10.0'
     path.write_text(json.dumps(template))
     dictionary = load_dictionary(dictionary_value)
     assert dictionary.bids_version == '1.11.1'
+    assert dictionary.mappings[0].dataset.dataset_description is not None
     assert dictionary.mappings[0].dataset.dataset_description['BIDSVersion'] == '1.10.0'
