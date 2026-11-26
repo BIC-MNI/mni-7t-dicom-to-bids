@@ -1,0 +1,10 @@
+{
+    "scanner": {
+        "LongName": "MRI scanner",
+        "Description": "Scanner on which the scan was acquired, derived from its DICOM scanner information.",
+        "Levels": {
+            "Terra": "Siemens MAGNETOM Terra 7T MRI scanner",
+            "Terra.X": "Siemens MAGNETOM Terra.X 7T MRI scanner"
+        }
+    }
+}

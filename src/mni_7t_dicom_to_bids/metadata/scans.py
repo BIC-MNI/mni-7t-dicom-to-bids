@@ -5,6 +5,7 @@ from bic_util.bids.scans import BidsScansTsvFile, BidsScanTsvRow
 from bic_util.print import print_warning
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
+from mni_7t_dicom_to_bids.metadata.sidecars import update_json_from_asset
 
 
 def get_scanner(json_path: Path) -> str:
@@ -72,3 +73,5 @@ def update_scans_tsv(
         scans.set_row(row)
 
     scans.write()
+
+    update_json_from_asset(bids_dataset_path, 'scans.json')

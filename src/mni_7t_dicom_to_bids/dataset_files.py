@@ -1,4 +1,3 @@
-import filecmp
 import getpass
 import os
 import shutil
@@ -8,10 +7,10 @@ from importlib.resources.abc import Traversable
 from pathlib import Path
 
 from bic_util.bids.name import BidsName
-from bic_util.print import print_error_exit, print_warning
 from bic_util.tsv import upsert_tsv_row
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
+from mni_7t_dicom_to_bids.metadata.sidecars import update_json_from_asset
 
 
 def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, dicom_study_path: Path, overwrite: bool):
@@ -28,36 +27,15 @@ def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, di
 
 def add_static_dataset_files(bids_dir_path: Path, overwrite: bool):
     """
-    Copy the static dataset files into the BIDS directory. The files are copied only if they do not
-    exist in the BIDS directory, or if they exist and are changed but can be overwritten. Exit the
-    program with an error if some file exists and is changed but cannot be overwritten.
+    Initialize ignore rules and merge packaged participant column definitions.
+
+    Preserve existing definitions unless overwrite is enabled, and always preserve custom columns.
     """
 
     # Ignore rules are append-only, including when overwriting conversion outputs.
     ensure_bidsignore(bids_dir_path)
 
-    file_name = 'participants.json'
-    with as_file(_resolve_asset_file_path(file_name)) as new_file_path:
-        old_file_path = bids_dir_path / file_name
-
-        if not old_file_path.exists():
-            print(f"File '{file_name}' does not exist in the BIDS directory. Creating...")
-        else:
-            if filecmp.cmp(old_file_path, new_file_path, shallow=False):
-                print(f"File '{file_name}' already exists in the BIDS directory and is unchanged. Skipping.")
-                return
-
-            if overwrite:
-                print_warning(
-                    f"File '{file_name}' already exists in the BIDS directory and is changed. Overwriting..."
-                )
-            else:
-                print_error_exit(
-                    f"File '{file_name}' already exists in the BIDS directory and is changed, use the option"
-                    " '--overwrite' to overwrite it."
-                )
-
-        shutil.copyfile(new_file_path, old_file_path)
+    update_json_from_asset(bids_dir_path, 'participants.json', overwrite=overwrite)
 
 
 def ensure_bidsignore(dataset_path: Path) -> Path:

@@ -4,12 +4,19 @@ from pathlib import Path
 import pytest
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
+from mni_7t_dicom_to_bids.dataset_files import add_static_dataset_files
 from mni_7t_dicom_to_bids.metadata.participants import update_participants_tsv
 from mni_7t_dicom_to_bids.metadata.scans import get_scanner, update_scans_tsv
 from mni_7t_dicom_to_bids.metadata.sessions import update_sessions_tsv
 
 
 def test_converter_preserves_existing_metadata_and_is_idempotent(tmp_path: Path):
+    scans_json_path = tmp_path / 'scans.json'
+    acquisition_time_definition = {'Description': 'Time of scan acquisition'}
+    scans_json_path.write_text(json.dumps({
+        'acq_time': acquisition_time_definition,
+        'scanner': {'Description': 'Outdated scanner definition'},
+    }))
     participant_path = tmp_path / 'participants.tsv'
     participant_path.write_text('participant_id\tsex\nsub-01\tF\n')
     session_path = tmp_path / 'sub-01/sub-01_sessions.tsv'
@@ -41,6 +48,52 @@ def test_converter_preserves_existing_metadata_and_is_idempotent(tmp_path: Path)
             'anat/new.nii.gz\tn/a\tTerra.X\n'
             'anat/old.nii.gz\t2020-01-01T10:00:00\tTerra\n'
         )
+        scans_metadata = json.loads(scans_json_path.read_text())
+        assert scans_metadata['acq_time'] == acquisition_time_definition
+        assert set(scans_metadata['scanner']['Levels']) == {'Terra', 'Terra.X'}
+        assert 'n/a' in scans_metadata['scanner']['Description']
+
+
+@pytest.mark.parametrize('overwrite', [False, True])
+def test_participants_sidecar_merges_asset_and_preserves_custom_columns(tmp_path: Path, overwrite: bool):
+    path = tmp_path / 'participants.json'
+    custom_definition = {'Description': 'Study-specific participant metadata'}
+    participant_definition = {'Description': 'Study-specific participant identifier'}
+    path.write_text(json.dumps({'custom': custom_definition, 'participant_id': participant_definition}))
+
+    add_static_dataset_files(tmp_path, overwrite)
+
+    content = path.read_text()
+    metadata = json.loads(content)
+    assert metadata['custom'] == custom_definition
+    assert metadata['group']['Levels']['Healthy'] == 'Healthy control'
+    if overwrite:
+        assert metadata['participant_id']['LongName'] == 'Participant identification label sub-'
+    else:
+        assert metadata['participant_id'] == participant_definition
+
+    add_static_dataset_files(tmp_path, overwrite)
+    assert path.read_text() == content
+
+
+@pytest.mark.parametrize('dataset_name', ['', 'derivatives/romeo'])
+def test_scanner_definition_is_created_in_each_dataset(tmp_path: Path, dataset_name: str):
+    dataset_path = tmp_path / dataset_name
+    session_path = dataset_path / 'sub-01/ses-01'
+    image_path = session_path / 'anat/scan.nii.gz'
+    image_path.parent.mkdir(parents=True)
+    image_path.with_name('scan.json').write_text(json.dumps({'ManufacturersModelName': 'MAGNETOM Terra'}))
+
+    update_scans_tsv(dataset_path, BidsSessionInfo('01', '01'), [ConvertedScan(image_path)])
+
+    metadata_path = dataset_path / 'scans.json'
+    first_content = metadata_path.read_text()
+    metadata = json.loads(first_content)
+    assert metadata['scanner']['LongName'] == 'MRI scanner'
+    assert metadata['scanner']['Levels']['Terra'] == 'Siemens MAGNETOM Terra 7T MRI scanner'
+
+    update_scans_tsv(dataset_path, BidsSessionInfo('01', '01'), [ConvertedScan(image_path)])
+    assert metadata_path.read_text() == first_content
 
 
 def test_no_scans_does_not_create_metadata(tmp_path: Path):
