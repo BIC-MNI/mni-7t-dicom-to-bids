@@ -246,10 +246,10 @@ def test_pipeline_preserves_metadata_through_pairing_and_cleanup_of_existing_ech
     mni_7t_dicom_to_bids(args)
 
     assert scans_path.read_text() == (
-        'filename\tnote\tscanner\n'
-        f'func/{prefix}_echo-1_part-mag_{contrast}.nii.gz\tmag note\tTerra\n'
-        f'func/{prefix}_echo-1_part-phase_{contrast}.nii.gz\tphase note\tTerra\n'
-        f'func/{prefix}_echo-2_part-mag_{contrast}.nii.gz\texisting echo note\tn/a\n'
+        'filename\tnote\n'
+        f'func/{prefix}_echo-1_part-mag_{contrast}.nii.gz\tmag note\n'
+        f'func/{prefix}_echo-1_part-phase_{contrast}.nii.gz\tphase note\n'
+        f'func/{prefix}_echo-2_part-mag_{contrast}.nii.gz\texisting echo note\n'
     )
     assert not list(directory.glob('*run-*'))
     assert len(list(directory.glob('*.nii.gz'))) == 3

@@ -201,9 +201,9 @@ def test_pipeline_records_final_paths_and_preserves_existing_metadata(
     for _ in range(2):
         mni_7t_dicom_to_bids(args)
         assert scans_path.read_text() == (
-            'filename\tnote\tscanner\n'
-            f'anat/{new_name}\tkeep\tTerra\n'
-            f'anat/{new_phase}\tphase note\tTerra\n'
+            'filename\tnote\n'
+            f'anat/{new_name}\tkeep\n'
+            f'anat/{new_phase}\tphase note\n'
         )
         assert not (anat / old_name).exists()
         assert (anat / new_name).exists()

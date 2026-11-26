@@ -230,5 +230,8 @@ def test_pipeline_routes_derivative_credits_and_honors_no_dataset_files(
     assert len(scans_paths) == 2
     for scans_path in scans_paths:
         lines = scans_path.read_text().splitlines()
-        assert lines[0] == 'filename\tscanner'
-        assert all(line.endswith('\tTerra') for line in lines[1:])
+        assert lines[0] == 'filename'
+    sessions_paths = list(root.rglob('*_sessions.tsv'))
+    assert len(sessions_paths) == 2
+    for sessions_path in sessions_paths:
+        assert sessions_path.read_text() == 'session_id\tscanner\nses-01\tSiemens Terra 7T\n'

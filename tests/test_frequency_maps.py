@@ -108,5 +108,5 @@ def test_pipeline_corrects_final_units_before_pairing_and_retains_scan_metadata(
         # A frequency map must not cause a magnitude image to receive part-mag or change runs.
         assert (session / 'anat/sub-01_ses-01_run-1_desc-frequency_T2starw.nii.gz').exists()
         assert not list(session.rglob('*part-mag*'))
-        assert f'anat/{final}.nii.gz\tkeep\tTerra\n' in scans_path.read_text()
+        assert f'anat/{final}.nii.gz\tkeep\n' in scans_path.read_text()
         assert old not in scans_path.read_text()

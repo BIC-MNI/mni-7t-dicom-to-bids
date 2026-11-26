@@ -83,14 +83,16 @@ and incomplete component/echo sets. Existing images in affected groups participa
 are renamed consistently; unrelated groups are left alone. Existing runless destinations use the
 normal overwrite checks. Sidecars, gradients, and `scans.tsv` follow the final filenames.
 
-The session `scans.tsv` includes a `scanner` column for successfully converted scans,
-including derivative outputs. The scanner is identified during post-processing from each scan's JSON sidecar:
+The subject-level `sub-<label>_sessions.tsv` includes a `scanner` column, documented
+in a dataset-root `sessions.json`, for both raw and derivative datasets.
+
+Scanners are identified during post-processing from each scan's JSON sidecar:
 
 | ManufacturersModelName | SoftwareVersions | scanner |
 |---|---|---|
-| `MAGNETOM Terra` | Any | `Terra` |
-| `MAGNETOM Terra.X` | Any | `Terra.X` |
-| `Investigational_Device_7T` | `syngo MR E12` | `Terra` |
+| `MAGNETOM Terra` | Any | `Siemens Terra 7T` |
+| `MAGNETOM Terra.X` | Any | `Siemens Terra.X 7T` |
+| `Investigational_Device_7T` | `syngo MR E12` | `Siemens Terra 7T` |
 | Otherwise (including missing metadata) | | `n/a`, with a warning |
 
 ## Target software version

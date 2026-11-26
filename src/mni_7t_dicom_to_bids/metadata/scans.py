@@ -1,36 +1,8 @@
-import json
 from pathlib import Path
 
 from bic_util.bids.scans import BidsScansTsvFile, BidsScanTsvRow
-from bic_util.print import print_warning
 
 from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
-from mni_7t_dicom_to_bids.metadata.sidecars import update_json_from_asset
-
-
-def get_scanner(json_path: Path) -> str:
-    """Identify the scanner from the converted scan's JSON sidecar."""
-
-    with json_path.open() as file:
-        metadata: dict[str, object] = json.load(file)
-
-    model = metadata.get('ManufacturersModelName')
-    software = metadata.get('SoftwareVersions')
-
-    match model, software:
-        case 'MAGNETOM Terra', _:
-            return 'Terra'
-        case 'MAGNETOM Terra.X', _:
-            return 'Terra.X'
-        case 'Investigational_Device_7T', 'syngo MR E12':
-            return 'Terra'
-        case _, _:
-            print_warning(
-                f"Cannot identify scanner for '{json_path}': ManufacturersModelName={model!r},"
-                f" SoftwareVersions={software!r}; using n/a."
-            )
-
-            return 'n/a'
 
 
 def update_scans_tsv(
@@ -63,15 +35,10 @@ def update_scans_tsv(
             if row is not None:
                 row.set_file_name(target.name)
 
-    # Add Terra / Terra.X scanner metadata.
     for scan in converted_scans:
         filename = scan.image_path.relative_to(session_path).as_posix()
         print(f"Updating scans.tsv metadata for '{filename}'...")
         row = scans.get_row(filename) or BidsScanTsvRow({'filename': filename})
-        json_path = scan.image_path.with_name(scan.image_path.name.removesuffix('.gz')).with_suffix('.json')
-        row.data['scanner'] = get_scanner(json_path)
         scans.set_row(row)
 
     scans.write()
-
-    update_json_from_asset(bids_dataset_path, 'scans.json')

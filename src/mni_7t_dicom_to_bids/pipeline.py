@@ -85,8 +85,8 @@ def mni_7t_dicom_to_bids(args: Args):
     for dataset, scans in scans_by_dataset.items():
         dataset_path = get_bids_dataset_path(args.bids_dataset_path, dataset)
         update_participants_tsv(dataset_path, args.subject)
-        update_sessions_tsv(dataset_path, bids_session)
         update_scans_tsv(dataset_path, bids_session, scans, renamed_images)
+        update_sessions_tsv(dataset_path, bids_session)
         update_bidsignore(dataset_path, scans)
 
     if args.dataset_files:
