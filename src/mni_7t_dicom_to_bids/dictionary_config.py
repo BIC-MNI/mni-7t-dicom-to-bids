@@ -36,6 +36,7 @@ class MappingConfig(DictionaryConfigModel):
     datatype: Literal['anat', 'dwi', 'fmap', 'func']
     filename: Annotated[str, Field(pattern=r'^[A-Za-z0-9_-]+\Z')]
     merge_images: bool = Field(default=False, alias='merge-images')
+    bidsignore: bool = False
     derivative: NonEmptyString | DerivativeConfig | None = None
     sidecar: dict[str, JsonValue] = Field(default_factory=dict[str, JsonValue])
     credit: CreditConfig | None = None

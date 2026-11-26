@@ -8,7 +8,7 @@ from mni_7t_dicom_to_bids.convert_dicom_series import (
     get_bids_dataset_path,
 )
 from mni_7t_dicom_to_bids.dataclass import BidsDatasetInfo, BidsSessionInfo, ConvertedScan
-from mni_7t_dicom_to_bids.dataset_files import add_dataset_files
+from mni_7t_dicom_to_bids.dataset_files import add_dataset_files, update_bidsignore
 from mni_7t_dicom_to_bids.dictionary import load_dicom_dictionary
 from mni_7t_dicom_to_bids.group_dicom_series import group_dicom_series
 from mni_7t_dicom_to_bids.map_dicom_series import create_conversion_plan
@@ -87,6 +87,7 @@ def mni_7t_dicom_to_bids(args: Args):
         update_participants_tsv(dataset_path, args.subject)
         update_sessions_tsv(dataset_path, bids_session)
         update_scans_tsv(dataset_path, bids_session, scans, renamed_images)
+        update_bidsignore(dataset_path, scans)
 
     if args.dataset_files:
         add_dataset_files(args.bids_dataset_path, bids_session, args.dicom_study_path, args.overwrite)

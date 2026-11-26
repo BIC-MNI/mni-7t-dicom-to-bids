@@ -40,6 +40,7 @@ def create_conversion_plan(
                 PlannedDicomSeries(
                     source=dicom_series,
                     merge_images=series_mapping.merge_images,
+                    bidsignore=series_mapping.bidsignore,
                     sidecar=series_mapping.sidecar,
                     credit=series_mapping.credit,
                 )

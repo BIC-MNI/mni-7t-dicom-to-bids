@@ -35,6 +35,7 @@ class SeriesMapping:
     dataset: BidsDatasetInfo
     sidecar: dict[str, object] = field(default_factory=dict[str, object])
     credit: SequenceCredit | None = None
+    bidsignore: bool = False
 
 
 @dataclass(frozen=True)
@@ -128,6 +129,7 @@ def _parse_dicom_dictionary(
             datatype=mapping.datatype,
             filename=mapping.filename,
             merge_images=mapping.merge_images,
+            bidsignore=mapping.bidsignore,
             dataset=dataset,
             sidecar=dict(mapping.sidecar),
             credit=_resolve_credit(mapping.credit, f'{location}.credit', references),

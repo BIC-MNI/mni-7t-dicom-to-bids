@@ -83,7 +83,7 @@ def convert_dicom_series(
             )
 
             result.scans.extend(
-                ConvertedScan(path, bids_acquisition.dataset, planned_series.credit)
+                ConvertedScan(path, bids_acquisition.dataset, planned_series.credit, planned_series.bidsignore)
                 for path in image_paths
                 if path.name.endswith(('.nii', '.nii.gz'))
             )

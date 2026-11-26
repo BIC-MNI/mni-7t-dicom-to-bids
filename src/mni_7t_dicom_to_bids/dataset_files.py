@@ -7,10 +7,11 @@ from importlib.resources import as_file, files
 from importlib.resources.abc import Traversable
 from pathlib import Path
 
+from bic_util.bids.name import BidsName
 from bic_util.print import print_error_exit, print_warning
 from bic_util.tsv import upsert_tsv_row
 
-from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo
+from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConvertedScan
 
 
 def add_dataset_files(bids_dataset_path: Path, bids_session: BidsSessionInfo, dicom_study_path: Path, overwrite: bool):
@@ -32,29 +33,67 @@ def add_static_dataset_files(bids_dir_path: Path, overwrite: bool):
     program with an error if some file exists and is changed but cannot be overwritten.
     """
 
-    # Copy the static dataset files.
-    for file_name in ['.bidsignore', 'participants.json']:
-        with as_file(_resolve_asset_file_path(file_name)) as new_file_path:
-            old_file_path = bids_dir_path / file_name
+    # Ignore rules are append-only, including when overwriting conversion outputs.
+    ensure_bidsignore(bids_dir_path)
 
-            if not old_file_path.exists():
-                print(f"File '{file_name}' does not exist in the BIDS directory. Creating...")
+    file_name = 'participants.json'
+    with as_file(_resolve_asset_file_path(file_name)) as new_file_path:
+        old_file_path = bids_dir_path / file_name
+
+        if not old_file_path.exists():
+            print(f"File '{file_name}' does not exist in the BIDS directory. Creating...")
+        else:
+            if filecmp.cmp(old_file_path, new_file_path, shallow=False):
+                print(f"File '{file_name}' already exists in the BIDS directory and is unchanged. Skipping.")
+                return
+
+            if overwrite:
+                print_warning(
+                    f"File '{file_name}' already exists in the BIDS directory and is changed. Overwriting..."
+                )
             else:
-                if filecmp.cmp(old_file_path, new_file_path, shallow=False):
-                    print(f"File '{file_name}' already exists in the BIDS directory and is unchanged. Skipping.")
-                    continue
+                print_error_exit(
+                    f"File '{file_name}' already exists in the BIDS directory and is changed, use the option"
+                    " '--overwrite' to overwrite it."
+                )
 
-                if overwrite:
-                    print_warning(
-                        f"File '{file_name}' already exists in the BIDS directory and is changed. Overwriting..."
-                    )
-                else:
-                    print_error_exit(
-                        f"File '{file_name}' already exists in the BIDS directory and is changed, use the option"
-                        " '--overwrite' to overwrite it."
-                    )
+        shutil.copyfile(new_file_path, old_file_path)
 
-            shutil.copyfile(new_file_path, old_file_path)
+
+def ensure_bidsignore(dataset_path: Path) -> Path:
+    """Initialize ignore rules from the packaged template without replacing existing content."""
+    path = dataset_path / '.bidsignore'
+    if not path.exists():
+        with as_file(_resolve_asset_file_path('.bidsignore')) as template:
+            shutil.copyfile(template, path)
+    return path
+
+
+def update_bidsignore(dataset_path: Path, scans: list[ConvertedScan]):
+    """Append exact final paths for flagged scans and their associated files."""
+    entries: set[str] = set()
+    for scan in scans:
+        if not scan.bidsignore:
+            continue
+        name = BidsName.from_string(scan.image_path.name)
+        name.extension = None
+        prefix = str(name) + '.'
+        for path in scan.image_path.parent.iterdir():
+            if path.is_file() and path.name.startswith(prefix):
+                entries.add(path.relative_to(dataset_path).as_posix())
+
+    if not entries:
+        return
+
+    path = ensure_bidsignore(dataset_path)
+    content = path.read_text(encoding='utf-8')
+    existing = {line.strip() for line in content.splitlines()}
+    missing = sorted(entries - existing)
+    if missing:
+        with path.open('a', encoding='utf-8') as file:
+            if content and not content.endswith('\n'):
+                file.write('\n')
+            file.write('\n'.join(missing) + '\n')
 
 
 def add_participants_7t_to_bids_json_file(

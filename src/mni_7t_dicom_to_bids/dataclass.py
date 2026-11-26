@@ -84,6 +84,7 @@ class ConvertedScan:
     image_path: Path
     dataset: BidsDatasetInfo = RAW_BIDS_DATASET
     credit: SequenceCredit | None = field(default=None, compare=False)
+    bidsignore: bool = field(default=False, compare=False)
 
 
 @dataclass
@@ -139,6 +140,7 @@ class PlannedDicomSeries:
     """
 
     credit: SequenceCredit | None = field(default=None, compare=False)
+    bidsignore: bool = field(default=False, compare=False)
 
 
 @dataclass

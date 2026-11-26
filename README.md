@@ -151,6 +151,14 @@ Details:
 - The mapping order is significant, the first matching entry whose series description pattern matches is used.
 - The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
 - The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
+- The optional `bidsignore` boolean defaults to `false`. When `true`, the converter appends the
+  final dataset-relative paths of the series' images and associated files (including JSON sidecars)
+  to that output dataset's `.bidsignore`, including for derivative datasets. Files remain in the
+  dataset but are excluded from validation. The default dictionary enables this for CLEAR-SWI and
+  merged ASPIRE MEGRE outputs. This also works without `--dataset-files`.
+  A missing `.bidsignore` is initialized from the packaged template. Existing content is preserved,
+  even with `--overwrite`, and duplicate entries are not appended. Changing the flag back to `false`
+  does not remove previous entries; remove obsolete entries manually.
 - The optional `sidecar` object adds or replaces metadata fields in every output JSON sidecar from the
   matching series. It is applied after dcm2niix metadata and the converter's automatic corrections, so
   configured values take precedence. Other fields are preserved. Values must be literal JSON values;
