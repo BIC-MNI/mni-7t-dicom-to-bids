@@ -4,8 +4,9 @@ from pathlib import Path
 import pytest
 
 from mni_7t_dicom_to_bids.args import Args, SkipErrorsArg, SkipUnknownsArg
-from mni_7t_dicom_to_bids.dataclass import ConversionResult, ConvertedScan
-from mni_7t_dicom_to_bids.patch_files import patch_singleton_runs
+from mni_7t_dicom_to_bids.convert_dicom_series import get_bids_acquisition_file_name
+from mni_7t_dicom_to_bids.dataclass import BidsSessionInfo, ConversionResult, ConvertedScan
+from mni_7t_dicom_to_bids.patch_files import patch_file_path, patch_magnitude_counterparts, patch_singleton_runs
 from mni_7t_dicom_to_bids.pipeline import mni_7t_dicom_to_bids
 
 
@@ -124,6 +125,87 @@ def test_runless_and_empty_inputs_are_unchanged(tmp_path: Path):
     assert patch_singleton_runs([]) == {}
     assert patch_singleton_runs([ConvertedScan(image)]) == {}
     assert image.exists()
+
+
+def test_single_series_gets_provisional_run():
+    assert get_bids_acquisition_file_name(BidsSessionInfo('01', '01'), 'T1w', 1) == (
+        'sub-01_ses-01_run-1_T1w'
+    )
+
+
+@pytest.mark.parametrize('source, normalized', [
+    ('task-cloudy_run-{run}_bold_e1', 'task-cloudy_run-{run}_echo-1_bold'),
+    ('acq-me_run-{run}_T2starw_e1', 'acq-me_run-{run}_echo-1_T2starw'),
+    ('acq-mtw07_run-{run}_mt-on_MTR', 'acq-mtw07_mt-on_run-{run}_MTR'),
+    ('acq-aspire_run-{run}_T2starw', 'acq-aspire_run-{run}_T2starmap'),
+])
+@pytest.mark.parametrize('run_count', [1, 2])
+def test_sequence_cleanup_preserves_runs_until_shared_pass(
+    tmp_path: Path, source: str, normalized: str, run_count: int
+):
+    scans = []
+    for run in range(1, run_count + 1):
+        original = write_image(tmp_path, 'sub-01_' + source.format(run=run) + '.nii.gz')
+        patch_file_path(original)
+        expected = tmp_path / ('sub-01_' + normalized.format(run=run) + '.nii.gz')
+        assert expected.exists()
+        scans.append(ConvertedScan(expected))
+
+    renames = patch_singleton_runs(scans)
+    if run_count == 1:
+        original = scans[0].image_path
+        assert renames == {original: original.with_name(original.name.replace('_run-1', ''))}
+    else:
+        assert renames == {}
+        assert all(scan.image_path.exists() for scan in scans)
+
+
+@pytest.mark.parametrize('run_count', [1, 2])
+def test_dwi_component_identification_defers_run_cleanup(tmp_path: Path, run_count: int):
+    scans = []
+    for acquisition in range(run_count):
+        for component, run in [('M', acquisition * 2 + 1), ('P', acquisition * 2 + 2)]:
+            # The first phase series uses the legacy run-2 fallback; later phases use dcm2niix's ph token.
+            phase_token = '_ph' if component == 'P' and run > 2 else ''
+            stem = f'sub-01_acq-test_dir-AP_run-{run}_dwi'
+            metadata = {'ImageType': [component], 'AcquisitionTime': f'10:0{acquisition}:00'}
+            image = write_image(tmp_path, stem + phase_token + '.nii.gz')
+            sidecar = tmp_path / (stem + phase_token + '.json')
+            sidecar.write_text(json.dumps(metadata))
+            patch_file_path(image)
+            patch_file_path(sidecar)
+            part = '_part-phase' if component == 'P' else ''
+            image = tmp_path / f'sub-01_acq-test_dir-AP_run-{run}{part}_dwi.nii.gz'
+            assert image.exists()
+            scans.append(ConvertedScan(image))
+
+    paired = patch_magnitude_counterparts(scans)
+    scans = [ConvertedScan(paired.get(scan.image_path, scan.image_path)) for scan in scans]
+    patch_singleton_runs(scans)
+    for acquisition in range(run_count):
+        run = f'_run-{acquisition * 2 + 1}' if run_count > 1 else ''
+        for part in ['mag', 'phase']:
+            stem = f'sub-01_acq-test_dir-AP{run}_part-{part}_dwi'
+            assert (tmp_path / (stem + '.nii.gz')).exists()
+            assert (tmp_path / (stem + '.json')).exists()
+
+
+@pytest.mark.parametrize('pair_count', [1, 2])
+def test_tb1tfl_pair_decoding_defers_singleton_cleanup(tmp_path: Path, pair_count: int):
+    scans = []
+    for run in range(1, pair_count * 2 + 1):
+        original = write_image(tmp_path, f'sub-01_acq-anat_run-{run}_TB1TFL.nii.gz')
+        patch_file_path(original)
+        acquisition = 'anat' if run % 2 else 'sfam'
+        image = tmp_path / f'sub-01_acq-{acquisition}_run-{(run + 1) // 2}_TB1TFL.nii.gz'
+        assert image.exists()
+        scans.append(ConvertedScan(image))
+
+    patch_singleton_runs(scans)
+    for pair in range(1, pair_count + 1):
+        run = f'_run-{pair}' if pair_count > 1 else ''
+        for acquisition in ['anat', 'sfam']:
+            assert (tmp_path / f'sub-01_acq-{acquisition}{run}_TB1TFL.nii.gz').exists()
 
 
 @pytest.mark.parametrize('contrast', ['bold', 'sbref'])

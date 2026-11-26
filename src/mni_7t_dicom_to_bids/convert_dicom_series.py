@@ -64,9 +64,6 @@ def convert_dicom_series(
                 f" ({counter.count} / {counter.total})."
             )
 
-            if len(planned_acquisition.series) == 1:
-                run_number = None
-
             bids_data_type_path = get_bids_data_type_dir_path(args.bids_dataset_path, bids_session, bids_acquisition)
 
             image_paths = run_conversion_function(
@@ -138,7 +135,7 @@ def convert_bids_dicom_series(
     bids_session: BidsSessionInfo,
     bids_acquisition: BidsAcquisitionInfo,
     bids_data_type_path: Path,
-    run_number: int | None,
+    run_number: int,
     args: Args,
     tmp_dicom_dir_path: Path,
     tmp_output_dir_path: Path,
@@ -337,7 +334,7 @@ def get_bids_dataset_path(bids_dataset_path: Path, dataset: BidsDatasetInfo) -> 
     return bids_dataset_path
 
 
-def get_bids_acquisition_file_name(bids_session: BidsSessionInfo, base_name: str, run_number: int | None) -> str:
+def get_bids_acquisition_file_name(bids_session: BidsSessionInfo, base_name: str, run_number: int) -> str:
     """
     Get the full BIDS file name of a BIDS acquisition.
     """
@@ -348,8 +345,7 @@ def get_bids_acquisition_file_name(bids_session: BidsSessionInfo, base_name: str
     bids_name.add('sub', bids_session.subject)
     bids_name.add('ses', bids_session.session)
 
-    # Add a run number if there are several DICOM series for the BIDS acquisition.
-    if run_number is not None:
-        bids_name.add('run', str(run_number))
+    # Keep a provisional series number until component pairing and final run normalization.
+    bids_name.add('run', str(run_number))
 
     return str(bids_name)

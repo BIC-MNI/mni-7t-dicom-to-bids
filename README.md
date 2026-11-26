@@ -73,6 +73,9 @@ Magnitude-only images keep their filenames. Renames include sidecars and gradien
 reflected in `scans.tsv`, retaining existing custom metadata.
 
 After frequency-map correction and magnitude/phase pairing, singleton `run` labels are removed.
+Conversion assigns provisional run numbers to every mapped series; echo images, MTR, T2* maps,
+and DWI all use this final cleanup instead of removing runs during individual series conversion.
+DWI phase identification and TB1TFL anat/sfam pair decoding retain provisional runs for that cleanup.
 Acquisition groups share a directory and all filename entities other than `run`, `part`, and `echo`
 (ignoring the image extension). A group with only one distinct run label loses that label across
 all components and echoes; groups with multiple runs retain their labels, including gaps in numbering

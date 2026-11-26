@@ -194,14 +194,6 @@ def patch_file_path(file_path: Path):
         bids_name.remove(echo_match.group(0))
         bids_name.add('echo', echo_match.group(1))
 
-    # Remove 'run-?' from echo files (there can be several 'task-rest' runs per acquisition).
-    if bids_name.has('echo') and bids_name.has('run') and not bids_name.has_value('task', 'rest'):
-        bids_name.remove('run')
-
-    # Remove 'run-?' from MTR files.
-    if bids_name.has_value('acq', 'mtw07') and bids_name.has('run'):
-        bids_name.remove('run')
-
     # Replace 'ph' with 'part-phase'.
     if bids_name.has('ph'):
         bids_name.remove('ph')
@@ -212,20 +204,16 @@ def patch_file_path(file_path: Path):
         and not bids_name.has('echo') and not bids_name.has('desc')
         and not bids_name.has('part') and not bids_name.has('rec')
     ):
-        bids_name.remove('run')
         bids_name.remove('T2starw')
         bids_name.add('T2starmap')
 
-    # Remove 'run-1' in 7T DWI acquisitions.
-    if bids_name.has('dwi') and bids_name.has_value('run', '1'):
-        bids_name.remove('run')
-
-    # Replace 'run-2' with 'part-phase' in 7T DWI acquisitions.
+    # Identify the second 7T DWI series as phase, retaining its provisional run for pairing.
+    # Run alignment and singleton removal happen after all series have been converted.
     if bids_name.has('dwi') and bids_name.has_value('run', '2'):
-        bids_name.remove('run')
         bids_name.add('part', 'phase')
 
-    # Apply the TB1TFL-specific post processing.
+    # Decode TB1TFL anat/sfam pairs into acquisition labels and shared provisional runs.
+    # The final run pass decides whether each acquisition has repeats.
     if bids_name.has('TB1TFL'):
         run_number = int(bids_name.get('run') or 0)
         acquisition_name = 'anat' if run_number % 2 == 1 else 'sfam'
