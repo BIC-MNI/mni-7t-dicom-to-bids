@@ -152,7 +152,6 @@
       "series": ".*Romeo_P_anat-T2star_acq-me_gre_0.*7iso_ASPIRE",
       "datatype": "anat",
       "filename": "acq-megre07_rec-romeo_desc-phaseunwrap_t2starw",
-      "merge-images": true,
       "derivative": "romeo",
       "credit": {
         "acknowledgement": "Multi-echo GRE: C2P from Simon Robinson, Vienna.",
