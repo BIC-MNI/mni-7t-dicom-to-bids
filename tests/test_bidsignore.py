@@ -137,10 +137,11 @@ def test_pipeline_propagates_flag_and_ignores_final_names_in_each_dataset(
     dictionary = tmp_path / 'dictionary.json'
     dictionary.write_text(json.dumps({
         'bids-version': '1.11.2', 'ignored-series': [], 'trim-series-suffixes': [],
+        'derivatives': {'custom': {'name': 'custom', 'dataset-description': str(template)}},
         'mappings': [
             {'series': 'raw', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': rule},
             {'series': 'derived', 'datatype': 'anat', 'filename': 'acq-custom_swi', 'bidsignore': rule,
-             'derivative': {'name': 'custom', 'dataset-description': str(template)}},
+             'derivative': 'custom'},
             {'series': 'regular', 'datatype': 'anat', 'filename': 'T1w'},
         ],
     }))

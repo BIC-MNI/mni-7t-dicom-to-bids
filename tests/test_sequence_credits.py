@@ -122,13 +122,17 @@ def test_invalid_credit_rejected_and_omitted_credit_supported(tmp_path: Path, cr
         load_dicom_dictionary(path)
 
 
-def test_structured_references_deduplicate_by_url(tmp_path: Path):
+def test_named_references_deduplicate_by_url(tmp_path: Path):
     root = tmp_path
     url = "https://doi.org/10.1002/mrm.26963"
     value = {
         "bids-version": "1.11.1",
         "ignored-series": list[str](),
         "trim-series-suffixes": list[str](),
+        "references": {
+            "paper": {"text": "Paper A", "url": url},
+            "alternate": {"text": "Alternate text", "url": url},
+        },
         "mappings": [
             {
                 "series": "example",
@@ -136,7 +140,7 @@ def test_structured_references_deduplicate_by_url(tmp_path: Path):
                 "filename": "T1w",
                 "credit": {
                     "acknowledgement": "Credit",
-                    "references": [{"text": "Paper A", "url": url}, {"text": "Alternate text", "url": url}],
+                    "references": ["paper", "alternate"],
                 },
             }
         ],

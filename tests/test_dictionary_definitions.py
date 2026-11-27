@@ -1,4 +1,3 @@
-import copy
 import json
 from collections.abc import Callable
 from pathlib import Path
@@ -48,16 +47,10 @@ def load_dictionary(tmp_path: Path) -> Callable[[dict[str, Any]], DicomDictionar
     return load
 
 
-def test_named_definitions_match_inline_values_and_resolve_relative_templates(
+def test_named_references_resolve_and_derivatives_resolve_relative_templates(
     dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
 ):
     named = load_dictionary(dictionary_value)
-    inline = copy.deepcopy(dictionary_value)
-    inline.pop("references")
-    inline.pop("derivatives")
-    inline["mappings"][0]["derivative"] = dictionary_value["derivatives"]["processed"]
-    inline["mappings"][0]["credit"]["references"] = [dictionary_value["references"]["paper"]]
-    assert named == load_dictionary(inline)
     assert named.mappings[0].dataset.name == "example"
     assert named.mappings[0].dataset.dataset_description is not None
     assert named.mappings[0].dataset.dataset_description["DatasetType"] == "derivative"
@@ -65,11 +58,12 @@ def test_named_definitions_match_inline_values_and_resolve_relative_templates(
     assert named.mappings[0].credit.references[0].url == dictionary_value["references"]["paper"]["url"]
 
 
-def test_mixed_references_deduplicate_by_url_and_default_to_empty(
+def test_named_references_deduplicate_by_url_and_default_to_empty(
     dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
 ):
     mapping = dictionary_value["mappings"][0]
-    mapping["credit"]["references"] = ["paper", dictionary_value["references"]["paper"]]
+    dictionary_value["references"]["same-paper"] = dict(dictionary_value["references"]["paper"])
+    mapping["credit"]["references"] = ["paper", "same-paper", "paper"]
     credit = load_dictionary(dictionary_value).mappings[0].credit
     assert credit is not None
     assert len(credit.references) == 1
@@ -128,7 +122,7 @@ def test_invalid_definition_sections_are_rejected(
         load_dictionary(dictionary_value)
 
 
-def test_conflicting_named_and_inline_derivatives_are_rejected(
+def test_conflicting_named_derivatives_are_rejected(
     tmp_path: Path, dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
 ):
     (tmp_path / "templates/other.json").write_text(
@@ -140,10 +134,6 @@ def test_conflicting_named_and_inline_derivatives_are_rejected(
         )
     )
     other = {"name": "example", "dataset-description": "templates/other.json"}
-    dictionary_value["mappings"][0]["derivative"] = other
-    with pytest.raises(DicomDictionaryError, match=r"mappings\[0\].derivative conflicts"):
-        load_dictionary(dictionary_value)
-    dictionary_value["mappings"][0]["derivative"] = "processed"
     dictionary_value["derivatives"]["unused"] = other
     with pytest.raises(DicomDictionaryError, match=r"derivatives\.unused conflicts"):
         load_dictionary(dictionary_value)
@@ -190,3 +180,37 @@ def test_derivative_template_version_may_differ_from_dictionary(
     assert dictionary.bids_version == '1.11.1'
     assert dictionary.mappings[0].dataset.dataset_description is not None
     assert dictionary.mappings[0].dataset.dataset_description['BIDSVersion'] == '1.10.0'
+
+
+def test_inline_derivatives_are_rejected(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary]
+):
+    dictionary_value["mappings"][0]["derivative"] = dictionary_value["derivatives"]["processed"]
+    with pytest.raises(DicomDictionaryError, match=r"mappings\[0\].derivative"):
+        load_dictionary(dictionary_value)
+
+
+@pytest.mark.parametrize("explicit_null", [False, True])
+def test_raw_dataset_does_not_require_derivative_definitions(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary],
+    explicit_null: bool
+):
+    dictionary_value.pop("derivatives")
+    mapping = dictionary_value["mappings"][0]
+    if explicit_null:
+        mapping["derivative"] = None
+    else:
+        mapping.pop("derivative")
+    assert not load_dictionary(dictionary_value).mappings[0].dataset.is_derivative
+
+
+@pytest.mark.parametrize("mixed", [False, True])
+def test_inline_references_are_rejected(
+    dictionary_value: dict[str, Any], load_dictionary: Callable[[dict[str, Any]], DicomDictionary], mixed: bool
+):
+    references = [dictionary_value["references"]["paper"]]
+    if mixed:
+        references.insert(0, "paper")
+    dictionary_value["mappings"][0]["credit"]["references"] = references
+    with pytest.raises(DicomDictionaryError, match=r"mappings\[0\].credit.references"):
+        load_dictionary(dictionary_value)

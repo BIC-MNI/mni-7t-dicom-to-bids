@@ -23,7 +23,7 @@ class CitationConfig(DictionaryConfigModel):
 
 class CreditConfig(DictionaryConfigModel):
     acknowledgement: NonEmptyString
-    references: list[NonEmptyString | CitationConfig] = Field(default_factory=list[str | CitationConfig])
+    references: list[NonEmptyString] = Field(default_factory=list[str])
 
 
 class DerivativeConfig(DictionaryConfigModel):
@@ -37,7 +37,7 @@ class MappingConfig(DictionaryConfigModel):
     filename: Annotated[str, Field(pattern=r'^[A-Za-z0-9_-]+\Z')]
     merge_images: bool = Field(default=False, alias='merge-images')
     bidsignore: bool | Annotated[str, Field(min_length=1, pattern=r'^[^\r\n]+\Z')] = False
-    derivative: NonEmptyString | DerivativeConfig | None = None
+    derivative: NonEmptyString | None = None
     sidecar: dict[str, JsonValue] = Field(default_factory=dict[str, JsonValue])
     credit: CreditConfig | None = None
 

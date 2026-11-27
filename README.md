@@ -58,6 +58,8 @@ pip install "mni_7t_dicom_to_bids[validator] @ git+https://github.com/bic-mni/mn
 
 ## Scan metadata
 
+See [processing on top of dcm2niix](./docs/Processings.md) for the built-in filename corrections, file cleanup, and metadata updates.
+
 Before magnitude/phase pairing, images whose final JSON sidecar has `Units: Hz` lose any `part-phase`
 label. This applies whether the units came from dcm2niix or a dictionary override.
 
@@ -105,241 +107,22 @@ Scanners are identified during post-processing from each scan's JSON sidecar:
 
 ## Configuration
 
-The MNI 7T DICOM to BIDS converter provides a default dictionary that maps common DICOM series acquired at the MNI 7T MRI scanner. However, a custom dictionary can also be passed to the converter using the `--dictionary <path>` CLI argument.
+This converter can be configured to work with any DICOM series or BIDS naming convention by providing it with a custom dictionary JSON or JSON5 file.
 
-A dictionary is a JSON or JSON5 file that has the following structure:
-
-```json5
-{
-  "bids-version": "1.11.2",
-  "ignored-series": ["AAHead_Scout.*"],
-  "trim-series-suffixes": ["_Pha", "_Motion"],
-  "references": {
-    "example-method": {
-      "text": "Example method reference.",
-      "url": "https://example.org/method"
-    }
-  },
-  "derivatives": {
-    "example": {
-      "name": "example",
-      "dataset-description": "dataset_descriptions/example.json"
-    }
-  },
-  "mappings": [
-    {
-      "series": "anat-T1w_acq-mprage_.*",
-      "datatype": "anat",
-      "filename": "T1w",
-      "merge-images": true,
-      "sidecar": {
-        "Description": "An anatomical image processed by the example pipeline."
-      },
-      "derivative": "example",
-      "credit": {
-        "acknowledgement": "Sequence and reconstruction attribution.",
-        "references": ["example-method"]
-      }
-    }
-  ]
-}
+```sh
+mni7t_dcm2bids --dictionary dictionary.json ...
 ```
 
-Details:
-- The `bids-version` string declares the target BIDS specification version (`major.minor.patch`).
-- Both JSON and JSON5 files are supported, the latter notably supporting comments.
-- Ignored series and mapping patterns use Python regular expressions with complete-string matching.
-- Trimmed suffixes are literal strings removed from the series description before matching.
-- The mapping order is significant, the first matching entry whose series description pattern matches is used.
-- The supported BIDS datatypes are `anat`, `dwi`, `fmap`, and `func`.
-- The optional `merge-images` boolean requests dcm2niix to merge the matching series into one a single output files (`-m y`). It defaults to `false`.
-- The optional `bidsignore` accepts a boolean or a nonempty, single-line string and defaults to
-  `false` (add nothing). When `true`, the converter appends the
-  final dataset-relative paths of the series' images and associated files (including JSON sidecars)
-  to that output dataset's `.bidsignore`, including for derivative datasets. A string is appended
-  verbatim as an ignore pattern relative to that dataset's root, for example
-  `"bidsignore": "**/*_rec-CLEARSWI*_swi.*"`. Patterns apply across participants and sessions;
-  include the extensions you want to ignore (e.g. `.*` covers images and sidecars). Files remain in
-  the dataset but are excluded from validation. The default dictionary uses patterns for CLEAR-SWI
-  and merged ASPIRE MEGRE outputs. This also works without `--dataset-files`.
-  A missing `.bidsignore` is initialized from the packaged template. Existing content is preserved,
-  even with `--overwrite`, and duplicate entries are not appended. Changing the flag back to `false`
-  does not remove previous entries; remove obsolete entries manually.
-- The optional `sidecar` object adds or replaces metadata fields in every output JSON sidecar from the
-  matching series. It is applied after dcm2niix metadata and the converter's automatic corrections, so
-  configured values take precedence. Other fields are preserved. Values must be literal JSON values;
-  nested objects and arrays replace the entire existing value rather than being merged recursively.
-  `null` writes a JSON null; it does not delete a field. Omitting `sidecar` is equivalent to `{}`.
-  The default dictionary uses this option to set `MTState` for MT-on and MT-off acquisitions. Custom
-  dictionaries with these acquisitions should also specify `MTState` explicitly.
-- The optional top-level `references` object defines citations once, keyed by non-empty names.
-  Each definition contains non-empty `text` and HTTP(S) `url` strings. A credit's `references` array
-  selects these definitions by name. Inline `{ "text": "...", "url": "..." }` objects remain supported,
-  including mixed lists of names and inline objects. Omitted credit references default to `[]`.
-- The optional top-level `derivatives` object defines derivative destinations once, keyed by non-empty
-  names. Each definition supplies `name` (the output directory label) and `dataset-description`
-  (the JSON template path). A mapping selects a definition with `"derivative": "example"`.
-  Inline derivative objects remain supported. Omitting `derivative` targets the raw dataset.
-  Relative template paths are resolved from the dictionary directory, including named definitions.
-- Both definition sections default to `{}`. Definitions are validated when the dictionary is loaded,
-  including unused definitions. Undefined names report the location of the mapping or credit that
-  uses them. Conflicting descriptions for the same derivative output directory are rejected.
-  Definitions cannot alias other definitions; their names are internal and are not exported to BIDS.
+See the [configuration documentation](./docs/Configuration.md) for more information about the configuration file format.
 
-## BIDS naming dictionary
+## Default dictionary
 
-The default MNI 7T DICOM to BIDS dictionary uses the following mapping:
-
-### Anatomical
-
-| **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
-|:-----:|:------------------------------------------|:---------|:-------------:|
-| 1 | `anat-flair_acq-0*7iso_UPAdia` | `acq-UPAdia07_FLAIR` | `anat` |
-| 2 | `anat-flair_acq-0*7mm_UPAdia` | `acq-UPAdia07_FLAIR` | `anat` |
-| 3 | `anat-flair_acq-0*7iso_dev3_5SD_UP` | `acq-5SDUP07_FLAIR` | `anat` |
-| 4 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI_Images` | `acq-mp2rageCSPtx07_UNIT1` | `anat` |
-| 5 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_UNI-DEN` | `acq-mp2rageCSPtx07_rec-denoised_UNIT1` | `anat` |
-| 6 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_T1_Images` | `acq-mp2rageCSPtx07_T1map` | `anat` |
-| 7 | `anat-T1w_acq_mprage_0*8mm_CSptx` | `acq-mprageCSPtx08_T1w` | `anat` |
-| 8 | `anat-T1w_acq_mprage_0*8mm_CSx_ND` | `acq-mprageCSPtx08_T1w` | `anat` |
-| 9 | `*anat-T1w_acq-mprage_0*7mm_UP` | `acq-mprageUP07_T1w` | `anat` |
-| 10 | `*CLEAR-SWI_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-CLEARSWI_swi` | `anat` |
-| 11 | `*Romeo_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-phaseunwrap_t2starw` | `derivatives/romeo/anat` |
-| 12 | `*Romeo_Mask_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-mask_t2starw` | `derivatives/romeo/anat` |
-| 13 | `*Romeo_B0_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-romeo_desc-B0_t2starw` | `derivatives/romeo/anat` |
-| 14 | `Aspire_M_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-mag_MEGRE` | `anat` |
-| 15 | `Aspire_P_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_part-phase_MEGRE` | `anat` |
-| 16 | `*T2star_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_T2starmap` | `anat` |
-| 17 | `*EchoCombined_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combined_T2starw` | `derivatives/aspire/anat` |
-| 18 | `*sensitivity_corrected_mag_anat-T2star_acq-me_gre_0*7iso_ASPIRE` | `acq-megre07_rec-aspire_desc-combinedsenscor_T2starw` | `derivatives/aspire/anat` |
-| 19 | `*T2Star_Images` | `acq-me_T2starmap` | `anat` |
-| 20 | `*anat-T2star_acq-me_gre_07mm*` | `acq-me_T2starw` | `anat` |
-| 21 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV1` | `acq-mp2rageCSPtx07_inv-1_MP2RAGE` | `anat` |
-| 22 | `*anat-T1w_acq-mp2rage_0*7mm_CSptx_INV2` | `acq-mp2rageCSPtx07_inv-2_MP2RAGE` | `anat` |
-| 23 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV1*` | `acq-mp2rage05_inv-1_MP2RAGE` | `anat` |
-| 24 | `*anat-T1w_acq-mp2rage_05mm_UP*_INV2*` | `acq-mp2rage05_inv-2_MP2RAGE` | `anat` |
-| 25 | `*anat-T1w_acq-mp2rage_05mm_UP*_T1_Images*` | `acq-mp2rage05_T1map` | `anat` |
-| 26 | `*anat-T1w_acq-mp2rage_05mm_UP*_UNI_Images*` | `acq-mp2rage05_UNIT1` | `anat` |
-| 27 | `*cstfl-mp2rage-05mm_INV1` | `acq-cstfl_inv-1_MP2RAGE` | `anat` |
-| 28 | `*cstfl-mp2rage-05mm_INV2` | `acq-cstfl_inv-2_MP2RAGE` | `anat` |
-| 29 | `*cstfl-mp2rage-05mm_T1_Images` | `acq-cstfl_T1map` | `anat` |
-| 30 | `*cstfl-mp2rage-05mm_UNI_Images` | `acq-cstfl_UNIT1` | `anat` |
-| 31 | `*cstfl-mp2rage-05mm_UNI-DEN` | `acq-cstfl_rec-denoised_UNIT1` | `anat` |
-| 32 | `*anat-mtw_acq-T1w_07mm` | `acq-mtw07_T1w` | `anat` |
-| 33 | `*anat-mtw_acq-MTON_07mm` | `acq-mtw07_mt-on_MTR` | `anat` |
-| 34 | `*anat-mtw_acq-MTOFF_07mm` | `acq-mtw07_mt-off_MTR` | `anat` |
-| 35 | `*_T1W` | `acq-MTR_T1w` | `anat` |
-| 36 | `anat-nm_acq-MTboost_sag_0.55mm` | `acq-neuromelaninMTw_T1w` | `anat` |
-| 37 | `CR_tfl_MTboost_sag7deg_0.55mm` | `acq-neuromelaninMTw_T1w` | `anat` |
-| 38 | `*anat-angio_acq-tof_03mm_inplane` | `acq-tof03_angio` | `anat` |
-| 39 | `*anat-angio_acq-tof_03mm_inplane_MIP_COR` | `acq-tof03_rec-MIPcor_angio` | `anat` |
-| 40 | `*anat-angio_acq-tof_03mm_inplane_MIP_SAG` | `acq-tof03_rec-MIPsag_angio` | `anat` |
-| 41 | `*anat-angio_acq-tof_03mm_inplane_MIP_TRA` | `acq-tof03_rec-MIPtra_angio` | `anat` |
-
-### Diffusion-weighted images
-
-| **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
-|:-----:|:------------------------------------------|:---------|:-------------:|
-| 1 | `dwi_acq_b0_PA_SBRef` | `acq-b0_dir-PA_sbref` | `dwi` |
-| 2 | `dwi_acq_b0_PA_acc9_SBRef` | `acq-b0_dir-PA_sbref` | `dwi` |
-| 3 | `*dwi_acq_b0*_PA_SBRef` | `acq-b0_dir-PA_sbref` | `dwi` |
-| 4 | `*dwi_acq_b0*_PA` | `acq-b0_dir-PA_dwi` | `dwi` |
-| 5 | `dwi_acq_b0_PA_acc9` | `acq-b0_dir-PA_dwi` | `dwi` |
-| 6 | `*dwi_acq_b0_PA_1p5iso_SBRef` | `acq-b01p5_dir-PA_sbref` | `dwi` |
-| 7 | `*dwi_acq_b0_PA_1p5iso` | `acq-b01p5_dir-PA_dwi` | `dwi` |
-| 8 | `*dwi_acq_multib_38dir_AP_acc9_SBRef` | `acq-multib38_dir-AP_sbref` | `dwi` |
-| 9 | `*dwi_acq_multib_38dir_AP_acc9_test_SBRef` | `acq-multib38Test_dir-AP_sbref` | `dwi` |
-| 10 | `*dwi_acq_multib_38dir_AP_acc9_1p5iso_SBRef` | `acq-multib381p5_dir-AP_sbref` | `dwi` |
-| 11 | `*dwi_acq_multib_70dir_AP_acc9_SBRef` | `acq-multib70_dir-AP_sbref` | `dwi` |
-| 12 | `dwi_acq_multib_108dir_AP_acc9_SBRef` | `acq-multib108_dir-AP_sbref` | `dwi` |
-| 13 | `*dwi_acq_multib_70dir_AP_acc9_1p5iso_SBRef` | `acq-multib701p5_dir-AP_sbref` | `dwi` |
-| 14 | `*dwi_acq_b300_10d-dir_AP_SBRef` | `acq-b300_dir-AP_sbref` | `dwi` |
-| 15 | `*dwi_acq_b700_40d-dir_AP_SBRef` | `acq-b700_dir-AP_sbref` | `dwi` |
-| 16 | `*dwi_acq_b2000_90d-dir_AP_SBRef` | `acq-b2000_dir-AP_sbref` | `dwi` |
-| 17 | `*dwi_acq_multib_38dir_AP_acc9` | `acq-multib38_dir-AP_dwi` | `dwi` |
-| 18 | `*dwi_acq_multib_38dir_AP_acc9_1p5iso` | `acq-multib381p5_dir-AP_dwi` | `dwi` |
-| 19 | `*dwi_acq_multib_38dir_AP_acc9_test` | `acq-multib38Test_dir-AP_dwi` | `dwi` |
-| 20 | `*dwi_acq_multib_70dir_AP_acc9` | `acq-multib70_dir-AP_dwi` | `dwi` |
-| 21 | `*dwi_acq_multib_70dir_AP_acc9_1p5iso` | `acq-multib701p5_dir-AP_dwi` | `dwi` |
-| 22 | `dwi_acq_multib_108dir_AP_acc9` | `acq-multib108_dir-AP_dwi` | `dwi` |
-| 23 | `*dwi_acq_b300_10d-dir_AP` | `acq-b300_dir-AP_dwi` | `dwi` |
-| 24 | `*dwi_acq_b700_40d-dir_AP` | `acq-b700_dir-AP_dwi` | `dwi` |
-| 25 | `*dwi_acq_b2000_90d-dir_AP` | `acq-b2000_dir-AP_dwi` | `dwi` |
-
-### Field maps
-
-| **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
-|:-----:|:------------------------------------------|:---------|:-------------:|
-| 1 | `fmap-b1_tra_p2` | `acq-anat_TB1TFL` | `fmap` |
-| 2 | `fmap-b1_acq-sag_p2` | `acq-anat_TB1TFL` | `fmap` |
-| 3 | `*fmap-b1_acq-*_p2` | `acq-anat_TB1TFL` | `fmap` |
-| 4 | `*fmap-fmri_acq-mbep2d_SE_19mm_dir-AP` | `acq-fmri_dir-AP_epi` | `fmap` |
-| 5 | `*fmap-fmri_acq-mbep2d_SE_19mm_dir-PA` | `acq-fmri_dir-PA_epi` | `fmap` |
-| 6 | `*fmap-fmri_acq-mbep2d_SE_19mm_dir-AP_Q1K` | `acq-fmriQ1K_dir-AP_epi` | `fmap` |
-| 7 | `*fmap-fmri_acq-mbep2d_SE_19mm_dir-PA_Q1K` | `acq-fmriQ1K_dir-PA_epi` | `fmap` |
-
-### Functional
-
-| **N** | **7T Terra Siemens acquisition pattern** | **BIDS** | **Directory** |
-|:-----:|:------------------------------------------|:---------|:-------------:|
-| 1 | `func-cloudy_acq-ep2d_MJC_19mm` | `task-cloudy_bold` | `func` |
-| 2 | `func-present_acq-ep2d_MJC_19mm` | `task-present_bold` | `func` |
-| 3 | `*func-semphon1_acq-mbep2d_ME_19mm` | `task-semphon1_bold` | `func` |
-| 4 | `*func-semphon2_acq-mbep2d_ME_19mm` | `task-semphon2_bold` | `func` |
-| 5 | `func-cross_acq-ep2d_MJC_19mm` | `task-rest_bold` | `func` |
-| 6 | `func-rsfmri_acq-multiE_1.9mm` | `task-rest_bold` | `func` |
-| 7 | `*func-rsfmri_acq-mbep2d_ME_19mm` | `task-rest_bold` | `func` |
-| 8 | `*func-rsfmri_acq-singleE_1*` | `task-rest_acq-singleE_bold` | `func` |
-| 9 | `*func-rsfmri_acq-mbep2d_ME_19mm_Q1K` | `task-rest_acq-Q1K_bold` | `func` |
-| 10 | `*func-epiencode_acq-mbep2d_ME_19mm*` | `task-epiencode_bold` | `func` |
-| 11 | `*func-epiretrieve_acq-mbep2d_ME_19mm` | `task-epiretrieve_bold` | `func` |
-| 12 | `*func-pattersep1_acq-mbep2d_ME_19mm` | `task-patternsep1_bold` | `func` |
-| 13 | `*func-patter*sep2_acq-mbep2d_ME_19mm` | `task-patternsep2_bold` | `func` |
-| 14 | `*func-semantic1_acq-mbep2d_ME_19mm` | `task-semantic1_bold` | `func` |
-| 15 | `*func-semantic2_acq-mbep2d_ME_19mm` | `task-semantic2_bold` | `func` |
-| 16 | `*func-spatial1_acq-mbep2d_ME_19mm` | `task-spatial1_bold` | `func` |
-| 17 | `*func-spatial2_acq-mbep2d_ME_19mm` | `task-spatial2_bold` | `func` |
-| 18 | `*func-movie*1_acq-mbep2d_ME_19mm` | `task-movies1_bold` | `func` |
-| 19 | `*func-movie*2_acq-mbep2d_ME_19mm` | `task-movies2_bold` | `func` |
-| 20 | `*func-movies3_acq-mbep2d_ME_19mm` | `task-movies3_bold` | `func` |
-| 21 | `*func-movies4_acq-mbep2d_ME_19mm` | `task-movies4_bold` | `func` |
-| 22 | `*func-caddy_acq-mbep2d_ME_19mm` | `task-caddy_bold` | `func` |
-| 23 | `*func-harsh_acq-mbep2d_ME_19mm` | `task-harsh_bold` | `func` |
-| 24 | `*func-pines_acq-mbep2d_ME_19mm` | `task-pines_bold` | `func` |
-| 25 | `*func-bathroom_acq-mbep2d_ME_19mm` | `task-bathroom_bold` | `func` |
-| 26 | `*func-audiobook1_acq-mbep2d_ME_19mm` | `task-audiobook1_bold` | `func` |
-| 27 | `*func-audiobook2_acq-mbep2d_ME_19mm` | `task-audiobook2_bold` | `func` |
-| 28 | `*func-oceans11_acq-mbep2d_ME_19mm` | `task-oceans11_bold` | `func` |
-| 29 | `*func-social_acq-mbep2d_ME_19mm` | `task-social_bold` | `func` |
-| 30 | `*func-sens1_acq-mbep2d_ME_19mm` | `task-sens2_bold` | `func` |
-| 31 | `*func-sens2_acq-mbep2d_ME_19mm` | `task-sens1_bold` | `func` |
-| 32 | `*func-slient1_acq-mbep2d_ME_19mm` | `task-salient_bold` | `func` |
-
-### Abbreviation Glossary
-
-| **Abbreviation** | **Description**                                               |
-|------------------|---------------------------------------------------------------|
-| **AP**           | Anterio-Posterior                                             |
-| **PA**           | Postero-anterior                                              |
-| **mtw**          | Magnetic transfer weighted                                    |
-| **sfmap**        | Scaled flip angle map                                         |
-| **tof**          | Time of flight                                                |
-| **multib**       | Multi shell N directions                                      |
-| **semphon**      | Semantic-phonetic                                             |
-| **romeo**        | Rapid opensource minimum spanning tree algorithm              |
-| **aspire**       | Combination of multi-channel phase data from multi-echo acquisitions |
-
-### References
-
-1. Eckstein K, Dymerska B, Bachrata B, Bogner W, Poljanc K, Trattnig S, Robinson SD. Computationally efficient combination of multi‐channel phase data from multi‐echo acquisitions (ASPIRE). Magnetic resonance in medicine. 2018 Jun;79(6):2996-3006. https://doi.org/10.1002/mrm.26963
-
-2. Dymerska B, Eckstein K, Bachrata B, Siow B, Trattnig S, Shmueli K, Robinson SD. Phase unwrapping with a rapid opensource minimum spanning tree algorithm (ROMEO). Magnetic resonance in medicine. 2021 Apr;85(4):2294-308. https://doi.org/10.1002/mrm.28563
-
-3. Sasaki M, Shibata E, Tohyama K, Takahashi J, Otsuka K, Tsuchiya K, Takahashi S, Ehara S, Terayama Y, Sakai A. Neuromelanin magnetic resonance imaging of locus ceruleus and substantia nigra in Parkinson's disease. Neuroreport. 2006 Jul 31;17(11):1215-8. https://doi.org/10.1097/01.wnr.0000227984.84927.a7
+This converter can be used with any DICOM to BIDS dictionary, but comes with a default dictionary aimed at the MNI BIC MRI acquisitions. See the the [default DICOM to BIDS dictionary documentation](./docs/Dictionary.md) for more information.
 
 ## Compilation
 
-This project can be compiled and distributed as an executable using PyInstaller, the compilation process is described in the [`COMPILATION.md`](./COMPILATION.md) file.
+This converter can be compiled and distributed as an executable using PyInstaller. See the
+[`Compilation documentation`](./docs/Compilation.md) for more information.
 
 ## Related repositories
 

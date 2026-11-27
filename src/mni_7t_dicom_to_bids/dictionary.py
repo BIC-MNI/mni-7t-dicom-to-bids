@@ -114,13 +114,12 @@ def _parse_dicom_dictionary(
     for index, mapping in enumerate(config.mappings):
         location = f'mappings[{index}]'
         derivative = mapping.derivative
-        if isinstance(derivative, str):
+        if derivative is not None:
             if derivative not in derivative_definitions:
                 raise DicomDictionaryError(f"{location}.derivative uses undefined derivative '{derivative}'.")
             dataset = derivative_definitions[derivative]
         else:
-            dataset = _load_derivative(derivative, f'{location}.derivative', read_template)
-        _check_derivative_consistency(dataset, derivatives, f'{location}.derivative')
+            dataset = RAW_BIDS_DATASET
         _require_unique(mapping.series, mapping_patterns, f'{location}.series')
 
         mappings.append(SeriesMapping(
@@ -147,12 +146,9 @@ def _resolve_credit(
         return None
     citations = {}
     for index, reference in enumerate(credit.references):
-        if isinstance(reference, str):
-            if reference not in definitions:
-                raise DicomDictionaryError(f"{location}.references[{index}] uses undefined reference '{reference}'.")
-            citation = definitions[reference]
-        else:
-            citation = Citation(reference.text, reference.url)
+        if reference not in definitions:
+            raise DicomDictionaryError(f"{location}.references[{index}] uses undefined reference '{reference}'.")
+        citation = definitions[reference]
         citations.setdefault(citation.url, citation)
     return SequenceCredit(credit.acknowledgement, tuple(citations.values()))
 
@@ -171,13 +167,10 @@ def _check_derivative_consistency(
 
 
 def _load_derivative(
-    derivative: DerivativeConfig | None,
+    derivative: DerivativeConfig,
     location: str,
     read_template: Callable[[str], tuple[object, str]],
 ) -> BidsDatasetInfo:
-    if derivative is None:
-        return RAW_BIDS_DATASET
-
     template_value, template_source = read_template(derivative.dataset_description)
     try:
         template = DatasetDescriptionConfig.model_validate(template_value)
